@@ -43,32 +43,33 @@ class Color(BaseModel):
         return f"{self.color}"
 
 
-def product_image_upload_path(instance, filename):
-    return f"images/{instance.product.id}/{filename}"
-
-
 class Image(BaseModel):
     class Meta:
         verbose_name_plural = "Images"
+
     product = models.OneToOneField(
         Product, on_delete=models.CASCADE, related_name="images")
     front = models.ImageField(
-        upload_to=product_image_upload_path, default="", null=True, blank=True)
+        upload_to='get_upload_path', default="", null=True, blank=True)
 
     back = models.ImageField(
-        upload_to=product_image_upload_path, default="", null=True, blank=True)
+        upload_to='get_upload_path', default="", null=True, blank=True)
 
     left_side = models.ImageField(
-        upload_to=product_image_upload_path, default="", null=True, blank=True)
+        upload_to='get_upload_path', default="", null=True, blank=True)
 
     up = models.ImageField(
-        upload_to=product_image_upload_path, default="", null=True, blank=True)
+        upload_to='get_upload_path', default="", null=True, blank=True)
 
     right_side = models.ImageField(
-        upload_to=product_image_upload_path, default="", null=True, blank=True)
+        upload_to='get_upload_path', default="", null=True, blank=True)
 
     def __str__(self) -> str:
         return "image"
+
+    @staticmethod
+    def get_upload_path(instance, filename):
+        return f"images/{instance.product.id}/{filename}"
 
 
 class Category(BaseModel):
