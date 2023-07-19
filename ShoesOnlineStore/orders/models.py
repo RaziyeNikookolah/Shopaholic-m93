@@ -39,7 +39,7 @@ class Order_Product(BaseModel):
     class Meta:
         verbose_name_plural = "Order-products"
     product = models.ForeignKey(
-        "Product", on_delete=models.PROTECT, related_name="order_products"
+        Product, on_delete=models.PROTECT, related_name="order_products"
     )
     order = models.ForeignKey(
         "Order", on_delete=models.PROTECT, related_name="order_products"
