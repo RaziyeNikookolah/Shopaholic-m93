@@ -12,8 +12,9 @@ class Product(BaseModel):
     is_active = models.BooleanField(default=True, blank=True)
     slug = models.SlugField(max_length=250, null=True,
                             blank=True, unique=True, allow_unicode=True)
-    # def __str__(self) -> str:
-    #     return
+
+    def __str__(self) -> str:
+        return "f{self.brand} {self.category}"
 
 
 class ProductSize(BaseModel):
@@ -23,6 +24,9 @@ class ProductSize(BaseModel):
     price = models.DecimalField()
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="product_sizes")
+
+    def __str__(self) -> str:
+        return "f{self.size}"
 
 
 class ProductImage(BaseModel):
@@ -40,4 +44,4 @@ class Category(BaseModel):
         "Category", on_delete=models.PROTECT, related_name="categories")
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250, null=True,
-                            blank=True, unique=True, allow_unicode=True)
+                            blank=True, unique=True, allow_unicode=True, )
