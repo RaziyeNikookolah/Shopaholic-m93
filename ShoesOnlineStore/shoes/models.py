@@ -16,7 +16,7 @@ class Product(BaseModel):
                             blank=True, unique=True, allow_unicode=True)
 
     def __str__(self) -> str:
-        return "f{self.brand} {self.category}"
+        return f"{self.brand} {self.category}"
 
 
 class ProductSize(BaseModel):
@@ -30,19 +30,32 @@ class ProductSize(BaseModel):
         Product, on_delete=models.CASCADE, related_name="sizes")
 
     def __str__(self) -> str:
-        return "f{self.size}"
+        return f"{self.size}"
+
+
+def product_image_upload_path(instance, filename):
+    return f"images/{instance.product.id}/{filename}"
 
 
 class ProductImage(BaseModel):
     class Meta:
         verbose_name_plural = "ProductImages"
-    front = models.CharField(max_length=250, null=True, blank=True)
-    back = models.CharField(max_length=250, null=True, blank=True)
-    left_side = models.CharField(max_length=250, null=True, blank=True)
-    up = models.CharField(max_length=250, null=True, blank=True)
-    right_side = models.CharField(max_length=250, null=True, blank=True)
     product = models.OneToOneField(
         Product, on_delete=models.CASCADE, related_name="images")
+    front = models.ImageField(
+        upload_to=product_image_upload_path, default="", null=True, blank=True)
+
+    back = models.ImageField(
+        upload_to=product_image_upload_path, default="", null=True, blank=True)
+
+    left_side = models.ImageField(
+        upload_to=product_image_upload_path, default="", null=True, blank=True)
+
+    up = models.ImageField(
+        upload_to=product_image_upload_path, default="", null=True, blank=True)
+
+    right_side = models.ImageField(
+        upload_to=product_image_upload_path, default="", null=True, blank=True)
 
     def __str__(self) -> str:
         return "image"
@@ -61,4 +74,4 @@ class Category(BaseModel):
                             blank=True, unique=True, allow_unicode=True, )
 
     def __str__(self) -> str:
-        return "f{self.title}"
+        return f"{self.title}"
