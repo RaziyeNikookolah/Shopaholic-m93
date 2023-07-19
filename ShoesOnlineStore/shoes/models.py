@@ -8,12 +8,17 @@ class Product(BaseModel):
     manufacturing_country = models.CharField(200)
     descriptions = models.TextField(max_length=250, null=True, blank=True)
     category = models.ForeignKey(
-        "Category", on_delete=models.CASCADE, related_name="products")
+        "Category", on_delete=models.PROTECT, related_name="products")
     is_active = models.BooleanField(default=True, blank=True)
 
 
 class ProductSize(BaseModel):
-    ...
+    size = models.IntegerField(max_length=2)
+    color = models.CharField(max_length=20)
+    availability_count = models.IntegerField(5)
+    price = models.DecimalField()
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product_sizes")
 
 
 class ProductImage(BaseModel):
