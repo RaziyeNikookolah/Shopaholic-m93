@@ -69,7 +69,8 @@ class Image(BaseModel):
 
     @staticmethod
     def get_upload_path(instance, filename):
-        return f"images/{instance.product.id}/{filename}"
+        # TODO filenameshould be field name
+        return f"statics/shoes/images/{instance.product.id}/{filename}"
 
 
 class Category(BaseModel):

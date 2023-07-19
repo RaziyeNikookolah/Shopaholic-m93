@@ -6,4 +6,4 @@ class ShoesConfig(AppConfig):
     name = 'shoes'
 
     def ready(self):
-        import shoes.signals
+        import shoes.signals  # configure signal
