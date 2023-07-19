@@ -18,7 +18,7 @@ class Product(BaseModel):
 
 
 class ProductSize(BaseModel):
-    size = models.IntegerField(max_length=2)
+    size = models.IntegerField()
     color = models.CharField(max_length=20)
     availability_count = models.IntegerField(5)
     price = models.DecimalField()
