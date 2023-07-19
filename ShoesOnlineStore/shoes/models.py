@@ -32,4 +32,7 @@ class ProductImage(BaseModel):
 
 
 class Category(BaseModel):
-    ...
+    parent_category = models.ForeignKey(
+        "Category", on_delete=models.PROTECT, related_name="categories")
+    title = models.CharField(max_length=250)
+    slug = models.CharField(max_length=250, null=True, blank=True)
