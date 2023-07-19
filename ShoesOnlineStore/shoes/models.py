@@ -8,7 +8,7 @@ class Product(BaseModel):
     code = models.CharField(max_length=10)
     brand = models.CharField(max_length=150)
     manufacturing_country = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=7, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     descriptions = models.TextField(max_length=250, null=True, blank=True)
     category = models.ForeignKey(
         "Category", on_delete=models.PROTECT, related_name="products")
