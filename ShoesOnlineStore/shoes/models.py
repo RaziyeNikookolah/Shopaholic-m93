@@ -22,7 +22,13 @@ class ProductSize(BaseModel):
 
 
 class ProductImage(BaseModel):
-    ...
+    front = models.CharField(max_length=250, null=True, blank=True)
+    back = models.CharField(max_length=250, null=True, blank=True)
+    left_side = models.CharField(max_length=250, null=True, blank=True)
+    up = models.CharField(max_length=250, null=True, blank=True)
+    right_side = models.CharField(max_length=250, null=True, blank=True)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product_sizes")
 
 
 class Category(BaseModel):
