@@ -32,5 +32,5 @@ class Address(BaseModel):
     details = models.TextField(max_length=500)
     customer=models.ForeignKey(Customer, on_delete=models.CASCADE,related_name="addresses")
     def __str__(self) -> str:
-        return f"{self.city} , {self.postal}"
+        return f"{self.city} , {self.postal_code}"
     

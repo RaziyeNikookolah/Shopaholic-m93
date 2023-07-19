@@ -25,9 +25,7 @@ class Order(BaseModel):
     future_send_date = models.DateTimeField()
     sending_type = models.IntegerField(
         choices=SendingType.choices, default=2)
-    delivery_status = models.DateTimeField()
-    sending_type = models.IntegerField(
-        choices=DeliveryStatus.choices, default=1)
+    delivery_status = models.IntegerField(DeliveryStatus.choices, default=1)
     tracking_code = models.CharField(max_length=30)
     shipping_cost = models.DecimalField(max_digits=10, decimal_places=2)
 
