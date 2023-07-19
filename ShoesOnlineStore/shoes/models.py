@@ -23,7 +23,7 @@ class Product(BaseModel):
 class Size(BaseModel):
     class Meta:
         verbose_name_plural = "sizes"
-    size = models.IntegerField()
+    size = models.PositiveSmallIntegerField()
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="sizes")
 
@@ -32,17 +32,22 @@ class Size(BaseModel):
 
 
 class Color(BaseModel):
+    class Meta:
+        verbose_name_plural = "Colors"
     color = models.CharField(max_length=20)
-    availability_count = models.IntegerField()
+    availability_count = models.PositiveSmallIntegerField()
     size = models.ForeignKey(
         Size, on_delete=models.CASCADE, related_name="colors")
+
+    def __str__(self) -> str:
+        return f"{self.color}"
 
 
 def product_image_upload_path(instance, filename):
     return f"images/{instance.product.id}/{filename}"
 
 
-class ProductImage(BaseModel):
+class Image(BaseModel):
     class Meta:
         verbose_name_plural = "Images"
     product = models.OneToOneField(
