@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'core.apps.CoreConfig',
     'orders.apps.OrdersConfig',
+    'shoes.apps.ShoesConfig',
 
 
 ]
