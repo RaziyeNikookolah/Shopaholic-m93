@@ -38,6 +38,9 @@ class ProductImage(BaseModel):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="product_sizes")
 
+    def __str__(self) -> str:
+        return "image"
+
 
 class Category(BaseModel):
     parent_category = models.ForeignKey(
@@ -45,3 +48,6 @@ class Category(BaseModel):
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250, null=True,
                             blank=True, unique=True, allow_unicode=True, )
+
+    def __str__(self) -> str:
+        return "f{self.title}"
