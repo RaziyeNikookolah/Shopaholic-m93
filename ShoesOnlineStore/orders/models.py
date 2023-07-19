@@ -22,16 +22,14 @@ class Order(BaseModel):
     customer = models.ForeignKey(
         Customer, on_delete=models.PROTECT, related_name="orders"
     )
-    future_send_date = models.DateTimeField()
     sending_type = models.IntegerField(
         choices=SendingType.choices, default=2)
     delivery_status = models.IntegerField(
         choices=DeliveryStatus.choices, default=1)
-    tracking_code = models.CharField(max_length=30)
-    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    tracking_code = models.CharField(max_length=30, null=True, blank=True)
 
     def __str__(self) -> str:
-        return f"{self.delivery_status}"
+        return f"Order id:{self.id}"
 
 
 class Order_Product(BaseModel):
@@ -57,6 +55,7 @@ class Receipt(BaseModel):
     )
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     final_price = models.DecimalField(max_digits=10, decimal_places=2)
+    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self) -> str:
         return f"{self.final_price}"
