@@ -8,6 +8,7 @@ class Product(BaseModel):
     code = models.CharField(max_length=10)
     brand = models.CharField(max_length=150)
     manufacturing_country = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=7, decimal_places=2)
     descriptions = models.TextField(max_length=250, null=True, blank=True)
     category = models.ForeignKey(
         "Category", on_delete=models.PROTECT, related_name="products")
@@ -19,18 +20,22 @@ class Product(BaseModel):
         return f"{self.brand} {self.category}"
 
 
-class ProductSize(BaseModel):
+class Size(BaseModel):
     class Meta:
-        verbose_name_plural = "ProductSizes"
+        verbose_name_plural = "sizes"
     size = models.IntegerField()
-    color = models.CharField(max_length=20)
-    availability_count = models.IntegerField()
-    price = models.DecimalField(max_digits=7, decimal_places=2)
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="sizes")
 
     def __str__(self) -> str:
         return f"{self.size}"
+
+
+class Color(BaseModel):
+    color = models.CharField(max_length=20)
+    availability_count = models.IntegerField()
+    size = models.ForeignKey(
+        Size, on_delete=models.CASCADE, related_name="colors")
 
 
 def product_image_upload_path(instance, filename):
@@ -39,7 +44,7 @@ def product_image_upload_path(instance, filename):
 
 class ProductImage(BaseModel):
     class Meta:
-        verbose_name_plural = "ProductImages"
+        verbose_name_plural = "Images"
     product = models.OneToOneField(
         Product, on_delete=models.CASCADE, related_name="images")
     front = models.ImageField(
