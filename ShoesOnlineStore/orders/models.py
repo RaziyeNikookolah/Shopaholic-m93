@@ -20,7 +20,7 @@ class Order(BaseModel):
         RECEIVED = 3, "تحویل داده شده ✔"
 
     customer = models.ForeignKey(
-        "Customer", on_delete=models.PROTECT, related_name="orders"
+        Customer, on_delete=models.PROTECT, related_name="orders"
     )
     future_send_date = models.DateTimeField()
     sending_type = models.IntegerField(
@@ -54,7 +54,7 @@ class Receipt(BaseModel):
     class Meta:
         verbose_name_plural = "Receipts"
     order = models.ForeignKey(
-        "Order", on_delete=models.PROTECT, related_name="receipts"
+        Order, on_delete=models.PROTECT, related_name="receipts"
     )
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     final_price = models.DecimalField(max_digits=10, decimal_places=2)
