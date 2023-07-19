@@ -10,7 +10,10 @@ class Product(BaseModel):
     category = models.ForeignKey(
         "Category", on_delete=models.PROTECT, related_name="products")
     is_active = models.BooleanField(default=True, blank=True)
-    slug = models.SlugField(max_length=250, null=True, blank=True)
+    slug = models.SlugField(max_length=250, null=True,
+                            blank=True, unique=True, allow_unicode=True)
+    # def __str__(self) -> str:
+    #     return
 
 
 class ProductSize(BaseModel):
@@ -36,4 +39,5 @@ class Category(BaseModel):
     parent_category = models.ForeignKey(
         "Category", on_delete=models.PROTECT, related_name="categories")
     title = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=250, null=True, blank=True)
+    slug = models.SlugField(max_length=250, null=True,
+                            blank=True, unique=True, allow_unicode=True)
