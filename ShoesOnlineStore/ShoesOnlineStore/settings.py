@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'ShoesOnlineStore.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'shoes_db',
+        'NAME': 'online_shoes_shopping_db',
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': '127.0.0.1',
