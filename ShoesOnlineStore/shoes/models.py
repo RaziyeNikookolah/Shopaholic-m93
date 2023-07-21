@@ -64,7 +64,7 @@ class Image(BaseModel):
         upload_to='get_upload_path', default="", null=True, blank=True)
 
     right_side = models.ImageField(
-        upload_to='get_upload_path', default="", null=True, blank=True)
+        upload_to=Image.get_upload_path(), default="", null=True, blank=True)
 
     def __str__(self) -> str:
         return "image"
