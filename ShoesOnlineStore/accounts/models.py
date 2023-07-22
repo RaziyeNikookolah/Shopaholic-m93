@@ -127,7 +127,7 @@ class Address(BaseModel):
         Account, on_delete=models.CASCADE, related_name='addresses', verbose_name=_("account"))
     province = models.CharField(
         max_length=7,
-        choices=PROVINCES.choices,
+        choices=PROVINCES,
         verbose_name=_('Province'),
     )
     city = models.CharField(_("city"), max_length=40)
