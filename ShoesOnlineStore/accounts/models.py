@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser
 from core.validators import PhoneValidator
 from .managers import AccountManager
+from core.utils import ROLE
 
 
 class Account(BaseModel, AbstractBaseUser):
@@ -11,12 +12,6 @@ class Account(BaseModel, AbstractBaseUser):
     class Meta:
         verbose_name_plural = _("Accounts")
         verbose_name = _("Account")
-
-    class Role(models.IntegerChoices):
-        USER = 0, _('User')
-        CUSTOMER = 1, _('Customer')
-        PRODUCT_MANAGER = 2, _('Manager')
-        OPERATOR = 3, _('Operator')
 
     phone_validator = PhoneValidator()
 
@@ -34,7 +29,7 @@ class Account(BaseModel, AbstractBaseUser):
     )
 
     role = models.PositiveSmallIntegerField(_('role'), max_length=10,
-                                            choices=Role.choices, default=Role.USER)
+                                            choices=ROLE.choices, default=ROLE.USER)
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
