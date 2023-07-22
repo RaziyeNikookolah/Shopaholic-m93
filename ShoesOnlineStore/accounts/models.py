@@ -17,7 +17,7 @@ class Account(BaseModel, AbstractBaseUser, PermissionsMixin):
 
     phone_number = models.CharField(
         _("phone number"),
-        max_length=11,
+        max_length=14,
         unique=True,
         help_text=(
             _("Required. 11 character. digits only.")
@@ -125,10 +125,9 @@ class Address(BaseModel):
 
     account = models.ForeignKey(
         Account, on_delete=models.CASCADE, related_name='addresses', verbose_name=_("account"))
-    country = models.CharField(_("country"), max_length=40, default='iran')
     province = models.CharField(
         max_length=7,
-        choices=PROVINCES,
+        choices=PROVINCES.choices,
         verbose_name=_('Province'),
     )
     city = models.CharField(_("city"), max_length=40)
