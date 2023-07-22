@@ -1,7 +1,7 @@
 from django.db import models
 from core.models import BaseModel
 from shoes.models import Product
-from customers.models import Customer
+from accounts.models import Account
 
 
 class Order(BaseModel):
@@ -19,8 +19,8 @@ class Order(BaseModel):
         SENT = 2, "ارسال شده 🚛"
         RECEIVED = 3, "تحویل داده شده ✔"
 
-    customer = models.ForeignKey(
-        Customer, on_delete=models.PROTECT, related_name="orders"
+    account = models.ForeignKey(
+        Account, on_delete=models.PROTECT, related_name="orders"
     )
     sending_type = models.IntegerField(
         choices=SendingType.choices, default=2)

@@ -133,6 +133,7 @@ class Address(BaseModel):
     city = models.CharField(_("city"), max_length=40)
     address = models.TextField(_("adderess"), max_length=100)
     postal_code = models.CharField(_("postal code"), max_length=20)
+    # receiver=# etelaate khodesh ya ye nafar dige
 
     def __str__(self):
         return f'{self.country}, {self.province}, {self.city}, {self.address}'
