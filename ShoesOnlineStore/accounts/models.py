@@ -52,3 +52,33 @@ class Account(BaseModel, AbstractBaseUser):
             return self.first_name+' '+self.last_name
         else:
             return 'Anonymous'
+
+
+class Profile(BaseModel):
+
+    class GENDER(models.IntegerChoices):
+        MALE = 1, _('Male')
+        FEMALE = 2, _('Female')
+        OTHER = 3, _('Other')
+
+    account = models.OneToOneField(
+        Account,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='profile')
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    gender = models.PositiveSmallIntegerField(
+        _('gender'), choices=GENDER.choices, null=True, blank=True, default=GENDER.FEMALE)
+    birthday = models.DateField(_('birthday'), null=True, blank=True)
+    bio = models.TextField(_('bio'), null=True, blank=True)
+    image = models.ImageField(
+        _('image'), upload_to=f'statics/profile/images/', default='statics/profile/images/profile.jpg', null=True, blank=True)
+    email = models.EmailField(_('email'), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("profile")
+        verbose_name_plural = _("profiles")
+
+    def __str__(self) -> str:
+        return f'profile for {self.user}'
