@@ -85,13 +85,6 @@ class Profile(BaseModel):
 
 
 class Address(BaseModel):
-    account = models.ForeignKey(
-        Account, on_delete=models.CASCADE, related_name='addresses', verbose_name=_("account"))
-    country = models.CharField(_("country"), max_length=100, default='iran')
-    province = models.CharField(_("province"), max_length=100)
-    city = models.CharField(_("city"), max_length=100)
-    address = models.TextField(_("adderess"), max_length=100)
-    postal_code = models.CharField(_("postal code"), max_length=20)
 
     PROVINCES = [
         ('thr', _('Tehran')),
@@ -130,6 +123,18 @@ class Address(BaseModel):
     class Meta:
         verbose_name = _("address")
         verbose_name_plural = _('adresses')
+
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name='addresses', verbose_name=_("account"))
+    country = models.CharField(_("country"), max_length=40, default='iran')
+    province = models.CharField(
+        max_length=7,
+        choices=PROVINCES,
+        verbose_name=_('Province'),
+    )
+    city = models.CharField(_("city"), max_length=40)
+    address = models.TextField(_("adderess"), max_length=100)
+    postal_code = models.CharField(_("postal code"), max_length=20)
 
     def __str__(self):
         return f'{self.country}, {self.province}, {self.city}, {self.address}'
