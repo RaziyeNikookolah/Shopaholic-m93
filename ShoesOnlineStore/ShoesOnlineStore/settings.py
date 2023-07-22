@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'orders.apps.OrdersConfig',
     'shoes.apps.ShoesConfig',
-    'customers.apps.CustomersConfig',
+    'accounts.apps.AccountsConfig',
+    'otp.apps.OtpConfig'
 
 ]
 
@@ -84,7 +85,7 @@ WSGI_APPLICATION = 'ShoesOnlineStore.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'online_shoes_shopping_db',
+        'NAME': 'shoes_online_shop',
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': '127.0.0.1',
@@ -137,7 +138,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -149,4 +149,5 @@ STATIC_URL = "statics/"
 # STATICFILES_DIRS = [
 #     BASE_DIR / "statics",
 # ]
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "statics")
+AUTH_USER_MODEL = 'accounts.Account'
