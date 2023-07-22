@@ -1,13 +1,13 @@
 from django.db import models
 from core.models import BaseModel
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from core.validators import PhoneValidator
 from .managers import AccountManager
 from core.utils import ROLE
 
 
-class Account(BaseModel, AbstractBaseUser):
+class Account(BaseModel, AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         verbose_name_plural = _("Accounts")
@@ -28,7 +28,7 @@ class Account(BaseModel, AbstractBaseUser):
         },
     )
 
-    role = models.PositiveSmallIntegerField(_('role'), max_length=10,
+    role = models.PositiveSmallIntegerField(_('role'),
                                             choices=ROLE.choices, default=ROLE.USER)
 
     USERNAME_FIELD = 'phone_number'
@@ -36,6 +36,10 @@ class Account(BaseModel, AbstractBaseUser):
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+
+    objects = AccountManager()
+
+    is_superuser = models.BooleanField(default=False)
 
     objects = AccountManager()
 
