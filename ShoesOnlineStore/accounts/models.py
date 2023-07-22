@@ -81,4 +81,21 @@ class Profile(BaseModel):
         verbose_name_plural = _("profiles")
 
     def __str__(self) -> str:
-        return f'profile for {self.user}'
+        return f'Profile for {self.user}'
+
+
+class Address(BaseModel):
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, related_name='addresses', verbose_name=_("account"))
+    country = models.CharField(_("country"), max_length=100, default='iran')
+    province = models.CharField(_("province"), max_length=100)
+    city = models.CharField(_("city"), max_length=100)
+    address = models.TextField(_("adderess"), max_length=100)
+    postal_code = models.CharField(_("postal code"), max_length=20)
+
+    class Meta:
+        verbose_name = _("address")
+        verbose_name_plural = _('adresses')
+
+    def __str__(self):
+        return f'{self.country}, {self.province}, {self.city}, {self.address}'
