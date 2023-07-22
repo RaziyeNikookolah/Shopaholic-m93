@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'shoes.apps.ShoesConfig',
     'customers.apps.CustomersConfig',
+    'accounts.apps.AccountsConfig',
 
 ]
 
@@ -150,3 +151,4 @@ STATIC_URL = "statics/"
 #     BASE_DIR / "statics",
 # ]
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+AUTH_USER_MODEL = 'accounts.Account'
