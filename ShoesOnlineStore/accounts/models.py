@@ -146,11 +146,12 @@ class Address(BaseModel):
 
 class OtpRequest(models.Model):
     request_id = models.UUIDField(default=uuid4, editable=False)
-    phone_number = models.CharField(max_length=12)
+    phone_number = models.CharField(max_length=14)
     code = models.CharField(max_length=4, null=True)
     valid_from = models.DateTimeField(default=timezone.now)
     valid_until = models.DateTimeField(
         default=timezone.now()+timedelta(seconds=120))
+    # the response of otp service
     receipt_id = models.CharField(max_length=255, null=True)
 
     class Meta:
@@ -159,7 +160,7 @@ class OtpRequest(models.Model):
         verbose_name_plural = _("OneTimePasswords")
 
     def generate_password(self):
-        self.password = ''
+        self.password = self._random_code()
         self.valid_until = timezone.now+timedelta(seconds=120)
 
     def _random_code(self):
