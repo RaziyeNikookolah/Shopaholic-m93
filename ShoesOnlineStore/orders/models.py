@@ -1,0 +1,61 @@
+from django.db import models
+from core.models import BaseModel
+from shoes.models import Product
+from accounts.models import Account
+
+
+class Order(BaseModel):
+    class Meta:
+        verbose_name_plural = "Orders"
+
+    class SendingType(models.IntegerChoices):
+        TIPAX = 1, "🚀🛰🚀🛰🚀 تیپاکس "
+        POST = 2, "🚚 پست  "
+        EXPRESS = 3, "🚖 تحویل در شهر"
+
+    class DeliveryStatus(models.IntegerChoices):
+        CANCLE = 0, "لغو شده ❌"
+        IN_STORE = 1, "در انبار🚂"
+        SENT = 2, "ارسال شده 🚛"
+        RECEIVED = 3, "تحویل داده شده ✔"
+
+    account = models.ForeignKey(
+        Account, on_delete=models.PROTECT, related_name="orders"
+    )
+    sending_type = models.IntegerField(
+        choices=SendingType.choices, default=2)
+    delivery_status = models.IntegerField(
+        choices=DeliveryStatus.choices, default=1)
+    tracking_code = models.CharField(max_length=30, null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"Order id:{self.id}"
+
+
+class Order_Product(BaseModel):
+    class Meta:
+        verbose_name_plural = "Order-products"
+    product = models.ForeignKey(
+        Product, on_delete=models.PROTECT, related_name="order_products"
+    )
+    order = models.ForeignKey(
+        "Order", on_delete=models.PROTECT, related_name="order_products"
+    )
+    quantity = models.PositiveSmallIntegerField()
+
+    def __str__(self) -> str:
+        return f"{self.product} {self.order}"
+
+
+class Receipt(BaseModel):
+    class Meta:
+        verbose_name_plural = "Receipts"
+    order = models.ForeignKey(
+        Order, on_delete=models.PROTECT, related_name="receipts"
+    )
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    final_price = models.DecimalField(max_digits=10, decimal_places=2)
+    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self) -> str:
+        return f"{self.final_price}"
