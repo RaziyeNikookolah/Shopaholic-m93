@@ -1,7 +1,10 @@
+from datetime import datetime
+from rest_framework.authtoken.models import Token
 from http.client import HTTPException
-from .serializers import RequestOtpSerializer, ResponseOtpSerializer
+from .serializers import RequestOtpSerializer, ResponseOtpSerializer, VerifyOtpSerializer, VerifyOtpResponseSerializer
 from kavenegar import KavenegarAPI, APIException
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -56,4 +59,30 @@ class RequestOTP(APIView):
 
 class VerifyOtp(APIView):
     def post(self, request):
-        ...
+        serializer = VerifyOtpSerializer(data=request.data)
+        if serializer.is_valid():
+            query = OtpRequest.objects.filter(
+                request_id=serializer.validated_data['request_id'],
+                phone_number=serializer.validated_data['phone_number'],
+                valid_until__gte=datetime.now()
+            )
+            if query.exists():
+                User = get_user_model()
+                user = User.objects.filter(
+                    phone_number=serializer.validated_data['phone_number'])
+                if user.exists():
+                    token, created = Token.objects.get_or_create(
+                        user=user.first())
+                    return Response(VerifyOtpResponseSerializer(data={'token': token, 'new_uesr': False}).data)
+                else:
+                    user = User.objects.create(
+                        phone_number=serializer.validated_data['phone_number'])
+                    token, created = Token.objects.get_or_create(
+                        user=user.first())
+                    return Response(VerifyOtpResponseSerializer(data={'token': token, 'new_uesr': True}).data)
+
+            else:
+                return Response(None, status=status.HTTP_403_FORBIDDEN)
+
+        else:
+            return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)

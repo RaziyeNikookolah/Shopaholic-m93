@@ -13,6 +13,7 @@ class ResponseOtpSerializer(serializers.ModelSerializer):
 
 
 class VerifyOtpSerializer(serializers.Serializer):
+    request_id = serializers.CharField(max_length=64)
     phone_number = serializers.CharField(max_length=12)
     code = serializers.CharField(max_length=4)
 
