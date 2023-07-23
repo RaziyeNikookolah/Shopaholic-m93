@@ -1,3 +1,8 @@
+from datetime import timedelta
+import random
+import string
+from uuid import uuid4
+from django.utils import timezone
 from django.db import models
 from core.models import BaseModel
 from django.utils.translation import gettext_lazy as _
@@ -137,3 +142,28 @@ class Address(BaseModel):
 
     def __str__(self):
         return f'{self.country}, {self.province}, {self.city}, {self.address}'
+
+
+class OtpRequest(models.Model):
+    request_id = models.UUIDField(default=uuid4, editable=False)
+    phone_number = models.CharField(max_length=12)
+    code = models.CharField(max_length=4, null=True)
+    valid_from = models.DateTimeField(default=timezone.now)
+    valid_until = models.DateTimeField(
+        default=timezone.now()+timedelta(seconds=120))
+    receipt_id = models.CharField(max_length=255, null=True)
+
+    class Meta:
+
+        verbose_name = _("OneTimePassword")
+        verbose_name_plural = _("OneTimePasswords")
+
+    def generate_password(self):
+        self.password = ''
+        self.valid_until = timezone.now+timedelta(seconds=120)
+
+    def _random_code(self):
+        rand = random.SystemRandom()
+        # it gives list of 4 char digit
+        digits = rand.choices(string.digits, k=4)
+        return ''.join(digits)
