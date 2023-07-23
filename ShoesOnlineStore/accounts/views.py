@@ -6,7 +6,7 @@ from django.views import View
 
 
 class LoginView(View):
-    template_name = "acounts/login.html"
+    template_name = "accounts/login.html"
 
     def get(self, request, *args, **kwargs):
 

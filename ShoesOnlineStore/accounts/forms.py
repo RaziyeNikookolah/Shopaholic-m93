@@ -1,8 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm
-from .models import Account
+from django import forms
 
 
-class UserCreationOrLoginForm(UserCreationForm):
-    class Meta:
-        model = Account
-        fields = ("phone_number",)
+class UserCreationOrLoginForm(forms.Form):
+    phone_number = forms.CharField(max_length=14)
