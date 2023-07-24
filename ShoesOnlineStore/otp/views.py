@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from rest_framework.authtoken.models import Token
 from http.client import HTTPException
 from .serializers import RequestOtpSerializer, ResponseOtpSerializer, VerifyOtpSerializer, VerifyOtpResponseSerializer
@@ -20,7 +20,7 @@ class OncePerMinuteThorttle(UserRateThrottle):
 
 class RequestOTP(APIView):
     def post(self, request):
-        throttle_classes = [OncePerMinuteThorttle]
+        # throttle_classes = [OncePerMinuteThorttle]
         serializer = RequestOtpSerializer(data=request.data)
         if serializer.is_valid():
 
@@ -31,14 +31,8 @@ class RequestOTP(APIView):
             otp_request.generate_code()
             otp_request.save()
 
-            api = KavenegarAPI(settings.SMS_API_KEY)
-            response = api.verify_lookup({
-                'receptor': otp_request.phone_number,
-                'token': otp_request.code,
-                'template': settings.OTP_TEMPLATE
-            })
             try:
-                api = KavenegarAPI(settings.SMS_API_KEY, timeout=20)
+                api = KavenegarAPI(settings.SMS_API_KEY)
                 params = {
                     'receptor': otp_request.phone_number,
                     'template': 'کد تایید شما',
@@ -50,11 +44,13 @@ class RequestOTP(APIView):
                 return Response(ResponseOtpSerializer(otp_request).data)
             except APIException as e:
                 print(e)
+                return Response({'error': 'Failed to send OTP because of kavenegar api authorization...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except HTTPException as e:
                 print(e)
+                return Response({'error': 'Failed to send OTP'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         else:
-            return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyOtp(APIView):
@@ -62,9 +58,8 @@ class VerifyOtp(APIView):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
             query = OtpRequest.objects.filter(
-                request_id=serializer.validated_data['request_id'],
                 phone_number=serializer.validated_data['phone_number'],
-                valid_until__gte=datetime.now()
+                valid_until__gte=datetime.now(timezone.utc)
             )
             if query.exists():
                 User = get_user_model()
@@ -82,7 +77,7 @@ class VerifyOtp(APIView):
                     return Response(VerifyOtpResponseSerializer(data={'token': token, 'new_uesr': True}).data)
 
             else:
-                return Response(None, status=status.HTTP_403_FORBIDDEN)
+                return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
         else:
-            return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

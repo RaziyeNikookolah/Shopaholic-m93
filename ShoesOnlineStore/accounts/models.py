@@ -1,8 +1,7 @@
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 import random
 import string
 from uuid import uuid4
-from django.utils import timezone
 from django.db import models
 from core.models import BaseModel
 from django.utils.translation import gettext_lazy as _
@@ -145,23 +144,20 @@ class Address(BaseModel):
 
 
 class OtpRequest(models.Model):
-    request_id = models.UUIDField(default=uuid4, editable=False)
     phone_number = models.CharField(max_length=14)
     code = models.CharField(max_length=4, null=True)
-    valid_from = models.DateTimeField(default=timezone.now)
+    valid_from = models.DateTimeField(default=datetime.now(timezone.utc))
     valid_until = models.DateTimeField(
-        default=timezone.now()+timedelta(seconds=120))
-    # the response of otp service
-    receipt_id = models.CharField(max_length=255, null=True)
+        default=datetime.now(timezone.utc)+timedelta(seconds=120))
 
     class Meta:
 
         verbose_name = _("OneTimePassword")
         verbose_name_plural = _("OneTimePasswords")
 
-    def generate_password(self):
-        self.password = self._random_code()
-        self.valid_until = timezone.now+timedelta(seconds=120)
+    def generate_code(self):
+        self.code = self._random_code()
+        self.valid_until = datetime.now(timezone.utc) + timedelta(seconds=120)
 
     def _random_code(self):
         rand = random.SystemRandom()
