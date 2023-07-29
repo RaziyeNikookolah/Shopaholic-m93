@@ -1,19 +1,19 @@
-from datetime import datetime, timezone
+from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token
 from http.client import HTTPException
-from .serializers import RequestOtpSerializer, ResponseOtpSerializer, VerifyOtpSerializer, VerifyOtpResponseSerializer
+from .serializers import RequestOtpSerializer, VerifyOtpSerializer, TokenSerializer
 from kavenegar import KavenegarAPI, APIException
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from accounts.models import OtpRequest
+from .models import OtpRequest
 from rest_framework.throttling import UserRateThrottle
 
+
 # to manage user prompt request and response time period
-
-
 class OncePerMinuteThorttle(UserRateThrottle):
     rate = '1/minute'
 
@@ -21,7 +21,9 @@ class OncePerMinuteThorttle(UserRateThrottle):
 class RequestOTP(APIView):
     def post(self, request):
         # throttle_classes = [OncePerMinuteThorttle]
+
         serializer = RequestOtpSerializer(data=request.data)
+
         if serializer.is_valid():
 
             # now user send me his phone number and other data in request
@@ -41,10 +43,10 @@ class RequestOTP(APIView):
                 }
                 response = api.verify_lookup(params)
                 print(response)
-                return Response(ResponseOtpSerializer(otp_request).data)
+                return Response({"message": "OTP send successfully"})
             except APIException as e:
                 print(e)
-                return Response({'error': 'Failed to send OTP because of kavenegar api authorization...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({'message': 'Send OTP of kavenegar without api authorization...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except HTTPException as e:
                 print(e)
                 return Response({'error': 'Failed to send OTP'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -57,27 +59,47 @@ class VerifyOtp(APIView):
     def post(self, request):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
-            query = OtpRequest.objects.filter(
-                phone_number=serializer.validated_data['phone_number'],
-                valid_until__gte=datetime.now(timezone.utc)
-            )
-            if query.exists():
-                User = get_user_model()
-                user = User.objects.filter(
-                    phone_number=serializer.validated_data['phone_number'])
-                if user.exists():
-                    token, created = Token.objects.get_or_create(
-                        user=user.first())
-                    return Response(VerifyOtpResponseSerializer(data={'token': token, 'new_uesr': False}).data)
+            phone_number = serializer.validated_data['phone_number']
+            code = serializer.validated_data['code']
+            otp_requests = OtpRequest.objects.filter(phone_number=phone_number)
+            if otp_requests.exists():
+
+                otp_request = otp_requests.first()
+
+                if otp_request.is_expired():
+
+                    messages.error(request, _(
+                        'Too late receive a code.'), 'danger')
+                    otp_request.delete()
+                    return Response(serializer.errors, status=status.HTTP_200)
+
+                if code == otp_request.code:
+
+                    messages.success(request, _(
+                        'Your code verified..'), 'success')
+                    User = get_user_model()
+                    otp_request.delete()
+                    if not User.objects.filter(phone_number=phone_number).exists():
+
+                        user = User.objects.create(
+                            phone_number=phone_number)
+                        # create jwt token
+                        # goes to profile page
+                        token, created = Token.objects.get_or_create(
+                            user=user)
+                        return Response(TokenSerializer({'token': token}).data, status=status.HTTP_201_CREATED)
+                    # login mishe
+
+                    return Response({'message': 'Verified code..'}, status=status.HTTP_403_FORBIDDEN)
                 else:
-                    user = User.objects.create(
-                        phone_number=serializer.validated_data['phone_number'])
-                    token, created = Token.objects.get_or_create(
-                        user=user.first())
-                    return Response(VerifyOtpResponseSerializer(data={'token': token, 'new_uesr': True}).data)
 
+                    messages.error(request, _(
+                        'Invalid code..'), 'danger')
+                    otp_request.delete()
+                    return Response({'error': 'Invalid code.'}, status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
 
+                return Response({'error': 'Invalid data provided.'}, status=status.HTTP_403_FORBIDDEN)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({'error': 'Invalid data provided.'}, status=status.HTTP_400_BAD_REQUEST)

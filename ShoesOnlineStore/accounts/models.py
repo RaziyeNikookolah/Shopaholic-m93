@@ -1,7 +1,5 @@
-from datetime import datetime, timedelta, timezone
-import random
-import string
-from uuid import uuid4
+
+from core.utils import PROVINCES
 from django.db import models
 from core.models import BaseModel
 from django.utils.translation import gettext_lazy as _
@@ -39,7 +37,7 @@ class Account(BaseModel, AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     objects = AccountManager()
 
@@ -72,7 +70,7 @@ class Profile(BaseModel):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
     gender = models.PositiveSmallIntegerField(
-        _('gender'), choices=GENDER.choices, null=True, blank=True, default=GENDER.FEMALE)
+        _('gender'), choices=GENDER.choices, default=GENDER.FEMALE)
     birthday = models.DateField(_('birthday'), null=True, blank=True)
     bio = models.TextField(_('bio'), null=True, blank=True)
     image = models.ImageField(
@@ -89,40 +87,6 @@ class Profile(BaseModel):
 
 class Address(BaseModel):
 
-    PROVINCES = [
-        ('thr', _('Tehran')),
-        ('az-sh', _('Azarbayejan Sharghi')),
-        ('az-gh', _('Azarbayejan Gharbi')),
-        ('ard', _('Ardebil')),
-        ('esf', _('Esfehan')),
-        ('alb', _('Alborz')),
-        ('ilm', _('Ilam')),
-        ('bsh', _('Booshehr')),
-        ('chm', _('Charmahal o Bakhtiari')),
-        ('kh-j', _('Khorasan Jonobi')),
-        ('kh-r', _('Khorasan Razavi')),
-        ('kh-sh', _('Khorasan Shomali')),
-        ('khz', _('Khoozestan')),
-        ('znj', _('Zanjan')),
-        ('smn', _('Semnan')),
-        ('sbch', _('Sistan Baloochestan')),
-        ('frs', _('Fars')),
-        ('ghz', _('Ghazvin')),
-        ('qom', _('Qom')),
-        ('krd', _('Kordestan')),
-        ('krm', _('Kerman')),
-        ('kr-sh', _('Kerman Shah')),
-        ('khb', _('Kohkilooye Boyer Ahmad')),
-        ('gls', _('Golestan')),
-        ('gil', _('Gilan')),
-        ('lor', _('Lorestan')),
-        ('maz', _('Mazandaran')),
-        ('mrk', _('Markazi')),
-        ('hrm', _('Hormozgan')),
-        ('hmd', _('Hamedan')),
-        ('yzd', _('Yazd')),
-    ]
-
     class Meta:
         verbose_name = _("address")
         verbose_name_plural = _('adresses')
@@ -137,30 +101,6 @@ class Address(BaseModel):
     city = models.CharField(_("city"), max_length=40)
     address = models.TextField(_("adderess"), max_length=100)
     postal_code = models.CharField(_("postal code"), max_length=20)
-    # receiver=# etelaate khodesh ya ye nafar dige
 
     def __str__(self):
         return f'{self.country}, {self.province}, {self.city}, {self.address}'
-
-
-class OtpRequest(models.Model):
-    phone_number = models.CharField(max_length=14)
-    code = models.CharField(max_length=4, null=True)
-    valid_from = models.DateTimeField(default=datetime.now(timezone.utc))
-    valid_until = models.DateTimeField(
-        default=datetime.now(timezone.utc)+timedelta(seconds=120))
-
-    class Meta:
-
-        verbose_name = _("OneTimePassword")
-        verbose_name_plural = _("OneTimePasswords")
-
-    def generate_code(self):
-        self.code = self._random_code()
-        self.valid_until = datetime.now(timezone.utc) + timedelta(seconds=120)
-
-    def _random_code(self):
-        rand = random.SystemRandom()
-        # it gives list of 4 char digit
-        digits = rand.choices(string.digits, k=4)
-        return ''.join(digits)
