@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from rest_framework import serializers
-from accounts.models import OtpRequest
+from .models import OtpRequest
 
 
 class RequestOtpSerializer(serializers.ModelSerializer):
