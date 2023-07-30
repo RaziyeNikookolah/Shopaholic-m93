@@ -1,6 +1,6 @@
 from django.shortcuts import render
-
-# Create your views here.
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .forms import UserCreationOrLoginForm
 from django.views import View
 
@@ -12,3 +12,12 @@ class LoginView(View):
 
         form = UserCreationOrLoginForm()
         return render(request, self.template_name, {"form": form})
+
+
+@api_view(['GET'])
+def getRoutes(request):
+    routes = [
+        '/token',
+        '/token/refresh',
+    ]
+    return Response(routes)
