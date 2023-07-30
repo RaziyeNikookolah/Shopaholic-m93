@@ -33,3 +33,9 @@ class CheckoutView(View):
     def get(self, request):
         return render(request, "checkout.html"
                       )
+
+
+class ContactView(View):
+    def get(self, request):
+        return render(request, "contact.html"
+                      )
