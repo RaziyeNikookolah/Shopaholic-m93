@@ -39,3 +39,15 @@ class ContactView(View):
     def get(self, request):
         return render(request, "contact.html"
                       )
+
+
+class ShopSingleView(View):
+    def get(self, request):
+        return render(request, "shop_single.html"
+                      )
+
+
+class ThankyouView(View):
+    def get(self, request):
+        return render(request, "thankyou.html"
+                      )
