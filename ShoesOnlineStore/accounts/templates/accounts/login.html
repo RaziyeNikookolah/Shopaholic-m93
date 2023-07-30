@@ -13,10 +13,10 @@
             <div class="card col-4 bg-light mt-5">
                 <div class="pt-4" ><h5 class="card-title">Login</h5></div>
                     <div class="card-body">
-                        <form method="post" action="">
+                        <form method="post" action="{% url '../verification_code.html' %}">
                             {% csrf_token %}
                             {{ form.as_p }}
-                            <input type="submit" value="Login">
+                            <input type="button" value="Login" id="loginBtn">
                             <input type="hidden" name="next" value="{{ request.GET.next }}">
                     
                         </form>
@@ -24,6 +24,6 @@
                 </div>
             </div>
         </div>
-    
+    </div>
 </body>
 </html>
