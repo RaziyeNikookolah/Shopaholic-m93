@@ -13,7 +13,7 @@ class HomeView(View):
 
 class AboutView(View):
     def get(self, request):
-        return render(request, "about_page.html"
+        return render(request, "about.html"
                       )
 
 
