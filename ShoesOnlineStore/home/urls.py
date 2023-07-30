@@ -12,4 +12,6 @@ admin.site.index_title = "Welcome to Shoes Online Shop"
 urlpatterns = [
     path("index/", views.HomeView.as_view(), name="home"),
     path("about/", views.AboutView.as_view(), name="about"),
+    path("cart/", views.CartView.as_view(), name="cart"),
+
 ]
