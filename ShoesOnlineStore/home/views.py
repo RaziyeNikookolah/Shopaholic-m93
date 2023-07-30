@@ -21,3 +21,9 @@ class ShopView(View):
     def get(self, request):
         return render(request, "shop.html"
                       )
+
+
+class CartView(View):
+    def get(self, request):
+        return render(request, "cart.html"
+                      )
