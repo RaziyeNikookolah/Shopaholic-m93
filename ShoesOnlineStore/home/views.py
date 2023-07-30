@@ -15,3 +15,9 @@ class AboutView(View):
     def get(self, request):
         return render(request, "about_page.html"
                       )
+
+
+class ShopView(View):
+    def get(self, request):
+        return render(request, "shop.html"
+                      )
