@@ -27,3 +27,9 @@ class CartView(View):
     def get(self, request):
         return render(request, "cart.html"
                       )
+
+
+class CheckoutView(View):
+    def get(self, request):
+        return render(request, "checkout.html"
+                      )
