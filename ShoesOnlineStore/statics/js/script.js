@@ -12,3 +12,20 @@ $(document).ready(function () {
         $('#div-login').toggle();
     });
 });
+
+$('#login_btn').on('click', function () {
+
+    let cookie = document.cookie
+    let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
+
+    $.ajax({
+        url: 'accounts/get_phone_number/',
+        type: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    }).then(res => {
+
+        console.log(res);
+    });
+});

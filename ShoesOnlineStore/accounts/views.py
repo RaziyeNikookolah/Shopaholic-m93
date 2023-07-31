@@ -1,3 +1,4 @@
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -21,3 +22,8 @@ def getRoutes(request):
         '/token/refresh',
     ]
     return Response(routes)
+
+
+def get_phon_number(request: HttpRequest):
+    print(request)
+    return HttpResponse("hello")
