@@ -7,7 +7,7 @@
                         <div class="signup-form">
                             <form method="post" action="">
                                 {% comment %} {% url 'otp_request' %} {% endcomment %}
-                                {% csrf_token %}
+                                {% comment %} {% csrf_token %} {% endcomment %}
                                 <div class="form-floating mb-3">
                                     <input type="text" id="phone_number"  name="phone_number" class="form-control" placeholder="Phone number" />
                                     {% comment %} pattern="[09][0-9]{2}-[0-9]{3}-[0-9]{4}" {% endcomment %}
