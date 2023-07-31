@@ -33,6 +33,7 @@ class RequestOTP(APIView):
             otp_request = OtpRequest()
             otp_request.phone_number = serializer.validated_data['phone_number']
             otp_request.generate_code()
+            print("*****  "+otp_request.code+"  *****")
             otp_request.save()
 
             try:
