@@ -1,8 +1,9 @@
 $(document).ready(function () {
-    $('#signup-div', '#code-verify-div').hide();
+    $('#login_container').hide();
 
     $('#li_login').on('click', function () {
-        $('#signup-div').toggle();
+        $('#login_container',).toggle();
+
     });
 });
 let phone_number = '';
@@ -46,7 +47,6 @@ $(document).on('submit', '#code-verify_form', function (e) {
         dataType: "json",
         success: function (data, status, xhr) {
             console.log(status);
-            console.log('222222222', phone_number);
             let formData = new FormData();
             formData.append('phone_number', phone_number);
             formData.append('password', '123');
@@ -77,6 +77,7 @@ $(document).on('submit', '#code-verify_form', function (e) {
     });
     $('#signup-div').hide();
     $('#code-verify-div').hide();
+    $('#login_container').hide();
     $('#phone_number').val("")
     $('#code').val("")
 
