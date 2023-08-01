@@ -1,4 +1,4 @@
-
+from django.db.models.signals import post_save
 from core.utils import PROVINCES
 from django.db import models
 from core.models import BaseModel
@@ -104,3 +104,11 @@ class Address(BaseModel):
 
     def __str__(self):
         return f'{self.country}, {self.province}, {self.city}, {self.address}'
+
+
+def save_profile(sender, **kwargs):
+    if kwargs['created']:
+        Profile.objects.create(user=kwargs['instance'])
+
+
+post_save.connect(save_profile, sender=Account)
