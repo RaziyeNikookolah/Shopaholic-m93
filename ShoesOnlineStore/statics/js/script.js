@@ -30,17 +30,22 @@ $(document).on('submit', '#login_form', function (e) {
             phone_number: $('#phone_number').val(),
             'csrfmiddlewaretoken': '{{csrf_token}}'
         },
-        dataType: "json"
+        dataType: "json",
+        success: function (data, status, xhr) {   // success callback function
+            // $('p').append(data.firstName + ' ' + data.middleName + ' ' + data.lastName);
+            console.log(status);
+        },
+        error: function (jqXhr, textStatus, errorMessage) { // error callback 
+            console.log('Error in login_form submission:', errorMessage);
+            // $('p').append('Error: ' + errorMessage);
+        },
 
-        // csrfmiddleware_token: $('input[name=csrfmiddleware_token]').val()
-    }).then(res => {
 
-        console.log(res);
     });
     $('#signup-div').hide();
     $('#code-verify-div').show();
     phone_number2.val($('#phone_number').val())
-
+    $('#phone_number').val("")
 });
 $(document).on('submit', '#code-verify_form', function (e) {
     e.preventDefault();
@@ -59,14 +64,78 @@ $(document).on('submit', '#code-verify_form', function (e) {
             code: $('#code').val(),
             'csrfmiddlewaretoken': '{{csrf_token}}'
         },
-        dataType: "json"
+        dataType: "json",
+        success: function (data, status, xhr) {
+            console.log(status);
 
-        // csrfmiddleware_token: $('input[name=csrfmiddleware_token]').val()
-    }).then(res => {
+            // $.ajax({
 
-        console.log(res);
+            //     url: 'token/',
+            //     type: 'POST',
+            //     data: {
+            //         grant_type: 'password',
+            //         phone_number: $('#phone_number2').val(),
+            //         'csrfmiddlewaretoken': '{{csrf_token}}',
+            //         password: "123",
+            //     },
+            //     dataType: "json",
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded'   // Set the appropriate content type
+            //     },
+            //     success: function (data, status, xhr) {   // success callback function
+            //         console.log(data);
+            //     },
+            //     error: function (jqXhr, textStatus, errorMessage) { // error callback 
+            //         console.log('Error in token request:', errorMessage);
+            //     },
+            // });
+
+
+
+
+
+
+
+            let formData = new FormData();
+            formData.append('phone_number', '09177302137');
+            formData.append('password', '123');
+
+            $.ajax({
+                url: "token/",
+                type: "POST",
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    // store tokens in localStorage
+                    window.localStorage.setItem('refreshToken', data['refresh']);
+                    window.localStorage.setItem('accessToken', data['access']);
+                    console.log(data['access']);
+                },
+                error: function (rs, e) {
+                    console.error(rs.status);
+                    console.error(rs.responseText);
+                }
+            }); // end ajax
+
+
+
+
+
+
+
+
+
+
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            console.log('Error in code-verify_form submission:', errorMessage);
+        }
     });
     $('#signup-div').hide();
     $('#code-verify-div').hide();
+    $('#phone_number2').val("")
+    $('#code').val("")
 
 });

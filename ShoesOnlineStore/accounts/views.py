@@ -15,15 +15,10 @@ class LoginView(View):
         return render(request, self.template_name, {"form": form})
 
 
-@api_view(['GET'])
-def getRoutes(request):
-    routes = [
-        '/token',
-        '/token/refresh',
-    ]
-    return Response(routes)
-
-
-def get_phon_number(request: HttpRequest):
-    print(request)
-    return HttpResponse("hello")
+# @api_view(['GET'])
+# def getRoutes(request):
+#     routes = [
+#         '/token',
+#         '/token/refresh',
+#     ]
+#     return Response(routes)

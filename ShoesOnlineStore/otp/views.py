@@ -74,7 +74,7 @@ class VerifyOtp(APIView):
                     messages.error(request, _(
                         'Too late receive a code.'), 'danger')
                     otp_request.delete()
-                    return Response(serializer.errors, status=status.HTTP_200)
+                    return Response(serializer.errors, status=status.HTTP_200_OK)
 
                 if code == otp_request.code:
 
@@ -88,12 +88,13 @@ class VerifyOtp(APIView):
                             phone_number=phone_number)
                         # create jwt token
                         # goes to profile page
-                        token, created = Token.objects.get_or_create(
-                            user=user)
-                        return Response(TokenSerializer({'token': token}).data, status=status.HTTP_201_CREATED)
+                        # token, created = Token.objects.get_or_create(
+                        #     user=user)
+
+                        return Response({'message': 'Code Verified'}, status=status.HTTP_202_ACCEPTED)
                     # login mishe
 
-                    return Response({'message': 'Verified code..'}, status=status.HTTP_403_FORBIDDEN)
+                    return Response({'message': 'Code Verified'}, status=status.HTTP_202_ACCEPTED)
                 else:
 
                     messages.error(request, _(
