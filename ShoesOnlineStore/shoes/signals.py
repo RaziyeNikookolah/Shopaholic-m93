@@ -10,7 +10,7 @@ from .models import Product, Category
 def create_new_product(sender, instance, created, **kwargs):
     if created:
         os.mkdir(os.path.join(
-            os.getcwd(), f"statics\shoes\images\{instance.id}"))
+            os.getcwd(), f"media\shoes\images\{instance.id}"))
 
 
 @receiver(pre_save, sender=Product)
