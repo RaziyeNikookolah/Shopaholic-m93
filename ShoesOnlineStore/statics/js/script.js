@@ -100,6 +100,7 @@ $(document).on('submit', '#code-verify_form', function (e) {
             formData.append('phone_number', '09177302137');
             formData.append('password', '123');
 
+
             $.ajax({
                 url: "token/",
                 type: "POST",
