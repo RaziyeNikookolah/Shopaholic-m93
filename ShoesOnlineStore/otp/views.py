@@ -1,8 +1,7 @@
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
-from rest_framework.authtoken.models import Token
 from http.client import HTTPException
-from .serializers import RequestOtpSerializer, VerifyOtpSerializer, TokenSerializer
+from .serializers import RequestOtpSerializer, VerifyOtpSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from kavenegar import KavenegarAPI, APIException
@@ -90,7 +89,6 @@ class VerifyOtp(APIView):
                         # goes to profile page
                         # token, created = Token.objects.get_or_create(
                         #     user=user)
-
                         return Response({'message': 'Code Verified'}, status=status.HTTP_202_ACCEPTED)
                     # login mishe
 
