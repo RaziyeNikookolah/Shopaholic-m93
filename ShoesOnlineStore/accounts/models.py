@@ -103,7 +103,7 @@ class Address(BaseModel):
     postal_code = models.CharField(_("postal code"), max_length=20)
 
     def __str__(self):
-        return f'{self.country}, {self.province}, {self.city}, {self.address}'
+        return f' {self.country}, {self.province}, {self.city}, {self.address}'
 
 
 def save_profile(sender, **kwargs):
