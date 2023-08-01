@@ -82,7 +82,7 @@ class Profile(BaseModel):
         verbose_name_plural = _("profiles")
 
     def __str__(self) -> str:
-        return f'Profile for {self.user}'
+        return f'Profile for {self.first_name} {self.last_name}'
 
 
 class Address(BaseModel):
@@ -108,7 +108,7 @@ class Address(BaseModel):
 
 def save_profile(sender, **kwargs):
     if kwargs['created']:
-        Profile.objects.create(user=kwargs['instance'])
+        Profile.objects.create(account=kwargs['instance'])
 
 
 post_save.connect(save_profile, sender=Account)
