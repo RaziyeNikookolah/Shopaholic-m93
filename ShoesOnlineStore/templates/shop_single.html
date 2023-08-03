@@ -3,7 +3,7 @@
   Shoes Online Shop
 {% endblock %}
 {% block content %}
-
+{% load static %}
     <div class="bg-light py-3">
       <div class="container">
         <div class="row">
@@ -16,7 +16,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-6">
-            <img src="{% static 'images/cloth_1.jpg'%}" alt="Image" class="img-fluid">
+            <img src="{{ product.image }}" alt="Image" class="img-fluid">
           </div>
           <div class="col-md-6">
             <h2 class="text-black">Tank Top T-Shirt</h2>
@@ -47,6 +47,7 @@
                 <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
               </div>
             </div>
+            {% load static %}
 
             </div>
             <p><a href="{% url 'cart' %}" class="buy-now btn btn-sm btn-primary">Add To Cart</a></p>

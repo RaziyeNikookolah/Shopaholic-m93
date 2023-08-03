@@ -106,8 +106,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
 
+]
+CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'ShoesOnlineStore.urls'
 
 TEMPLATES = [
@@ -135,7 +136,7 @@ WSGI_APPLICATION = 'ShoesOnlineStore.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'online_shoes_shopping',
+        'NAME': 'online_shoes_shopping_db',
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': '127.0.0.1',

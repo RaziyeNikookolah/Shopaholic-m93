@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import View
+from shoes.models import Product
 
 
 class HomeView(View):
@@ -42,8 +43,9 @@ class ContactView(View):
 
 
 class ShopSingleView(View):
-    def get(self, request):
-        return render(request, "shop_single.html"
+    def get(self, request, pk):
+        product = Product.objects.get(id=pk)
+        return render(request, "shop_single.html", context={"product": product}
                       )
 
 
