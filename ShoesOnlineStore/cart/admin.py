@@ -9,7 +9,7 @@ class CartItemline(admin.TabularInline):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'status', 'updated_at')
+    list_display = ('user', 'status', 'modify_timestamp')
     inlines = (CartItemline,)
     # def has_add_permission(self, request):
     #     return False
@@ -17,7 +17,7 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'product', 'updated_at')
+    list_display = ('__str__', 'product', 'modify_timestamp')
 
     def has_add_permission(self, request):
         return False
