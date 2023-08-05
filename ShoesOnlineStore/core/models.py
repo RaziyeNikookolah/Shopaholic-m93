@@ -1,36 +1,43 @@
+from typing import Any, Dict, Tuple
 from django.db import models
-from .manager import SoftDeleteManager
-from django.utils import timezone
+from datetime import datetime
+from django.db.models.query import QuerySet
+
+
+class SoftDeleteManager(models.Manager):
+
+    def get_queryset(self) -> QuerySet:
+        return super().get_queryset().filter(is_deleted=False)
+
+
+class ArchiveDeletedManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=True)
 
 
 class BaseModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(auto_now=True, editable=True)
-
     class Meta:
         abstract = True
-        # ordering = ("-updated_at", "-created_at")
-# soft delete
-# class SoftDelete()
 
+    objects = SoftDeleteManager()
+    all_objects = models.Manager()
+    deleted_objects = ArchiveDeletedManager()
 
-class SoftDeleteModel(models.Model):
+    is_deleted = models.BooleanField(
+        default=False, db_index=True, null=False, blank=False)
+    create_timestamp = models.DateTimeField(auto_now_add=True)
+    delete_timestamp = models.DateTimeField(
+        default=None, null=True, blank=True)
+    modify_timestamp = models.DateTimeField(auto_now=True)
+    restore_timestamp = models.DateTimeField(
+        default=None, null=True, blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    deleted_at = models.DateTimeField(
-        null=True, default=None, blank=True, db_index=True)
-    objects = models.Manager()
-    undeleted_objects = SoftDeleteManager()
-    # deleted_objects =
-
-    def soft_delete(self):
-        self.deleted_at = timezone.now()
-        self.save()
+    def delete(self, **kwargs) -> Tuple[int, Dict[str, int]]:
+        self.is_deleted = True
+        self.delete_timestamp = datetime.now()
+        self.save(using=kwargs.get("using"))
 
     def restore(self):
-        self.deleted_at = None
+        self.is_deleted = False
+        self.restore_timestamp = datetime.now()
         self.save()
-
-    class Meta:
-        abstract = True
