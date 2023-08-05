@@ -25,8 +25,9 @@ class ShopView(View):
 
 
 class CartView(View):
-    def get(self, request):
-        return render(request, "cart.html"
+    def get(self, request, pk):
+        product = Product.objects.get(pk=pk)
+        return render(request, "cart.html", {"product": product}
                       )
 
 
@@ -44,8 +45,12 @@ class ContactView(View):
 
 class ShopSingleView(View):
     def get(self, request, pk):
-        product = Product.objects.get(id=pk)
-        return render(request, "shop_single.html", context={"product": product}
+        product = Product.objects.filter(id=pk).select_related(
+            'brand', 'category').prefetch_related('color', 'size').first()
+        sizes = product.size.all()
+        colors = product.color.all()
+
+        return render(request, "shop_single.html", context={"product": product, 'sizes': sizes, "colors": colors}
                       )
 
 
