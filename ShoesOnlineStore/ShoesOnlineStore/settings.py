@@ -49,10 +49,13 @@ INSTALLED_APPS = [
     'shoes.apps.ShoesConfig',
     'accounts.apps.AccountsConfig',
     'otp.apps.OtpConfig',
-    'cart.apps.CartConfig',
+    "ckeditor",
+    # 'cart.apps.CartConfig',
 
 ]
-
+AUTHENTICATION_BACKENDS = [
+    "accounts.backends.PhoneNumberBackend",
+]
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
@@ -96,7 +99,8 @@ SIMPLE_JWT = {
 #     "http://localhost:3000"
 # ]
 
-
+MAX_DIGITS = 20
+DECIMAL_PLACES = 2
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     "corsheaders.middleware.CorsMiddleware",
@@ -136,7 +140,7 @@ WSGI_APPLICATION = 'ShoesOnlineStore.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'online_shoes_shopping_db',
+        'NAME': 'online_shoes_shopping',
         'USER': 'postgres',
         'PASSWORD': '123',
         'HOST': '127.0.0.1',
