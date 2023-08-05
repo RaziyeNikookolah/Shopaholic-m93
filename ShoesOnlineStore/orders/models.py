@@ -4,6 +4,11 @@ from shoes.models import Product
 from accounts.models import Account
 from core.utils import PROVINCES
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+
+
+MAX_DIGITS = settings.MAX_DIGITS
+DECIMAL_PLACES = settings.DECIMAL_PLACES
 
 
 class Order(BaseModel):
@@ -11,7 +16,7 @@ class Order(BaseModel):
         verbose_name_plural = "Orders"
 
     class SendingType(models.IntegerChoices):
-        TIPAX = 1, " تکس "
+        TIPAX = 1, " تیپاکس "
         POST = 2, "🚚 پست  "
         EXPRESS = 3, "🚖 تحویل در شهر"
 
@@ -28,11 +33,15 @@ class Order(BaseModel):
         choices=SendingType.choices, default=2)
     delivery_status = models.IntegerField(
         choices=DeliveryStatus.choices, default=1)
+    is_paid = models.BooleanField(null=True, blank=True, default=False)
+    payment_date = models.DateTimeField(null=True, blank=True)
     tracking_code = models.CharField(max_length=30, null=True, blank=True)
     shipping_cost = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True)
+        max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True, blank=True)
+    sent_date = models.DateField(null=True, blank=True)
+    delivery_date = models.DateField(null=True, blank=True)
     tax = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True)
+        max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True, blank=True)
 
     # megdar dehi inja shipping cost , tax khodam bayad benevisam
     self_receive = models.BooleanField(default=True)
@@ -52,9 +61,9 @@ class Order(BaseModel):
         return f"Order id:{self.id}"
 
 
-class Order_Product(BaseModel):
+class OrderItems(BaseModel):
     class Meta:
-        verbose_name_plural = "Order-products"
+        verbose_name_plural = "OrderItems"
     product = models.ForeignKey(
         Product, on_delete=models.PROTECT, related_name="order_products"
     )
@@ -62,6 +71,8 @@ class Order_Product(BaseModel):
         "Order", on_delete=models.PROTECT, related_name="order_products"
     )
     quantity = models.PositiveSmallIntegerField()
+    final_price = models.DecimalField(
+        max_digits=MAX_DIGITS, decimal_places=2, null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.product} {self.order}"
@@ -73,8 +84,10 @@ class Receipt(BaseModel):
     order = models.ForeignKey(
         Order, on_delete=models.PROTECT, related_name="receipts"
     )
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    final_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(
+        max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
+    final_price = models.DecimalField(
+        max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     is_paid = models.BooleanField(default=False)
 
     def __str__(self) -> str:
