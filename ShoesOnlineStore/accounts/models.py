@@ -5,7 +5,7 @@ from core.models import BaseModel
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from core.validators import PhoneValidator
-from .managers import AccountManager
+from .managers import AccountManager, CustomerManager
 from core.utils import ROLE
 
 
@@ -112,3 +112,10 @@ def save_profile(sender, **kwargs):
 
 
 post_save.connect(save_profile, sender=Account)
+
+
+class Customer(Account):
+    objects = CustomerManager()
+
+    class Meta:
+        proxy = True
