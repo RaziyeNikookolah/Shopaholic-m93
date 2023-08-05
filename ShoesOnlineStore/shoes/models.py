@@ -1,17 +1,22 @@
+from django.utils.translation import gettext_lazy as _
 from django.db import models
-from core.models import BaseModel
+from django.conf import settings
+from core.models import BaseModel, SoftDeleteModel
+
+MAX_DIGITS = settings.MAX_DIGITS
+DECIMAL_PLACES = settings.DECIMAL_PLACES
 
 
-class Product(BaseModel):
+class Product(SoftDeleteModel):
     class Meta:
-        verbose_name_plural = "Products",
+        verbose_name_plural = "Products"
 
     def get_upload_path(instance, filename):
         return f"media/shoes/images/{instance.id}/{filename}"
+    title = models.CharField(max_length=200)
     brand = models.ForeignKey(
         'Brand', on_delete=models.PROTECT, related_name="products")
     code = models.CharField(max_length=10, unique=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
     descriptions = models.TextField(max_length=250, null=True, blank=True)
     category = models.ForeignKey(
         "Category", on_delete=models.PROTECT, related_name="products")
@@ -19,8 +24,6 @@ class Product(BaseModel):
         'Color', related_name="product_colors")
     image = models.ImageField(
         upload_to=get_upload_path, default="", null=True, blank=True)
-    # galery = models.OneToOneField(
-    #     "Gallery", on_delete=models.PROTECT, related_name="product_images")
     available_quantity = models.PositiveSmallIntegerField()
     size = models.ManyToManyField("Size", related_name="product_sizes")
     is_active = models.BooleanField(default=True, blank=True)
@@ -62,16 +65,16 @@ class Color(BaseModel):
         return f"{self.name}"
 
 
-class Image(BaseModel):
+class Gallery(BaseModel):
 
     class Meta:
-        verbose_name_plural = "Images"
+        verbose_name_plural = "Gallery"
 
     def get_upload_path(instance, filename):
         return f"media/shoes/images/{instance.product.id}/{filename}"
 
-    color = models.OneToOneField(
-        Color, on_delete=models.PROTECT, related_name="image")
+    product = models.OneToOneField(
+        "Product", on_delete=models.PROTECT, related_name="product")
     front = models.ImageField(
         upload_to=get_upload_path, default="", null=True, blank=True)
 
@@ -105,3 +108,18 @@ class Category(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.title}"
+
+
+class Price(BaseModel):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name=_('product'),  related_name='prices')
+    price = models.DecimalField(
+        _('price'), max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
+
+    class Meta:
+        verbose_name = _("price")
+        verbose_name_plural = _('prices')
+        ordering = ('-created_at',)
+
+    def __str__(self) -> str:
+        return f'{self.created_at}:{self.amount}'
