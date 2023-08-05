@@ -8,7 +8,11 @@
     <div class="bg-light py-3">
       <div class="container">
         <div class="row">
-          <div class="col-md-12 mb-0"><a href="{% url 'index' %}">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Cart</strong></div>
+          <div class="col-md-12 mb-0">
+            <a href="{% url 'index' %}">Home</a> 
+            <span class="mx-2 mb-0">/</span> 
+            <strong class="text-black">Cart</strong>
+          </div>
         </div>
       </div>
     </div>
@@ -32,25 +36,38 @@
                 <tbody>
                   <tr>
                     <td class="product-thumbnail">
-                      <img src="{% static 'images/cloth_1.jpg'%}" alt="Image" class="img-fluid">
+                      <img src="{{product.image.url}}" alt="Image" class="img-fluid">
                     </td>
                     <td class="product-name">
-                      <h2 class="h5 text-black">Top Up T-Shirt</h2>
+                      <h2 class="h5 text-black">{{product.title}}</h2>
                     </td>
-                    <td>$49.00</td>
+                    <td id="product_price">{{product.price}}</td>
                     <td>
                       <div class="input-group mb-3" style="max-width: 120px;">
                         <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                          <button onclick="total_price(input=-1)" class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
                         </div>
-                        <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        <input type="text" class="form-control text-center" id="quantity" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
                         <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+                          <button onclick="total_price(input=1)" class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
                         </div>
                       </div>
 
                     </td>
-                    <td>$49.00</td>
+                    <td id="total_price">{{product.price}}</td>
+                    <script>
+                      function total_price(input) {
+                        let price = $('#product_price').text();
+
+                        if (input==1)
+                          console.log(1+$('#quantity').val());
+                        else if (input==-1)                        
+                          console.log($('#quantity').val()-1);
+
+
+                        $('#total_price').text(price*quantity);
+                      }
+                    </script>
                     <td><a href="#" class="btn btn-primary btn-sm">X</a></td>
                   </tr>
 
