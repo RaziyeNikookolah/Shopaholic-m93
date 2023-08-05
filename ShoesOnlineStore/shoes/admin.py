@@ -3,15 +3,16 @@ from . import models
 from django.utils.html import format_html
 
 admin.site.register(models.Size)
-admin.site.register(models.Image)
+admin.site.register(models.Gallery)
 admin.site.register(models.Color)
 admin.site.register(models.Category)
 admin.site.register(models.Brand)
+admin.site.register(models.Price)
 
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("image_preview", "id", "brand", 'code', 'price', 'descriptions',
+    list_display = ("image_preview", "id", "brand", 'code', 'title', 'descriptions',
                     'category',  'available_quantity',  'is_active', 'slug')
     search_fields = ("code", "color")
     list_filter = ("updated_at",)
