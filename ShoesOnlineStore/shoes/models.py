@@ -1,13 +1,13 @@
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.conf import settings
-from core.models import BaseModel, SoftDeleteModel
+from core.models import BaseModel
 
 MAX_DIGITS = settings.MAX_DIGITS
 DECIMAL_PLACES = settings.DECIMAL_PLACES
 
 
-class Product(SoftDeleteModel):
+class Product(BaseModel):
     class Meta:
         verbose_name_plural = "Products"
 
@@ -24,7 +24,6 @@ class Product(SoftDeleteModel):
         'Color', related_name="product_colors")
     image = models.ImageField(
         upload_to=get_upload_path, default="", null=True, blank=True)
-    available_quantity = models.PositiveSmallIntegerField()
     size = models.ManyToManyField("Size", related_name="product_sizes")
     is_active = models.BooleanField(default=True, blank=True)
     slug = models.SlugField(max_length=250, null=True,
@@ -45,6 +44,18 @@ class Brand (BaseModel):
 
     def __str__(self) -> str:
         return f"{self.title}"
+
+
+class AvailableQuantity (BaseModel):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name=_('product'),  related_name='available_quantity')
+    quantity = models.PositiveIntegerField(null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "AvailableQuantitys"
+
+    def __str__(self) -> str:
+        return f"{self.quantity}"
 
 
 class Size(BaseModel):
@@ -119,7 +130,7 @@ class Price(BaseModel):
     class Meta:
         verbose_name = _("price")
         verbose_name_plural = _('prices')
-        ordering = ('-created_at',)
+        ordering = ('-create_timestamp',)
 
     def __str__(self) -> str:
-        return f'{self.created_at}:{self.amount}'
+        return f'{self.create_timestamp}:{self.amount}'
