@@ -40,8 +40,8 @@ class PriceInline(admin.TabularInline):
     model = models.Price
 
 
-class AvailableQuantityInline(admin.TabularInline):
-    model = models.AvailableQuantity
+class QuantityInline(admin.TabularInline):
+    model = models.Quantity
 
 
 @admin.register(models.Product)
@@ -61,7 +61,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ("code",)
     list_filter = ("modify_timestamp",)
     list_per_page = 10
-    inlines = (AvailableQuantityInline, PriceInline, GalleryInline, )
+    inlines = (QuantityInline, PriceInline, GalleryInline, )
     prepopulated_fields = {"slug": ("title",)}
     list_editable = ("category",)
     raw_id_fields = ("category",)

@@ -10,20 +10,18 @@ DECIMAL_PLACES = settings.DECIMAL_PLACES
 class Product(BaseModel):
     class Meta:
         verbose_name_plural = "Products"
-
-    def get_upload_path(instance, filename):
-        return f"media/shoes/images/{instance.id}/{filename}"
     title = models.CharField(max_length=200)
     brand = models.ForeignKey(
         'Brand', on_delete=models.PROTECT, related_name="products")
     code = models.CharField(max_length=10, unique=True)
     descriptions = models.TextField(max_length=250, null=True, blank=True)
+    available_quantity = models.PositiveIntegerField(null=True, blank=True)
     category = models.ForeignKey(
         "Category", on_delete=models.PROTECT, related_name="products")
     color = models.ManyToManyField(
         'Color', related_name="product_colors")
     image = models.ImageField(
-        upload_to=get_upload_path, default="", null=True, blank=True)
+        upload_to="shoe_images/", default="", null=True, blank=True)
     size = models.ManyToManyField("Size", related_name="product_sizes")
     is_active = models.BooleanField(default=True, blank=True)
     slug = models.SlugField(max_length=250, null=True,
@@ -46,13 +44,13 @@ class Brand (BaseModel):
         return f"{self.title}"
 
 
-class AvailableQuantity (BaseModel):
+class Quantity (BaseModel):
     product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name=_('product'),  related_name='available_quantity')
+        Product, on_delete=models.CASCADE, verbose_name=_('product'),  related_name='quantities')
     quantity = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = "AvailableQuantitys"
+        verbose_name_plural = "Quantities"
 
     def __str__(self) -> str:
         return f"{self.quantity}"
@@ -82,7 +80,7 @@ class Gallery(BaseModel):
         verbose_name_plural = "Gallery"
 
     def get_upload_path(instance, filename):
-        return f"media/shoes/images/{instance.product.id}/{filename}"
+        return f"shoes/images/{instance.id}/{filename}"
 
     product = models.OneToOneField(
         "Product", on_delete=models.PROTECT, related_name="product")
@@ -133,4 +131,4 @@ class Price(BaseModel):
         ordering = ('-create_timestamp',)
 
     def __str__(self) -> str:
-        return f'{self.create_timestamp}:{self.amount}'
+        return f'{self.create_timestamp}:{self.price}'

@@ -1,4 +1,4 @@
-from django.db.models import Subquery, OuterRef
+from django.db.models import Subquery, OuterRef, Max
 from django.views.generic.list import ListView
 from django.db.models import Q
 from .models import Product, Gallery, Price
@@ -54,8 +54,16 @@ class ProductList(APIView):
                 'brand', 'category').prefetch_related('color', 'size')
 
         # Subquery to get the last added price for each product
+        # last_price_subquery = Price.objects.filter(
+        #     product=OuterRef('pk')).order_by('-create_timestamp')
+
         last_price_subquery = Price.objects.filter(
-            product=OuterRef('pk')).order_by('-created_at')
+            product=OuterRef('pk')).order_by('-create_timestamp')
+        last_price_subquery = last_price_subquery.values(
+            'product').annotate(max_create_timestamp=Max('create_timestamp'))
+        last_price_subquery = last_price_subquery.values(
+            'max_create_timestamp')[:1]
+
         queryset = queryset.annotate(last_price=Subquery(
             last_price_subquery.values('price')[:1]))
 
