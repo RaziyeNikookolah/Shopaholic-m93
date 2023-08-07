@@ -3,136 +3,118 @@
   Shoes Online Shop
 {% endblock %}
 {% block content %}
-{% load static %}
-    <div class="site-section" id="product_details">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6">
-            <img src="{{ product.image.url }}" alt="Image" class="img-fluid">
+<div class="site-section" >
+  <div class="container">
+    <div class="row" id="product_details"  >
+      <div class="col-md-6">
+        <img src="{{ product.image.url }}" alt="Image" class="img-fluid">
+      </div>
+      <div class="col-md-6">
+        <h2 class="text-black">{{product.brand}}</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, vitae, explicabo? Incidunt facere, natus soluta dolores iusto! Molestiae expedita veritatis nesciunt doloremque sint asperiores fuga voluptas, distinctio, aperiam, ratione dolore.</p>
+        <p class="mb-4">Ex numquam veritatis debitis minima quo error quam eos dolorum quidem perferendis. Quos repellat dignissimos minus, eveniet nam voluptatibus molestias omnis reiciendis perspiciatis illum hic magni iste, velit aperiam quis.</p>
+        <p><strong class="text-primary h4">{{ product.last_price }}$</strong></p>
+        
+        <div class="mb-1 d-flex">
+          {% for size in sizes %}
+          <label for="option-sm" class="d-flex mr-3 mb-3">
+            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
+              <input type="radio" id="option-sm" name="shop-sizes">
+            </span> 
+            <span class="d-inline-block text-black">{{ size }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        <div>
+          {% for color in colors %}
+          <label for="option-sm" class="d-flex mr-3 mb-3">
+            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
+              <input type="radio" id="option-sm" name="shop-colors">
+            </span>            
+            <span class="d-inline-block text-black">{{ color }}</span>                
+          </label>
+          {% endfor %}
+              <a href="{% url 'cart' %}" class="site-cart">
+                <span class="icon icon-shopping_cart"></span>
+                <span class="count">2</span>
+              </a>
+        </div>
+        <div class="mb-5">
+          <div class="input-group mb-3" style="max-width: 120px;">
+          <div class="input-group-prepend">
+            <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
           </div>
-          <div class="col-md-6">
-            <h2 class="text-black">{{product.brand}}</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, vitae, explicabo? Incidunt facere, natus soluta dolores iusto! Molestiae expedita veritatis nesciunt doloremque sint asperiores fuga voluptas, distinctio, aperiam, ratione dolore.</p>
-            <p class="mb-4">Ex numquam veritatis debitis minima quo error quam eos dolorum quidem perferendis. Quos repellat dignissimos minus, eveniet nam voluptatibus molestias omnis reiciendis perspiciatis illum hic magni iste, velit aperiam quis.</p>
-            <p><strong class="text-primary h4">{{ product.price }}$</strong></p>
+          <input id="quantity" type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+          <div class="input-group-append">
+            <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+          </div>
+        </div>
+        </div>
+          <script>
             
-            <div class="mb-1 d-flex">
-              {% for size in sizes %}
-              <label for="option-sm" class="d-flex mr-3 mb-3">
-                <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
-                  <input type="radio" id="option-sm" name="shop-sizes">
-                </span> 
-                <span class="d-inline-block text-black">{{ size }}</span>
-              </label>
-              {% endfor %}
-            </div>
-              <div>
-              {% for color in colors %}
-              <label for="option-sm" class="d-flex mr-3 mb-3">
-                <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
-                  <input type="radio" id="option-sm" name="shop-colors">
-                </span>            
-                <span class="d-inline-block text-black">{{ color }}</span>                
-              </label>
-              {% endfor %}
-                  <a href="{% url 'cart' %}" class="site-cart">
-                    <span class="icon icon-shopping_cart"></span>
-                    <span class="count">2</span>
-                  </a>
-            </div>
-            <div class="mb-5">
-              <div class="input-group mb-3" style="max-width: 120px;">
-              <div class="input-group-prepend">
-                <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-              </div>
-              <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-              <div class="input-group-append">
-                <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-              </div>
-            </div>
-            {% load static %}
-
-            </div>
-            <p><a href="{% url 'cart' product.id %}" class="buy-now btn btn-sm btn-primary">Add To Cart</a></p>
-
-          </div>
-        </div>
+          </script>
+        <p ><a  href="#" onclick="add_to_cart()" class="buy-now btn btn-sm btn-primary">Add To Cart</a></p>
       </div>
     </div>
+  </div>
+</div>   
 
-    <div class="site-section block-3 site-blocks-2 bg-light">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-7 site-section-heading text-center pt-4">
-            <h2>Featured Products</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="nonloop-block-3 owl-carousel">
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'images/cloth_1.jpg'%}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Tank Top</a></h3>
-                    <p class="mb-0">Finding perfect t-shirt</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'images/shoe_1.jpg'%}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Corater</a></h3>
-                    <p class="mb-0">Finding perfect products</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'images/cloth_2.jpg'%}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Polo Shirt</a></h3>
-                    <p class="mb-0">Finding perfect products</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'images/cloth_3.jpg'%}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">T-Shirt Mockup</a></h3>
-                    <p class="mb-0">Finding perfect products</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'images/shoe_1.jpg'%}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Corater</a></h3>
-                    <p class="mb-0">Finding perfect products</p>
-                    <p class="text-primary font-weight-bold">$50</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
+<script> 
+
+
+  const url = window.location.href;
+
+  // Split the URL by '/'
+  const urlParts = url.split('/');
+  
+  // Retrieve the value of the path parameter from the appropriate index
+  const pathParamValue = urlParts[4]; // Adjust the index based on your URL structure
+document.addEventListener('DOMContentLoaded', function(e) {
+// Get the current URL
+    e.preventDefault();
+
+const url_shoe_detail = "http://localhost:8000/shoe_detail/" + encodeURIComponent(pathParamValue)+"/";
+    fetch(url_shoe_detail, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+       
+    })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+        }).catch(error => {
+            // Handle any errors
+            console.error('Error:', error);
+        });
+} );
+
+function add_to_cart() {
+  console.log("*********");
+  const quantity = document.getElementById('quantity').value;
+  const data = {
+      "product_id": pathParamValue,
+      "quantity": quantity
+  };
+  console.log(data);
+  fetch('http://localhost:8000/order/add_to_cart/', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+  })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
+</script>
+ 
 {% endblock %}
+
