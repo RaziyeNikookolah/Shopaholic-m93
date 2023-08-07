@@ -68,8 +68,7 @@ class OrderItems(BaseModel):
         Product, on_delete=models.PROTECT, related_name="order_products"
     )
     order = models.ForeignKey(
-        "Order", on_delete=models.PROTECT, related_name="order_products"
-    )
+        "Order", on_delete=models.PROTECT, related_name="order_products", null=True, blank=True)
     quantity = models.PositiveSmallIntegerField()
     final_price = models.DecimalField(
         max_digits=MAX_DIGITS, decimal_places=2, null=True, blank=True)
