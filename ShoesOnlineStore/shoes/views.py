@@ -1,7 +1,7 @@
 from django.db.models import Subquery, OuterRef, Max
+from .models import Product, Price
 from django.views.generic.list import ListView
 from django.db.models import Q
-from .models import Product, Gallery, Price
 from .serializer import ProductsSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 # IsAuthenticatedOrReadOnly permission just can run safe method for unauthenticated user
