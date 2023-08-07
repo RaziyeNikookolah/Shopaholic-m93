@@ -10,6 +10,7 @@ DECIMAL_PLACES = settings.DECIMAL_PLACES
 class Product(BaseModel):
     class Meta:
         verbose_name_plural = "Products"
+        # unique_together = [['color', 'image']]
     title = models.CharField(max_length=200)
     brand = models.ForeignKey(
         'Brand', on_delete=models.PROTECT, related_name="products")
