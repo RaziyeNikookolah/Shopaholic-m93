@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     $.ajax({
-        url: 'shoes/product_list/',
+        url: 'http://localhost:8000/shoes/product_list/',
         type: 'GET',
         dataType: "json",
         success: function (data, status, xhr) {
@@ -15,9 +15,9 @@ $(document).ready(function () {
                     ' <a href=""><img src="' + element.image + '"  alt="Image placeholder" class="img-fluid"></a>' +
                     '</figure>' +
                     '<div class="block-4-text p-4">' +
-                    '<h3 "><a  href="/shop_single/' + element.id + '">' + element.brand + '</a></h3>' +
+                    '<h3 "><a  href="/shop_single/' + element.id + '/">' + element.brand + '</a></h3>' +
                     '<p class="mb-0">' + element.descriptions + '</p>' +
-                    '<p class="text-primary font-weight-bold">$' + element.price + '</p>' +
+                    '<p class="text-primary font-weight-bold">$' + element.last_price + '</p>' +
                     '</div>' +
                     '</div>' +
                     '</div>';
@@ -41,7 +41,7 @@ $(document).ready(function () {
             // alert('You pressed enter!');
             // }
             $.ajax({
-                url: 'shoes/search_list/',
+                url: 'http://localhost:8000/shoes/search_list/',
                 type: 'GET',
                 data: { search: $('#search_form').val() },
                 dataType: "json",
@@ -56,7 +56,7 @@ $(document).ready(function () {
                             ' <a href=""><img src="' + element.image + '"  alt="Image placeholder" class="img-fluid"></a>' +
                             '</figure>' +
                             '<div class="block-4-text p-4">' +
-                            '<h3 class="product"><a href="">' + element.brand + '</a></h3>' +
+                            '<h3 "><a  href="/shop_single/' + element.id + '/">' + element.brand + '</a></h3>' +
                             '<p class="mb-0">' + element.descriptions + '</p>' +
                             '<p class="text-primary font-weight-bold">$' + element.price + '</p>' +
                             '</div>' +
@@ -79,8 +79,3 @@ $(document).ready(function () {
 
 
 });
-function go_to_single_shop() {
-
-    Window.location.replace("http://www.google.com");
-    console.log("go.......")
-}

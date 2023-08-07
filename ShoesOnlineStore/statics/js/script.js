@@ -82,3 +82,6 @@ $(document).on('submit', '#code-verify_form', function (e) {
     $('#code').val("")
 
 });
+
+
+
