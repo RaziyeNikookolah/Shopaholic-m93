@@ -18,4 +18,6 @@ urlpatterns = [
     path("shop_single/<int:pk>/", views.ShopSingleView.as_view(), name="shop_single"),
     path("thank_you/", views.ThankyouView.as_view(), name="thank_you"),
     path("cart/checkout/", views.CheckoutView.as_view(), name="checkout"),
+    path("shoe_detail/<int:pk>/", views.ShoeDetail.as_view(), name="shoe_detail"),
+
 ]
