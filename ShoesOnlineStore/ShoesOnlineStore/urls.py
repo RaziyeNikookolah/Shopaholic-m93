@@ -32,6 +32,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('api_auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('otp/', include('otp.urls')),
+    path('order/', include('orders.urls')),
     path('', include('home.urls')),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
