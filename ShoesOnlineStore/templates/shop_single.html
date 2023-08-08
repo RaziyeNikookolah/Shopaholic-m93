@@ -19,9 +19,9 @@
           {% for size in sizes %}
           <label for="option-sm" class="d-flex mr-3 mb-3">
             <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
-              <input type="radio" id="option-sm" name="shop-sizes">
+              <input type="radio" value="{{ size }}" id="option-sm" name="shop-sizes">
             </span> 
-            <span class="d-inline-block text-black">{{ size }}</span>
+            <span id="span_size" class="d-inline-block text-black">{{ size }}</span>
           </label>
           {% endfor %}
         </div>
@@ -29,9 +29,9 @@
           {% for color in colors %}
           <label for="option-sm" class="d-flex mr-3 mb-3">
             <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
-              <input type="radio" id="option-sm" name="shop-colors">
+              <input type="radio" value="{{ color }}" id="option-sm" name="shop-colors">
             </span>            
-            <span class="d-inline-block text-black">{{ color }}</span>                
+            <span id="span_color" class="d-inline-block text-black">{{ color }}</span>                
           </label>
           {% endfor %}
               <a href="{% url 'cart' %}" class="site-cart">
@@ -94,9 +94,29 @@ const url_shoe_detail = "http://localhost:8000/shoe_detail/" + encodeURIComponen
 function add_to_cart() {
   console.log("*********");
   const quantity = document.getElementById('quantity').value;
+  const colorRadioButtons = document.getElementsByName('shop-colors');
+  let selectedColor = "";
+  for (const radioButton of colorRadioButtons) {
+    if (radioButton.checked) {
+      selectedColor = radioButton.value;
+      break;
+    }
+  }
+
+  const sizeRadioButtons = document.getElementsByName('shop-sizes');
+  let selectedSize = "";
+  for (const radioButton of sizeRadioButtons) {
+    if (radioButton.checked) {
+      selectedSize = radioButton.value;
+      break;
+    }
+  }
+
   const data = {
-      "product_id": pathParamValue,
-      "quantity": quantity
+    "product_id": pathParamValue,
+    "quantity": quantity,
+    "color": selectedColor,
+    "size": selectedSize
   };
   console.log(data);
   fetch('http://localhost:8000/order/add_to_cart/', {
