@@ -1,3 +1,5 @@
+from django import forms
+from .models import Product
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
@@ -44,8 +46,16 @@ class QuantityInline(admin.TabularInline):
     model = models.Quantity
 
 
+class ProductAdminForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        exclude = ['delete_timestamp',
+                   'restore_timestamp', 'is_deleted']  # Exclude the delete_timestamp field
+
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    form: ProductAdminForm
     list_display = (
         "image_preview",
         "id",
@@ -66,6 +76,15 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ("category",)
     raw_id_fields = ("category",)
     autocomplete_fields = ("category",)  # Add autocomplete_fields for category
+
+    # def get_form(self, request, obj=None, **kwargs):
+    #     form = super().get_form(request, obj, **kwargs)
+    #     disabled_fields = {'delete_timestamp',
+    #                        'restore_timestamp', 'is_deleted'}
+    #     for field in disabled_fields:
+    #         if field in form.base_fields:
+    #             form.base_fields[field].diabled = True
+    #     return form
 
     def image_preview(self, obj):
         return format_html(
