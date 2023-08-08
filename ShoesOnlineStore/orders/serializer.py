@@ -14,6 +14,8 @@ class OrderItemsSerializer(serializers.ModelSerializer):
 class AddCartItemsSerializer(serializers.Serializer):
     product_id = serializers.CharField(max_length=4)
     quantity = serializers.CharField(max_length=4)
+    color = serializers.CharField(max_length=40)
+    size = serializers.IntegerField()
 
 
 class RemoveCartItemsSerializer(serializers.Serializer):
