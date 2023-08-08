@@ -11,6 +11,10 @@ class OrderItemsSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class CartItemsSerializer(serializers.Serializer):
+class AddCartItemsSerializer(serializers.Serializer):
     product_id = serializers.CharField(max_length=4)
     quantity = serializers.CharField(max_length=4)
+
+
+class RemoveCartItemsSerializer(serializers.Serializer):
+    product_id = serializers.CharField(max_length=4)
