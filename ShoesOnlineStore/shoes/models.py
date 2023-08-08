@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.conf import settings
@@ -10,7 +11,8 @@ DECIMAL_PLACES = settings.DECIMAL_PLACES
 class Product(BaseModel):
     class Meta:
         verbose_name_plural = "Products"
-        # unique_together = [['color', 'image']]
+        # constraints = [models.UniqueConstraint(
+        #     fields=['image', 'color', 'code'], name='unique_product')]
     title = models.CharField(max_length=200)
     brand = models.ForeignKey(
         'Brand', on_delete=models.PROTECT, related_name="products")
@@ -20,16 +22,29 @@ class Product(BaseModel):
     category = models.ForeignKey(
         "Category", on_delete=models.PROTECT, related_name="products")
     color = models.ManyToManyField(
-        'Color', related_name="product_colors")
+        'Color', related_name="products")
     image = models.ImageField(
         upload_to="shoe_images/", default="", null=True, blank=True)
-    size = models.ManyToManyField("Size", related_name="product_sizes")
+    size = models.ManyToManyField("Size", related_name="products")
     is_active = models.BooleanField(default=True, blank=True)
     slug = models.SlugField(max_length=250, null=True,
                             blank=True, unique=True, allow_unicode=True)
 
     def __str__(self) -> str:
-        return f"{self.code},{self.brand} {self.category}"
+        return f"{self.code},{self.brand}"
+
+    # def validate_unique(self, exclude=None):
+    #     qs = Product.objects.filter(
+    #         image=self.image, color__in=self.color.all(), code=self.code
+    #     )
+    #     if self.pk is not None:
+    #         qs = qs.exclude(pk=self.pk)
+
+    #     if qs.exists():
+    #         raise ValidationError(
+    #             'The combination of image, color, and code fields must be unique.')
+
+    #     super().validate_unique(exclude)
 
 
 class Brand (BaseModel):
