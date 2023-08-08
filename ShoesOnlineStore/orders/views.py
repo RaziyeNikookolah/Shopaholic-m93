@@ -2,16 +2,18 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-from orders.serializer import OrderItemsSerializer, CartItemsSerializer
+from orders.serializer import OrderItemsSerializer, AddCartItemsSerializer, RemoveCartItemsSerializer
 from django.db.models import Subquery, OuterRef, Max
 from shoes.models import Product, Price
 from .cart import Cart
+
+cart: Cart = None
 
 
 @csrf_exempt
 @api_view(['POST'])
 def add_to_cart(request):
-    serializer = CartItemsSerializer(data=request.data)
+    serializer = AddCartItemsSerializer(data=request.data)
     if serializer.is_valid():
         cart = Cart(request)
         product_id = serializer.validated_data.get('product_id', '')
@@ -26,6 +28,18 @@ def add_to_cart(request):
         ).first()
 
         cart.add(product, quantity)
-        return Response({'message': 'session_added'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'item_added'}, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
+@api_view(['POST'])
+def remove_from_cart(request):
+    serializer = RemoveCartItemsSerializer(data=request.data)
+    product_id = serializer.validated_data.get('product_id', '')
+    if serializer.is_valid():
+        cart.remove(product_id)
+        return Response({'message': 'cart item removed'}, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
