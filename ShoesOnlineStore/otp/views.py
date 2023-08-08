@@ -80,6 +80,7 @@ class VerifyOtp(APIView):
                     messages.success(request, _(
                         'Your code verified..'), 'success')
                     User = get_user_model()
+
                     otp_request.delete()
                     if not User.objects.filter(phone_number=phone_number).exists():
 

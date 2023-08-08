@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from orders.serializer import OrderItemsSerializer, AddCartItemsSerializer, RemoveCartItemsSerializer
 from django.db.models import Subquery, OuterRef, Max
 from shoes.models import Product, Price
-from .cart import Cart
+from .cart import Cart, CART_SESSION_ID
 
 cart: Cart = None
 
@@ -45,3 +45,9 @@ def remove_from_cart(request):
         return Response({'message': 'cart item removed'}, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
+@api_view(['Get'])
+def cart_list(request):
+    print(request.session[CART_SESSION_ID])
