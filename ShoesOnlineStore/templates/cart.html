@@ -160,5 +160,34 @@
         </div>
       </div>
     </div>
-    {% endblock %}
+  <script>
+    const url = window.location.href;
+
+    // Split the URL by '/'
+    const urlParts = url.split('/');
     
+    // Retrieve the value of the path parameter from the appropriate index
+    const pathParamValue = urlParts[4]; // Adjust the index based on your URL structure
+  document.addEventListener('DOMContentLoaded', function(e) {
+  // Get the current URL
+      e.preventDefault();
+  
+  const url_cart_list = "http://localhost:8000/order/cart_list/";
+      fetch(url_cart_list, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+         
+      })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+          }).catch(error => {
+              // Handle any errors
+              console.error('Error:', error);
+          });
+  } );
+  </script>
+    {% endblock %}
+  
