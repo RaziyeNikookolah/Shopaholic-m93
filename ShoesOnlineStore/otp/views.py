@@ -26,7 +26,6 @@ class RequestOTP(APIView):
         serializer = RequestOtpSerializer(data=request.data)
 
         if serializer.is_valid():
-
             # now user send me his phone number and other data in request
             # in serializer we just work with request.data
             otp_request = OtpRequest()

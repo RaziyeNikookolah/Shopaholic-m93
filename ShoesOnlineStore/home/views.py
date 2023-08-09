@@ -31,7 +31,7 @@ class ShopView(View):
 
 
 class CartView(View):
-    def get(self, request, pk):
+    def get(self, request):
         # product = Product.objects.get(pk=pk)
         return render(request, "cart.html"  # , {"product": product}
                       )
