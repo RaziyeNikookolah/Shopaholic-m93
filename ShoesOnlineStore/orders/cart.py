@@ -1,4 +1,5 @@
 
+from decimal import Decimal
 from shoes.models import Product
 
 
@@ -21,17 +22,23 @@ class Cart:
             cart[str(product.id)]['product'] = product
 
         for item in cart.values():
-            item['total_price'] = int(item['price']) * item['quantity']
+            item['total_price'] = str(
+                Decimal(item['price']) * item['quantity'])
             yield item
 
     def __len__(self):
         return sum(item['quantity'] for item in self.cart.values())
 
-    def add(self, product, quantity):
+    def print(self):
+        dictCart = dict()
+        for k, v in self.cart.items():
+            print(v)
+
+    def add(self, product, quantity, size, image, color, price):
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {
-                'quantity': 0, 'price': str(product.last_price)}
+                'quantity': 0, 'image': image, 'price': price, 'size': size, 'color': color, }
         self.cart[product_id]['quantity'] += int(quantity)
         self.save()
         print(self.session[CART_SESSION_ID])
@@ -46,7 +53,7 @@ class Cart:
         self.session.modified = True
 
     def get_total_price(self):
-        return sum(int(item['price']) * item['quantity'] for item in self.cart.values())
+        return sum(item['price'] * item['quantity'] for item in self.cart.values())
 
     def clear(self):
         del self.session[CART_SESSION_ID]
