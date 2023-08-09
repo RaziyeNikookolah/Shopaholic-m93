@@ -2,12 +2,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-from orders.serializer import OrderItemsSerializer, AddCartItemsSerializer, RemoveCartItemsSerializer
-from django.db.models import Subquery, OuterRef, Max
+from orders.serializer import OrderItemsSerializer, AddCartItemsSerializer, RemoveCartItemsSerializer, CartItemSerializer
+from django.db.models import Subquery, OuterRef
 from shoes.models import Product, Price
 from .cart import Cart, CART_SESSION_ID
 
-cart: Cart = None
+
+cart = {}
 
 
 @csrf_exempt
@@ -15,11 +16,14 @@ cart: Cart = None
 def add_to_cart(request):
     serializer = AddCartItemsSerializer(data=request.data)
     if serializer.is_valid():
+        global cart
         cart = Cart(request)
         product_id = serializer.validated_data.get('product_id', '')
         quantity = serializer.validated_data.get('quantity', '')
         color = serializer.validated_data.get('color', '')
+        image = serializer.validated_data.get('image', '')
         size = serializer.validated_data.get('size', '')
+        price = serializer.validated_data.get('price', '')
 
         last_price_subquery = Price.objects.filter(
             product=OuterRef('pk')).order_by('-create_timestamp')
@@ -29,7 +33,7 @@ def add_to_cart(request):
             last_price=Subquery(last_price_subquery.values('price')[:1])
         ).filter(color__name=color, size__number=size).first()
 
-        cart.add(product, quantity)
+        cart.add(product, quantity, size, image, color, str(price))
         return Response({'message': 'item_added'}, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -47,7 +51,11 @@ def remove_from_cart(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
-@api_view(['Get'])
+@api_view(['GET'])
 def cart_list(request):
-    print(request.session[CART_SESSION_ID])
+    global cart
+    cart.print()
+    serializer = CartItemSerializer(cart, many=True)
+    serialized_data = serializer.data
+
+    return Response(serialized_data)
