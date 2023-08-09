@@ -33,45 +33,8 @@
                     <th class="product-remove">Remove</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td class="product-thumbnail">
-                      <img src="{{product.image.url}}" alt="Image" class="img-fluid">
-                    </td>
-                    <td class="product-name">
-                      <h2 class="h5 text-black">{{product.title}}</h2>
-                    </td>
-                    <td id="product_price">{{product.price}}</td>
-                    <td>
-                      <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group-prepend">
-                          <button onclick="total_price(input=-1)" class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                        </div>
-                        <input type="text" class="form-control text-center" id="quantity" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                        <div class="input-group-append">
-                          <button onclick="total_price(input=1)" class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                        </div>
-                      </div>
-
-                    </td>
-                    <td id="total_price">{{product.price}}</td>
-                    <script>
-                      function total_price(input) {
-                        let price = $('#product_price').text();
-
-                        if (input==1)
-                          console.log(1+$('#quantity').val());
-                        else if (input==-1)                        
-                          console.log($('#quantity').val()-1);
-
-
-                        $('#total_price').text(price*quantity);
-                      }
-                    </script>
-                    <td><a href="#" class="btn btn-primary btn-sm">X</a></td>
-                  </tr>
-
-                  <tr>
+                <tbody id="cart_table_body" >
+                  <tr style="display:none;">
                     <td class="product-thumbnail">
                       <img src="{% static 'images/cloth_2.jpg'%}" alt="Image" class="img-fluid">
                     </td>
@@ -183,6 +146,37 @@
           .then(response => response.json())
           .then(data => {
             console.log(data);
+            output='<tbody id="cart_table_body" >';
+
+            data.forEach((element, index) => {
+              output+="<tr>"+
+              '<td class="product-thumbnail">'+
+                '<img src="'+element.image+'" alt="Image" class="img-fluid">'+
+              "</td>"+
+              '<td class="product-name">'+
+                '<h2 class="h5 text-black">Polo Shirt</h2>'+
+              '</td>'+
+              '<td>'+element.price+'</td>'+
+              '<td>'+
+                '<div class="input-group mb-3" style="max-width: 120px;">'+
+                  '<div class="input-group-prepend">'+
+                    '<button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>'+
+                  '</div>'+
+                  '<input type="text" id="quantity" class="form-control text-center" value="'+element.quantity+'" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">'+
+                  '<div class="input-group-append">'+
+                    '<button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>'+
+                  '</div>'+
+                '</div>'+
+
+              '</td>'+
+              '<td>'+element.total_price+'</td>'+
+              '<td><a href="#" class="btn btn-primary btn-sm">X</a></td>'+
+            '</tr>';
+
+                  });
+                  output+='</tbody>';
+                  var table_content = document.getElementById('cart_table_body');
+                  table_content.innerHTML=output;
           }).catch(error => {
               // Handle any errors
               console.error('Error:', error);

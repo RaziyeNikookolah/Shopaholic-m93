@@ -8,7 +8,7 @@ from shoes.models import Product, Price
 from .cart import Cart, CART_SESSION_ID
 
 
-cart = {}
+cart = Cart()
 
 
 @csrf_exempt
@@ -16,8 +16,13 @@ cart = {}
 def add_to_cart(request):
     serializer = AddCartItemsSerializer(data=request.data)
     if serializer.is_valid():
-        global cart
-        cart = Cart(request)
+        # global cart
+
+        session = request.session
+        cart = session.get(CART_SESSION_ID)
+        if not cart:
+            cart = session[CART_SESSION_ID] = {}
+
         product_id = serializer.validated_data.get('product_id', '')
         quantity = serializer.validated_data.get('quantity', '')
         color = serializer.validated_data.get('color', '')
