@@ -79,26 +79,26 @@
   
   // Retrieve the value of the path parameter from the appropriate index
   const pathParamValue = urlParts[4]; // Adjust the index based on your URL structure
-document.addEventListener('DOMContentLoaded', function(e) {
+//document.addEventListener('DOMContentLoaded', function(e) {
 // Get the current URL
-    e.preventDefault();
+//    e.preventDefault();
 
-const url_shoe_detail = "http://localhost:8000/shoe_detail/" + encodeURIComponent(pathParamValue)+"/";
-    fetch(url_shoe_detail, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+//const url_shoe_detail = "http://localhost:8000/shoe_detail/" + encodeURIComponent(pathParamValue)+"/";
+//    fetch(url_shoe_detail, {
+//        method: 'GET',
+//        headers: {
+ //           'Content-Type': 'application/json',
+//        },
        
-    })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-        }).catch(error => {
-            // Handle any errors
-            console.error('Error:', error);
-        });
-} );
+//    })
+//        .then(response => response.json())
+//        .then(data => {
+ //         console.log(data);
+ //       }).catch(error => {
+ //           // Handle any errors
+ //           console.error('Error:', error);
+ //       });
+//} );
 
 function add_to_cart() {
   console.log("*********");
@@ -110,7 +110,7 @@ function add_to_cart() {
       selectedColor = radioButton.value;
       break;
     }
-  }
+  };
 
   const sizeRadioButtons = document.getElementsByName('shop-sizes');
   let selectedSize = "";
@@ -119,19 +119,19 @@ function add_to_cart() {
       selectedSize = radioButton.value;
       break;
     }
-  }
+  };
 
   const data = {
     "product_id": pathParamValue,
     "quantity": quantity,
     "color": selectedColor,
     "image":image,
-    "size": selectedSize,
+   "size": selectedSize,
     "price": price
-  };
-  console.log(data);
+ };
+ console.log(data);
   fetch('http://localhost:8000/order/add_to_cart/', {
-      method: 'POST',
+    method: 'POST',
       headers: {
           'Content-Type': 'application/json',
       },
@@ -144,7 +144,8 @@ function add_to_cart() {
       .catch(error => {
           console.error('Error:', error);
       });
-}
+  console.log("************");
+    }
 </script>
  
 {% endblock %}
