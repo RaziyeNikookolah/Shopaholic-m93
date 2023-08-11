@@ -18,7 +18,7 @@ class OrderItemsSerializer(serializers.ModelSerializer):
 class AddCartItemsSerializer(serializers.Serializer):
     product_id = serializers.CharField(max_length=4)
     image = serializers.CharField(max_length=240)
-    quantity = serializers.CharField(max_length=4)
+    quantity = serializers.IntegerField()
     color = serializers.CharField(max_length=40)
     size = serializers.IntegerField()
     price = serializers.DecimalField(
@@ -32,7 +32,7 @@ class RemoveCartItemsSerializer(serializers.Serializer):
 class CartItemSerializer(serializers.Serializer):
 
     image = serializers.CharField(max_length=240)
-    quantity = serializers.CharField(max_length=4)
+    quantity = serializers.IntegerField()
     color = serializers.CharField(max_length=40)
     size = serializers.IntegerField()
     price = serializers.DecimalField(
