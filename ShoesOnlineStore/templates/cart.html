@@ -303,7 +303,9 @@
                   
                   // Function to remove a cart item
                   function removeCartItem(itemId) {
+                    alert(itemId);
                     delete cartData.cart_items[itemId];
+                    cartItemDeleteSessionRequest(parseInt(itemId));
                   }
 
           },
@@ -312,6 +314,23 @@
         },
   } );
 });  
+function cartItemDeleteSessionRequest(product_id){
+  const data={"product_id":product_id};
+  fetch('http://localhost:8000/order/remove_from_cart/', {
+    method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+  })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
 </script>
 {% endblock %}
   
