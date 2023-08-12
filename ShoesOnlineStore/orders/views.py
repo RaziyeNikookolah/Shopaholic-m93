@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-from .utils import add_product_to_session, session_cart, session, session_key
+from .utils import add_product_to_session, session_cart, remove_product_from_session
 from orders.serializer import RemoveCartItemsSerializer, CartItemSerializer, OrderItemsSerializer
 # from django.db.models import Subquery, OuterRef
 # from shoes.models import Product, Price
@@ -33,17 +33,12 @@ def add_to_cart(request):
 @csrf_exempt
 @api_view(['POST'])
 def remove_from_cart(request):
+    print(111111)
     serializer = RemoveCartItemsSerializer(data=request.data)
-    product_id = serializer.validated_data.get('product_id', '')
     if serializer.is_valid():
-        # cart.remove(product_id)
-        global cart
-        if product_id in cart:
-            del cart[product_id]
-            global session
-            session.modified = True
-
-        return Response({'message': 'cart item removed'}, status=status.HTTP_201_CREATED)
+        product_id = serializer.validated_data.get('product_id', '')
+        print(22222)
+        return remove_product_from_session(product_id)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
