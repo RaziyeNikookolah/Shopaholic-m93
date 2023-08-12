@@ -14,6 +14,7 @@ DECIMAL_PLACES = settings.DECIMAL_PLACES
 class Order(BaseModel):
     class Meta:
         verbose_name_plural = "Orders"
+        ordering = ('is_paid', '-modify_timestamp')
 
     class SendingType(models.IntegerChoices):
         TIPAX = 1, " تیپاکس "
@@ -60,18 +61,24 @@ class Order(BaseModel):
     def __str__(self) -> str:
         return f"Order id:{self.id}"
 
+    def get_total_price(self):
+        return sum(item.get_cost() for item in self.items.all())
+
 
 class OrderItems(BaseModel):
     class Meta:
         verbose_name_plural = "OrderItems"
     product = models.ForeignKey(
-        Product, on_delete=models.PROTECT, related_name="order_products"
+        Product, on_delete=models.PROTECT, related_name="items"
     )
     order = models.ForeignKey(
-        "Order", on_delete=models.PROTECT, related_name="order_products", null=True, blank=True)
+        "Order", on_delete=models.PROTECT, related_name="items", null=True, blank=True)
     quantity = models.PositiveSmallIntegerField()
     final_price = models.DecimalField(
         max_digits=MAX_DIGITS, decimal_places=2, null=True, blank=True)
+
+    def get_cost(self):
+        return self.final_price*self.quantity
 
     def __str__(self) -> str:
         return f"{self.product} {self.order}"
