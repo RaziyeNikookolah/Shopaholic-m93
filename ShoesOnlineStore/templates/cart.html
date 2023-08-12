@@ -108,7 +108,7 @@
                     <span class="text-black">Total</span>
                   </div>
                   <div class="col-md-6 text-right">
-                    <strong class="text-black">$230.00</strong>
+                    <strong class="text-black"id="grandTotal">$230.00</strong>
                   </div>
                 </div>
 
@@ -123,65 +123,195 @@
         </div>
       </div>
     </div>
-  <script>
-    const url = window.location.href;
 
-    // Split the URL by '/'
-    const urlParts = url.split('/');
-    
-    // Retrieve the value of the path parameter from the appropriate index
-    const pathParamValue = urlParts[4]; // Adjust the index based on your URL structure
-  document.addEventListener('DOMContentLoaded', function(e) {
-  // Get the current URL
-      e.preventDefault();
-  
-  const url_cart_list = "http://localhost:8000/order/cart_list/";
-      fetch(url_cart_list, {
-          method: 'GET',
-          headers: {
-              'Content-Type': 'application/json',
-          },
+      <script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
+      <script src="{% static 'js/jquery-ui.js'%}"></script>
+      <script src="{% static 'js/popper.min.js'%}"></script>
+      <script src="{% static 'js/bootstrap.min.js'%}"></script>
+      <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+      <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+      <script src="{% static 'js/aos.js'%}"></script>  
+      <script src="{% static 'js/main.js'%}"></script>
+<script>
+    $(document).ready(function() {
+      $.ajax({
+      url : "http://localhost:8000/order/cart_list/",
+      type: 'GET',
+      dataType: "json",
+      success: function (data, status, xhr) {
          
-      })
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            output='<tbody id="cart_table_body" >';
 
+        cartData = JSON.parse(data);
+            {% comment %} console.log(data);
+            output='<tbody id="cart_table_body" >';
             data.forEach((element, index) => {
-              output+="<tr>"+
+              output+="<tr>";
+              output+=
               '<td class="product-thumbnail">'+
-                '<img src="'+element.image+'" alt="Image" class="img-fluid">'+
+                '<img src="'+element.cart_items.image.url+'" alt="Image" class="img-fluid">'+
               "</td>"+
               '<td class="product-name">'+
-                '<h2 class="h5 text-black">Polo Shirt</h2>'+
+                '<h2 class="h5 text-black">'+element.cart_items.title+'</h2>'+
               '</td>'+
-              '<td>'+element.price+'</td>'+
+              '<td>'+element.cart_items.price+'</td>'+
               '<td>'+
                 '<div class="input-group mb-3" style="max-width: 120px;">'+
                   '<div class="input-group-prepend">'+
                     '<button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>'+
                   '</div>'+
-                  '<input type="text" id="quantity" class="form-control text-center" value="'+element.quantity+'" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">'+
+                  '<input type="text" id="quantity" class="form-control text-center" value="'+element.cart_items.quantity+'" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">'+
                   '<div class="input-group-append">'+
                     '<button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>'+
                   '</div>'+
                 '</div>'+
 
               '</td>'+
-              '<td>'+element.total_price+'</td>'+
+              '<td>'+element.cart_items.sub_price+'</td>'+
               '<td><a href="#" class="btn btn-primary btn-sm">X</a></td>'+
             '</tr>';
 
                   });
                   output+='</tbody>';
-                  var table_content = document.getElementById('cart_table_body');
-                  table_content.innerHTML=output;
-          }).catch(error => {
-              // Handle any errors
-              console.error('Error:', error);
-          });
+                  $('#cart_table_body').html(output); {% endcomment %}
+                  var tableBody = document.getElementById('cart_table_body');
+                  var grandTotalElement = document.getElementById('grandTotal');
+                  
+                  // Iterate over the cart items and create a table row for each item
+                  for (var itemId in cartData.cart_items) {
+                    var item = cartData.cart_items[itemId];
+                    createTableRow(item);
+                  }
+                  
+                  // Display the grand total
+                  updateGrandTotal();
+                  
+                  // Function to create a table row for an item
+                  function createTableRow(item) {
+                    var row = document.createElement('tr');
+                    var imageCell = document.createElement('td');
+                    var nameCell = document.createElement('td');
+                    var priceCell = document.createElement('td');
+                    var quantityCell = document.createElement('td');
+                    var subTotalCell = document.createElement('td');
+                    var removeCell = document.createElement('td');
+                    var removeLink = document.createElement('a');
+                  
+                    // Image cell
+                    var image = document.createElement('img');
+                    image.src = item.image;
+                    image.alt = item.title;
+                    image.className = 'img-fluid';
+                    imageCell.appendChild(image);
+                    row.appendChild(imageCell);
+                  
+                    // Name cell
+                    var name = document.createElement('h2');
+                    name.className = 'h5 text-black';
+                    name.textContent = item.title;
+                    nameCell.appendChild(name);
+                    row.appendChild(nameCell);
+                  
+                    // Price cell
+                    priceCell.textContent = '$' + item.price;
+                    row.appendChild(priceCell);
+                  
+                    // Quantity cell
+                    var quantityInputGroup = document.createElement('div');
+                    quantityInputGroup.className = 'input-group mb-3';
+                    quantityInputGroup.style.maxWidth = '120px';
+                  
+                    var quantityMinusBtn = document.createElement('button');
+                    quantityMinusBtn.className = 'btn btn-outline-primary js-btn-minus';
+                    quantityMinusBtn.type = 'button';
+                    quantityMinusBtn.textContent = '-';
+                    quantityInputGroup.appendChild(quantityMinusBtn);
+                  
+                    var quantityInput = document.createElement('input');
+                    quantityInput.type = 'text';
+                    quantityInput.className = 'form-control text-center';
+                    quantityInput.value = item.quantity;
+                    quantityInputGroup.appendChild(quantityInput);
+                  
+                    var quantityPlusBtn = document.createElement('button');
+                    quantityPlusBtn.className = 'btn btn-outline-primary js-btn-plus';
+                    quantityPlusBtn.type = 'button';
+                    quantityPlusBtn.textContent = '+';
+                    quantityInputGroup.appendChild(quantityPlusBtn);
+                  
+                    quantityCell.appendChild(quantityInputGroup);
+                    row.appendChild(quantityCell);
+                  
+                    // Subtotal cell
+                    subTotalCell.id = 'subTotal_' + item.id;
+                    subTotalCell.textContent = '$' + item.sub_total;
+                    row.appendChild(subTotalCell);
+                  
+                    // Remove cell
+                    removeLink.href = '#';
+                    removeLink.className = 'btn btn-primary btn-sm';
+                    removeLink.textContent = 'X';
+                    removeCell.appendChild(removeLink);
+                    row.appendChild(removeCell);
+                  
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
+                  
+                    // Event listener for the minus button
+                    quantityMinusBtn.addEventListener('click', function() {
+                      if (item.quantity > 1) {
+                        item.quantity--;
+                        quantityInput.value = item.quantity;
+                        updateSubTotal(item);
+                        updateGrandTotal();
+                      }
+                    });
+                  
+                    // Event listener for the plus button
+                    quantityPlusBtn.addEventListener('click', function() {
+                      item.quantity++;
+                      quantityInput.value = item.quantity;
+                      updateSubTotal(item);
+                      updateGrandTotal();
+                    });
+                  
+                    // Event listener for the remove link
+                    removeLink.addEventListener('click', function(event) {
+                      event.preventDefault();
+                      removeCartItem(item.id);
+                      row.remove();
+                      updateGrandTotal();
+                    });
+                  }
+                  
+                  // Function to update the subtotal for an item
+                  function updateSubTotal(item) {
+                    item.sub_total = (item.price * item.quantity).toFixed(2);
+                    var subTotalCell = document.getElementById('subTotal_' + item.id);
+                    subTotalCell.textContent = '$' + item.sub_total;
+                  }
+                  
+                  // Function to update the grand total
+                  function updateGrandTotal() {
+                    var grandTotal = 0;
+                    for (var itemId in cartData.cart_items) {
+                      var item = cartData.cart_items[itemId];
+                      grandTotal += parseFloat(item.sub_total);
+                    }
+                    cartData.grand_total = grandTotal.toFixed(2);
+                    grandTotalElement.textContent = 'Grand Total: $' + cartData.grand_total;
+                  }
+                  
+                  // Function to remove a cart item
+                  function removeCartItem(itemId) {
+                    delete cartData.cart_items[itemId];
+                  }
+
+          },
+          error: function (jqXhr, textStatus, errorMessage) { // error callback 
+            console.log('Error in loading data', errorMessage);
+        },
   } );
-  </script>
+});  
+</script>
     {% endblock %}
   
