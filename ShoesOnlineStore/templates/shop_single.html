@@ -21,7 +21,6 @@
         <script>
           // Retrieve the value of the Django HTML tag
           var price = "{{ product.last_price }}";
-
         </script>
         
         <div class="mb-1 d-flex">
@@ -79,30 +78,9 @@
   
   // Retrieve the value of the path parameter from the appropriate index
   const pathParamValue = urlParts[4]; // Adjust the index based on your URL structure
-//document.addEventListener('DOMContentLoaded', function(e) {
-// Get the current URL
-//    e.preventDefault();
-
-//const url_shoe_detail = "http://localhost:8000/shoe_detail/" + encodeURIComponent(pathParamValue)+"/";
-//    fetch(url_shoe_detail, {
-//        method: 'GET',
-//        headers: {
- //           'Content-Type': 'application/json',
-//        },
-       
-//    })
-//        .then(response => response.json())
-//        .then(data => {
- //         console.log(data);
- //       }).catch(error => {
- //           // Handle any errors
- //           console.error('Error:', error);
- //       });
-//} );
 
 function add_to_cart() {
-  console.log("*********");
-  const quantity = document.getElementById('quantity').value;
+  let quantity = document.getElementById('quantity').value;
   const colorRadioButtons = document.getElementsByName('shop-colors');
   let selectedColor = "";
   for (const radioButton of colorRadioButtons) {
@@ -120,14 +98,16 @@ function add_to_cart() {
       break;
     }
   };
+  // Convert price and quantity to numbers
+  let price_int = parseInt(price);
+  let quantity_int = parseInt(quantity);
+  let total_price=(price_int*quantity_int);
 
   const data = {
     "product_id": pathParamValue,
-    "quantity": quantity,
-    "color": selectedColor,
-    "image":image,
-   "size": selectedSize,
-    "price": price
+    "price":price,
+    "quantity": quantity_int,
+    "total_price":total_price,
  };
  console.log(data);
   fetch('http://localhost:8000/order/add_to_cart/', {
@@ -135,7 +115,7 @@ function add_to_cart() {
       headers: {
           'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
   })
       .then(response => response.json())
       .then(data => {
@@ -144,7 +124,7 @@ function add_to_cart() {
       .catch(error => {
           console.error('Error:', error);
       });
-  console.log("************");
+
     }
 </script>
  
