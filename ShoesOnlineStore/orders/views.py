@@ -46,31 +46,9 @@ def remove_from_cart(request):
 @api_view(['GET'])
 def cart_list(request):
     session_whit_serialized_product = session_cart()
-    # for k, v in session_whit_serialized_product:
-    #     print("************")
-    #     print(k, v)
-
-    # serializer = OrderItemsSerializer(
-    #     session_whit_serialized_product, many=True)
-    # serialized_data = serializer.data
     return Response(session_whit_serialized_product)
-# @api_view(['GET'])
-# def cart_list(request):
-#     global session
-#     session_with_serialized_product = session_cart(session)
 
-#     # Serialize each item in the cart separately
-#     serialized_items = []
-#     for item in session_with_serialized_product['cart_items']:
-#         serialized_item = OrderItemsSerializer(data=item)
-#         if serialized_item.is_valid():
-#             serialized_items.append(serialized_item)
-#         else:
-#             # Handle any invalid data, such as skipping or logging an error
-#             # For simplicity, let's skip the invalid item here
-#             continue
 
-#     # Convert the list of serialized items to JSON-serializable data
-#     serialized_data = [item.data for item in serialized_items]
-
-#     return Response(serialized_data)
+@api_view(['POST'])
+def order_create(request):
+    ...
