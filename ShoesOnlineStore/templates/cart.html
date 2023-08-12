@@ -303,7 +303,7 @@
                   
                   // Function to remove a cart item
                   function removeCartItem(itemId) {
-                    alert(itemId);
+                    {% comment %} alert(itemId); {% endcomment %}
                     delete cartData.cart_items[itemId];
                     cartItemDeleteSessionRequest(parseInt(itemId));
                   }

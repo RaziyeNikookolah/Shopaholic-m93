@@ -1,10 +1,26 @@
 import json
 from django.contrib.sessions.backends.db import SessionStore
+from rest_framework.response import Response
 from decimal import Decimal
 from shoes.models import Product
 from shoes.serializer import ProductSimpleSerializer
 session = SessionStore()
 session_key = "products"
+
+
+def remove_product_from_session(id):
+    global session
+    id = str(id)
+
+    if session_key not in session:
+        return Response({"message": "Empty cart"})
+
+    if id not in session[session_key]:
+        return Response({"message": "Item does not exist"})
+    del session[session_key][id]
+    session.save()
+
+    return Response({"message": "Deleted"})
 
 
 def add_product_to_session(id, price, quantity, total_price):
@@ -57,3 +73,9 @@ def session_cart() -> dict:
 
         data = {'cart_items': cart_item, 'grand_total': main_total}
         return json.dumps(data, cls=DecimalEncoder)
+
+
+def print_session_items():
+    global session
+    for item in session[session_key]:
+        print("**********" + item+"************")
