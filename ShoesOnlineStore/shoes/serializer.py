@@ -14,3 +14,13 @@ class ProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+
+
+class ProductSimpleSerializer(serializers.ModelSerializer):
+    # price = serializers.StringRelatedField(read_only=True)
+    size = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        fields = ('id', 'title', 'size',  # 'price',
+                  'image')
