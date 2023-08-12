@@ -79,3 +79,9 @@ def print_session_items():
     global session
     for item in session[session_key]:
         print("**********" + item+"************")
+
+
+def clear_session():
+    global session
+    del session[session_key]
+    session.save()
