@@ -28,4 +28,4 @@ class CartItemSerializer(serializers.Serializer):
 
 
 class RemoveCartItemsSerializer(serializers.Serializer):
-    product_id = serializers.CharField(max_length=4)
+    product_id = serializers.IntegerField()
