@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from http.client import HTTPException
 from .serializers import RequestOtpSerializer, VerifyOtpSerializer
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+# from rest_framework_simplejwt.views import TokenObtainPairView
 from kavenegar import KavenegarAPI, APIException
 from django.conf import settings
 from django.contrib.auth import get_user_model
