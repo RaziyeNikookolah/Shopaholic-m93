@@ -1,23 +1,21 @@
-from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
-from http.client import HTTPException
 from .serializers import RequestOtpSerializer, VerifyOtpSerializer
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 # from rest_framework_simplejwt.views import TokenObtainPairView
-from kavenegar import KavenegarAPI, APIException
-from django.conf import settings
-from django.contrib.auth import login, logout
-from django.contrib.auth import get_user_model
+from .utils import send_otp_request, verify_otp_request
+from accounts.utils import generate_access_token, generate_refresh_token
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import OtpRequest
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.permissions import AllowAny
-
+from django.contrib.auth import login
+from django.contrib.auth import get_user_model
 
 # to manage user prompt request and response time period
+
+
 class OncePerMinuteThorttle(UserRateThrottle):
     rate = '1/minute'
 
@@ -38,23 +36,7 @@ class RequestOTP(APIView):
             print("*****  "+otp_request.code+"  *****")
             otp_request.save()
 
-            try:
-                api = KavenegarAPI(settings.SMS_API_KEY)
-                params = {
-                    'receptor': otp_request.phone_number,
-                    'template': 'کد تایید شما',
-                    'token': otp_request.code,
-                    'type': 'sms',  # sms vs call
-                }
-                response = api.verify_lookup(params)
-                print(response)
-                return Response({"message": "OTP send successfully"})
-            except APIException as e:
-                print(e)
-                return Response({'message': 'Send OTP of kavenegar without api authorization...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            except HTTPException as e:
-                print(e)
-                return Response({'error': 'Failed to send OTP'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return send_otp_request(otp_request)
 
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -70,43 +52,26 @@ class VerifyOtp(APIView):
             code = serializer.validated_data['code']
             otp_requests = OtpRequest.objects.filter(phone_number=phone_number)
             if otp_requests.exists():
-
                 otp_request = otp_requests.first()
-
-                if otp_request.is_expired():
-
-                    messages.error(request, _(
-                        'Too late receive a code.'), 'danger')
-                    otp_request.delete()
-                    return Response(serializer.errors, status=status.HTTP_200_OK)
-
-                if code == otp_request.code:
-
-                    messages.success(request, _(
-                        'Your code verified..'), 'success')
+                verification_status, message = verify_otp_request(
+                    code, otp_request)
+                if verification_status == status.HTTP_200_OK:
                     User = get_user_model()
                     user: User
-                    otp_request.delete()
-                    try:
-                        user = User.objects.get(phone_number=phone_number)
-                    except ObjectDoesNotExist:
-                        user = User.objects.create(
-                            phone_number=phone_number)
-                        login(request, user)
+                    user, _ = User.objects.get_or_create(
+                        phone_number=phone_number)
+                    login(request, user)
 
-                        # add_session_items_to_orderItem(user)
-                        # create jwt token
-                        # goes to profile page
-                    return Response({'message': 'Code Verified'}, status=status.HTTP_202_ACCEPTED)
+                    # add_session_items_to_orderItem(user)
+                    # create jwt token
+                    access_token = generate_access_token(user)
+                    refresh_token = generate_refresh_token(user)
+                    return Response({"access_token": access_token, "refresh_token": refresh_token}, status=verification_status)
+
+                    # goes to profile page
                 else:
-
-                    messages.error(request, _(
-                        'Invalid code..'), 'danger')
-                    otp_request.delete()
-                    return Response({'error': 'Invalid code.'}, status=status.HTTP_403_FORBIDDEN)
+                    return Response({'message': message}, status=verification_status)
             else:
-
-                return Response({'error': 'Invalid data provided.'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'error': 'Invalid data provided.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-
-            return Response({'error': 'Invalid data provided.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid data provided.'}, status=status.HTTP_403_FORBIDDEN)
