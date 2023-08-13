@@ -162,19 +162,19 @@ REST_FRAMEWORK = {
 }
 
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-# 'rest_framework.authentication.TokenAuthentication',
-# 'rest_framework.authentication.BasicAuthentication',
-# 'rest_framework.authentication.SessionAuthentication',
-# 'rest_framework_simplejwt.authentication.JWTAuthentication',
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
 
-# ],
-# 'DEFAULT_PERMISSION_CLASSES': [
-# it makes defualt for all methods
-# 'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-# ]
-# }
+    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    # it makes defualt for all methods
+    # 'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    # ]
+}
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

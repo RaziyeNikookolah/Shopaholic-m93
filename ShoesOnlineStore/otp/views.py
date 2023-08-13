@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import OtpRequest
 from rest_framework.throttling import UserRateThrottle
+from rest_framework.permissions import AllowAny
 
 
 # to manage user prompt request and response time period
@@ -20,6 +21,7 @@ class OncePerMinuteThorttle(UserRateThrottle):
 
 
 class RequestOTP(APIView):
+
     def post(self, request):
         # throttle_classes = [OncePerMinuteThorttle]
 
@@ -57,7 +59,10 @@ class RequestOTP(APIView):
 
 
 class VerifyOtp(APIView):
+    permission_classes = (AllowAny,)
+
     def post(self, request):
+        print(2222222+"verify")
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
             phone_number = serializer.validated_data['phone_number']
