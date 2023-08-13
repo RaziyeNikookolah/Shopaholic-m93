@@ -52,23 +52,24 @@ $(document).on('submit', '#code-verify_form', function (e) {
             formData.append('password', '123');
 
 
-            $.ajax({
-                url: "http://localhost:8000/token/",
-                type: "POST",
-                data: formData,
-                cache: false,
-                processData: false,
-                contentType: false,
-                success: function (data) {
-                    window.localStorage.setItem('refreshToken', data['refresh']);
-                    window.localStorage.setItem('accessToken', data['access']);
-                    console.log(data['access']);
-                },
-                error: function (rs, e) {
-                    console.error(rs.status);
-                    console.error(rs.responseText);
-                }
-            }); // end ajax
+            //  $.ajax({
+            //     url: "http://localhost:8000/token/",
+            //     type: "POST",
+            //     data: formData,
+            //     cache: false,
+            //     processData: false,
+            //     contentType: false,
+            //     success: function (data) {
+            //         window.localStorage.setItem('refreshToken', data['refresh']);
+            //         window.localStorage.setItem('accessToken', data['access']);
+            //         console.log(data['access']);
+            //     },
+            //     error: function (rs, e) {
+            //         console.log("*************")
+            //         console.error(rs.status);
+            //         console.error(rs.responseText);
+            //     }
+            // }); // end ajax 
 
         },
         error: function (jqXhr, textStatus, errorMessage) {
