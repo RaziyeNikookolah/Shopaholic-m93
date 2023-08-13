@@ -12,7 +12,7 @@ $(document).on('submit', '#login_form', function (e) {
     phone_number = $('#phone_number').val();
     $.ajax({
 
-        url: 'otp/request_otp/',
+        url: 'http://localhost:8000/otp/request_otp/',
         type: 'POST',
         data: {
             phone_number: phone_number,
@@ -37,7 +37,7 @@ $(document).on('submit', '#code-verify_form', function (e) {
 
     $.ajax({
 
-        url: 'otp/verify_otp/',
+        url: 'http://localhost:8000/otp/verify_otp/',
         type: 'POST',
         data: {
             phone_number: phone_number,
@@ -53,7 +53,7 @@ $(document).on('submit', '#code-verify_form', function (e) {
 
 
             $.ajax({
-                url: "token/",
+                url: "http://localhost:8000/token/",
                 type: "POST",
                 data: formData,
                 cache: false,
