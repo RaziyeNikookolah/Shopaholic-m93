@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
 from http.client import HTTPException
 from .serializers import RequestOtpSerializer, VerifyOtpSerializer
@@ -6,6 +7,7 @@ from .serializers import RequestOtpSerializer, VerifyOtpSerializer
 # from rest_framework_simplejwt.views import TokenObtainPairView
 from kavenegar import KavenegarAPI, APIException
 from django.conf import settings
+from django.contrib.auth import login, logout
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -62,7 +64,6 @@ class VerifyOtp(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        print(2222222+"verify")
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
             phone_number = serializer.validated_data['phone_number']
@@ -84,19 +85,18 @@ class VerifyOtp(APIView):
                     messages.success(request, _(
                         'Your code verified..'), 'success')
                     User = get_user_model()
-
+                    user: User
                     otp_request.delete()
-                    if not User.objects.filter(phone_number=phone_number).exists():
-
+                    try:
+                        user = User.objects.get(phone_number=phone_number)
+                    except ObjectDoesNotExist:
                         user = User.objects.create(
                             phone_number=phone_number)
+                        login(request, user)
+
+                        # add_session_items_to_orderItem(user)
                         # create jwt token
                         # goes to profile page
-                        # token, created = Token.objects.get_or_create(
-                        #     user=user)
-                        return Response({'message': 'Code Verified'}, status=status.HTTP_202_ACCEPTED)
-                    # login mishe
-
                     return Response({'message': 'Code Verified'}, status=status.HTTP_202_ACCEPTED)
                 else:
 
