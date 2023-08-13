@@ -45,11 +45,12 @@ $(document).on('submit', '#code-verify_form', function (e) {
             'csrfmiddlewaretoken': '{{csrf_token}}'
         },
         dataType: "json",
-        success: function (data, status, xhr) {
+        success: function (res, status, xhr) {
             console.log(status);
-            let formData = new FormData();
-            formData.append('phone_number', phone_number);
-            formData.append('password', '123');
+            console.log(res);
+            // let formData = new FormData();
+            // formData.append('phone_number', phone_number);
+            // formData.append('password', '123');
 
 
             //  $.ajax({
