@@ -21,7 +21,8 @@ class JWTAuthentication(authentication.BaseAuthentication):
         )  # clean the token
         # Decode the JWT and verify its signature
         try:
-            payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
+            payload = jwt.decode(
+                jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
 
         except jwt.exceptions.InvalidSignatureError:
             raise AuthenticationFailed("Invalid signature")
@@ -52,42 +53,43 @@ class JWTAuthentication(authentication.BaseAuthentication):
         return token
 
 
-# class LoginAuthentication(authentication.BaseAuthentication):
-#     def authenticate(self, request):
+class LoginAuthentication(authentication.BaseAuthentication):
+    def authenticate(self, request):
 
-#         # Extract the JWT from the Authorization header
-#         authorization_header = request.headers.get("Authorization")
-#         if not authorization_header:
-#             return None
+        # Extract the JWT from the Authorization header
+        authorization_header = request.headers.get("Authorization")
+        if not authorization_header:
+            return None
 
-#         jwt_token = JWTAuthentication.get_the_token_from_header(
-#             authorization_header
-#         )  # clean the token
-#         # Decode the JWT and verify its signature
-#         payload = {}
-#         try:
-#             payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
-#         except jwt.exceptions.ExpiredSignatureError:
-#             raise AuthenticationFailed("Signature expired")
-#         except:
-#             return None
+        jwt_token = JWTAuthentication.get_the_token_from_header(
+            authorization_header
+        )  # clean the token
+        # Decode the JWT and verify its signature
+        payload = {}
+        try:
+            payload = jwt.decode(
+                jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
+        except jwt.exceptions.ExpiredSignatureError:
+            raise AuthenticationFailed("Signature expired")
+        except:
+            return None
 
-#         # Get the user from the database
-#         user_id = payload.get("user_id")
-#         if not user_id:
-#             return None
+        # Get the user from the database
+        user_id = payload.get("user_id")
+        if not user_id:
+            return None
 
-#         user = User.objects.filter(id=user_id).first()
+        user = User.objects.filter(id=user_id).first()
 
-#         if not user:
-#             return None
-#         # Return the user and token payload
-#         return user, payload
+        if not user:
+            return None
+        # Return the user and token payload
+        return user, payload
 
-#     def authenticate_header(self, request):
-#         return "Bearer"
+    def authenticate_header(self, request):
+        return "Bearer"
 
-#     @classmethod
-#     def get_the_token_from_header(cls, token):
-#         token = token.replace("Bearer", "").replace(" ", "")  # clean the token
-#         return token
+    @classmethod
+    def get_the_token_from_header(cls, token):
+        token = token.replace("Bearer", "").replace(" ", "")  # clean the token
+        return token
