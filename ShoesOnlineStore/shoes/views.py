@@ -3,7 +3,7 @@ from .models import Product, Price
 from django.views.generic.list import ListView
 from django.db.models import Q
 from .serializer import ProductsSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 # IsAuthenticatedOrReadOnly permission just can run safe method for unauthenticated user
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
@@ -14,7 +14,7 @@ from rest_framework import status
 class ListCreateProductView(ListAPIView):
     queryset = Product.objects.filter(available_quantity__gte=1)
     serializer_class = ProductsSerializer
-    # permission_classes = ((IsAuthenticatedOrReadOnly,))
+    permission_classes = ((IsAuthenticatedOrReadOnly,))
 
     def get_queryset(self):
         return super().get_queryset().select_related('brand', 'category').prefetch_related('color', 'size')
@@ -44,6 +44,8 @@ class ProductSearchListView(APIView):
 
 
 class ProductList(APIView):
+    permission_classes = (AllowAny,)
+
     def get(self, request):
         queryset = None
         if not 'search' in request.GET:
