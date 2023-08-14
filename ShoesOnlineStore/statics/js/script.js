@@ -3,9 +3,11 @@ $(document).ready(function () {
 
     $('#li_login').on('click', function () {
         $('#login_container',).toggle();
-
     });
 });
+function login() {
+    $('#login_container',).show();
+}
 let phone_number = '';
 $(document).on('submit', '#login_form', function (e) {
     e.preventDefault();
@@ -25,8 +27,6 @@ $(document).on('submit', '#login_form', function (e) {
         error: function (jqXhr, textStatus, errorMessage) { // error callback 
             console.log('Error in login_form submission:', errorMessage);
         },
-
-
     });
     $('#signup-div').hide();
     $('#code-verify-div').show();
