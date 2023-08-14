@@ -106,7 +106,8 @@ AUTHENTICATION_BACKENDS = [
 # ]
 
 MAX_DIGITS = 20
-DECIMAL_PLACES = 2
+DECIMAL_PLACES = 0
+MERCHANT = getenv("MERCHANT")
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -165,9 +166,9 @@ REST_FRAMEWORK = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
 
     ],
     # 'DEFAULT_PERMISSION_CLASSES': [
