@@ -270,14 +270,35 @@
   });
 });  
 function cartItemDeleteSessionRequest(product_id){
-
 }
 
 function redirectToCheckout(){
-      // First function logic
-    window.location = '../cart/checkout/'; // Redirect to the desired URL
 
-    // Second function logic
+  fetch('http://localhost:8000/order/checkout/', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+})
+    .then(response => {
+      if(response.status==401){
+        console.log(401);
+        login();
+        console.log("*******");
+        //window.location = '../cart/checkout/'; // Redirect to the desired URL 
+        
+      }
+      else if (response.status==100){
+        console.log(100);
+        console.log("*******");
+
+      }
+      })
+      .catch(error => {
+        console.log("errrrorr")
+        console.error('Error:', error);
+    });
+
     add_session_to_menuItemRequest();
 
 }
@@ -304,12 +325,7 @@ fetch('http://localhost:8000/order/update_cart/', {
       .catch(error => {
           console.error('Error:', error);
       });
-
-
-
 }
-
-
-
 </script>
+<script src="{% static 'js/script.js'%}"></script>
 {% endblock %}
