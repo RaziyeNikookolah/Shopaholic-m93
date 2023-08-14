@@ -4,10 +4,8 @@ services:
   db:
     container_name: postgres
     image: postgres:latest
-    environment:
-      - POSTGRES_DB=online_shoes_shopping
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123
+    env_file:
+      - .env
     networks:
       - main_net
     ports:
