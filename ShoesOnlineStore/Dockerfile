@@ -2,10 +2,10 @@ FROM python:3.11.4
 LABEL Maintainer="r.nikookolah@gmail.com"
 LABEL Owner="RaziyeNikookolah"
 LABEL version="v1.1"
-RUN mkdir /e-commerce
+RUN mkdir /app
 
 # set work directory
-WORKDIR /e-commerce
+WORKDIR /app
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -16,6 +16,6 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt /requirements.txt
 RUN pip install -U pip
 RUN pip install -r /requirements.txt
-COPY . /e-commerce/
+COPY . /app/
 EXPOSE 8000
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
