@@ -76,6 +76,19 @@ class OrderCreateView(APIView):
         return Response("Order created successfully.")
 
 
+class UpdateCartItemView(APIView):
+    authentication_classes = []
+    permission_classes = (AllowAny,)
+
+    @csrf_exempt
+    def post(self, request):
+        if request.data:
+            data = request.data  # Access the JSON data
+            print("Received data:", data)
+            return Response({'message': "Data received"}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': "Bad data"}, status=status.HTTP_400_BAD_REQUEST)
+
 # def request_payment(request):
 #     data = {
 #         "MerchantID": settings.MERCHANT,
