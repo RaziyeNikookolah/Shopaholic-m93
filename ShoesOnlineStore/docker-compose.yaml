@@ -1,1 +1,40 @@
+services:
+  db:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=online_shoes_shopping
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+    networks:
+      - main_net
+    ports:
+      - "5432:5432"
+    restart: on-failure
+    volumes:
+      - postgres_data:/var/lib/postgresql/postgres_data
+
+  app:
+    build: .
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    container_name: app
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    expose:
+      - "8000"
+    networks:
+      - main_net
+    ports:
+      - "8000:8000"
+    restart: on-failure
+
+volumes:
+  postgres_data:
+
+
+networks:
+  main_net:
+
 
