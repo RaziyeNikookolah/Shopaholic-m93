@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
-from .utils import add_product_to_session, session_cart, remove_product_from_session
+from .utils import add_product_to_session, session_cart, remove_product_from_session, clear_session
 from orders.serializer import RemoveCartItemsSerializer, CartItemSerializer, OrderItemsSerializer
 
 
@@ -84,7 +84,11 @@ class UpdateCartItemView(APIView):
     def post(self, request):
         if request.data:
             data = request.data  # Access the JSON data
-            print("Received data:", data)
+            clear_session()
+            for item in data.get('cart_items').values():
+                print(item)
+                add_product_to_session(
+                    item['id'], item['price'], item['quantity'], item['sub_total'])
             return Response({'message': "Data received"}, status=status.HTTP_200_OK)
         else:
             return Response({'message': "Bad data"}, status=status.HTTP_400_BAD_REQUEST)
