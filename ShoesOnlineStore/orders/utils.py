@@ -1,6 +1,7 @@
 import json
 from django.contrib.sessions.backends.db import SessionStore
 from rest_framework.response import Response
+from rest_framework import status
 from decimal import Decimal
 from shoes.models import Product
 from shoes.serializer import ProductSimpleSerializer
@@ -76,8 +77,7 @@ def session_cart() -> dict:
         data = {'cart_items': cart_item, 'grand_total': main_total}
         return json.dumps(data, cls=DecimalEncoder)
     else:
-        session[session_key] = {}
-        return {}
+        return {"message": "Empty cart"}
 
 
 def print_session_items():
