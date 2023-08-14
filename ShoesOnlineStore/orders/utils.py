@@ -55,7 +55,9 @@ class DecimalEncoder(json.JSONEncoder):
 
 
 def session_cart() -> dict:
+
     global session
+
     if session[session_key]:
         cart_item = {}
         main_total = Decimal(0)
@@ -73,6 +75,9 @@ def session_cart() -> dict:
 
         data = {'cart_items': cart_item, 'grand_total': main_total}
         return json.dumps(data, cls=DecimalEncoder)
+    else:
+        session[session_key] = {}
+        return {}
 
 
 def print_session_items():
