@@ -95,13 +95,14 @@ class UpdateCartItemView(APIView):
 
 
 class CheckoutView(APIView):
-    authentication_classes = [authentication.JWTAuthentication]
+    authentication_classes = [authentication.LoginAuthentication]
 
     def get(self, request):
-        if request.user:
-            return Response({"message": "User is Logged in"}, status=status.HTTP_100_CONTINUE)
-        else:
-            return Response({"message": "login required"}, status=status.HTTP_401_UNAUTHORIZED)
+        ...
+        # if request.user:
+        #     return Response({"message": "User is Logged in"}, status=status.HTTP_100_CONTINUE)
+        # else:
+        #     return Response({"message": "login required"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # def request_payment(request):
