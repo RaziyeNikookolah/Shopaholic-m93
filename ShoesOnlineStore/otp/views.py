@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from .serializers import RequestOtpSerializer, VerifyOtpSerializer
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -65,7 +66,12 @@ class VerifyOtp(APIView):
                     # create jwt token
                     access_token = generate_access_token(user)
                     refresh_token = generate_refresh_token(user)
-                    return Response({"access_token": access_token, "refresh_token": refresh_token}, status=verification_status)
+                    if 'next' in request.GET:
+                        print("boooooooooood")
+                        return redirect({"access_token": access_token, "refresh_token": refresh_token,
+                                         "redirect_url": request.GET.get('next')}, status=verification_status)
+                    else:
+                        return Response({"access_token": access_token, "refresh_token": refresh_token}, status=verification_status)
 
                     # goes to profile page
                 else:
