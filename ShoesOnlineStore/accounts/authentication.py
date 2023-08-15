@@ -72,7 +72,7 @@ class LoginAuthentication(authentication.BaseAuthentication):
         except jwt.exceptions.ExpiredSignatureError:
             raise AuthenticationFailed("Signature expired")
         except:
-            return None
+            raise AuthenticationFailed("Token invalid")
 
         # Get the user from the database
         user_id = payload.get("user_id")
