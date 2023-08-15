@@ -7,11 +7,10 @@ from . import views
 
 admin.site.site_title = "Welcome to Shoes Online Shop"
 admin.site.index_title = "Welcome to Shoes Online Shop"
-
+app_name = 'home'
 urlpatterns = [
     path("", views.HomeView.as_view(), name="index"),
     path("about/", views.AboutView.as_view(), name="about"),
-    path("cart/", views.CartView.as_view(), name="cart"),
     path("cart/", views.CartView.as_view(), name="cart"),
     path("contact/", views.ContactView.as_view(), name="contact"),
     path("shop/", views.ShopView.as_view(), name="shop"),
