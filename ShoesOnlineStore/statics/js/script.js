@@ -1,13 +1,4 @@
-$(document).ready(function () {
-    $('#login_container').hide();
 
-    $('#li_login').on('click', function () {
-        $('#login_container',).toggle();
-    });
-});
-function login() {
-    $('#login_container',).show();
-}
 let phone_number = '';
 $(document).on('submit', '#login_form', function (e) {
     e.preventDefault();
@@ -46,32 +37,9 @@ $(document).on('submit', '#code-verify_form', function (e) {
         },
         dataType: "json",
         success: function (res, status, xhr) {
-            console.log(status);
-            console.log(res);
-            // let formData = new FormData();
-            // formData.append('phone_number', phone_number);
-            // formData.append('password', '123');
-
-
-            //  $.ajax({
-            //     url: "http://localhost:8000/token/",
-            //     type: "POST",
-            //     data: formData,
-            //     cache: false,
-            //     processData: false,
-            //     contentType: false,
-            //     success: function (data) {
-            //         window.localStorage.setItem('refreshToken', data['refresh']);
-            //         window.localStorage.setItem('accessToken', data['access']);
-            //         console.log(data['access']);
-            //     },
-            //     error: function (rs, e) {
-            //         console.log("*************")
-            //         console.error(rs.status);
-            //         console.error(rs.responseText);
-            //     }
-            // }); // end ajax 
-
+            window.localStorage.setItem('refreshToken', res['refresh_token']);
+            window.localStorage.setItem('accessToken', res['access_token']);
+            //console.log(window.localStorage.getItem('refreshToken'));
         },
         error: function (jqXhr, textStatus, errorMessage) {
             console.log('Error in code-verify_form submission:', errorMessage);
