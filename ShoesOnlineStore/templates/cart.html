@@ -9,7 +9,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12 mb-0">
-            <a href="{% url 'index' %}">Home</a> 
+            <a href="{% url 'home:index' %}">Home</a> 
             <span class="mx-2 mb-0">/</span> 
             <strong class="text-black">Cart</strong>
           </div>
@@ -84,7 +84,7 @@
 
                 <div class="row">
                   <div class="col-md-12">
-                    <button class="btn btn-primary btn-lg py-3 btn-block" onclick="redirectToCheckout()">Proceed To Checkout</button>
+                    <a href="{% url 'home:checkout' %}" class="btn btn-primary btn-lg py-3 btn-block " style="color:white;" >Proceed To Checkout</a>
                   </div>
                 </div>
               </div>
@@ -273,31 +273,48 @@ function cartItemDeleteSessionRequest(product_id){
 }
 
 function redirectToCheckout(){
-
+  accessToken=window.localStorage.getItem('accessToken');
+  refreshToken=window.localStorage.getItem('refreshToken');
+  if(accessToken){
   fetch('http://localhost:8000/order/checkout/', {
     method: 'GET',
     headers: {
         'Content-Type': 'application/json',
+        "Authorization": "Bearer " + accessToken ,
     },
 })
     .then(response => {
-      if(response.status==401){
-        console.log(401);
-        login();
-        console.log("*******");
-        //window.location = '../cart/checkout/'; // Redirect to the desired URL 
-        
-      }
-      else if (response.status==100){
-        console.log(100);
-        console.log("*******");
+      console.log(401);
+      if(response.status==401){  
 
-      }
+        fetch('http://localhost:8000/order/checkout/', {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              "Authorization": "Bearer " + refreshToken ,
+          },
       })
+          .then(response => {
+            console.log(401);
+            if(response.status==401){  
+                window.location = 'http://127.0.0.1:8000/api/v1/accounts/optain_pair_tokens/?next=/cart/checkout/';
+            }
+            else{
+              window.localStorage.setItem('refreshToken', response['refresh_token']);
+              window.localStorage.setItem('accessToken', response['access_token']);
+            }
+          })
+            
+            .catch(error => {
+              console.error('Error:', error);
+          });
+      }})
       .catch(error => {
-        console.log("errrrorr")
         console.error('Error:', error);
-    });
+    });}
+    else{
+      window.location = 'http://127.0.0.1:8000/accounts/login/?next=/cart/checkout/';
+    }
 
     add_session_to_menuItemRequest();
 
