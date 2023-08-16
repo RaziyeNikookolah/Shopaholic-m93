@@ -40,7 +40,7 @@ class CartView(View):
 
 
 class CheckoutView(View):
-    @method_decorator(login_required(login_url="/accounts/login/"))
+    # @method_decorator(login_required(login_url="/accounts/login/"))
     def get(self, request):
         return render(request, "checkout.html"
                       )
