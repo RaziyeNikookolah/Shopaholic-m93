@@ -261,7 +261,35 @@ function save_order_and_pay_money(event){
   state=$("c_state_country").val;
   postal_zip=$("c_code").val;
   order_note=$("c_order_notes").val;
-  
+
+
+  const data = {
+    "fname": fname,
+    "lname":lname,
+    "address": address,
+    "email":email,
+    "phone_number":phone_number,
+    "postal_zip":postal_zip,
+    "order_note":order_note,
+ };
+
+
+
+  fetch('http://localhost:8000/order/create_order/', {
+    method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(cartData),
+  })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
 }
 
 
