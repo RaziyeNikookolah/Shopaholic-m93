@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # 'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
-    # 'django_filters',
+    'django_filters',
     # 'rest_framework_simplejwt',
     'home.apps.HomeConfig',
     'core.apps.CoreConfig',
@@ -57,6 +57,9 @@ INSTALLED_APPS = [
     'otp.apps.OtpConfig',
     "ckeditor",
     'cart.apps.CartConfig',
+    'drf_spectacular',
+    'django_celery_results',
+    'django_celery_beat',
 
 ]
 AUTHENTICATION_BACKENDS = [
@@ -107,7 +110,6 @@ AUTHENTICATION_BACKENDS = [
 
 MAX_DIGITS = 20
 DECIMAL_PLACES = 0
-MERCHANT = getenv("MERCHANT")
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -157,11 +159,18 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("accounts.authentication.JWTAuthentication",),
+    # "DEFAULT_AUTHENTICATION_CLASSES": ("accounts.authentication.JWTAuthentication",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 3,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Shoes Online Shopping API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 
+}
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -236,3 +245,34 @@ MESSAGE_TAGS = {
     messages.WARNING: "alert-warning",
     messages.ERROR: "alert-warning",
 }
+# SANDBOX MODE ZARRINPAL
+
+MERCHANT = "00000000-0000-0000-0000-000000000000"
+
+SANDBOX = True
+
+# MERCHANT = getenv("MERCHANT")
+# dyzupayxhklqngjb
+
+
+# CELERY SETTINGS
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Tehran'
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+# CELERY BEAT
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# SMTP Settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'r.nikookolah@gmail.com'
+EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = 'Celery <r.nikookolah@gmail.com>'
