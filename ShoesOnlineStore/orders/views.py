@@ -1,3 +1,6 @@
+import json
+from django.conf import settings
+import requests
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -105,36 +108,36 @@ class CheckoutView(APIView):
         #     return Response({"message": "login required"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# def request_payment(request):
-#     data = {
-#         "MerchantID": settings.MERCHANT,
-#         "Amount": amount,
-#         "Description": description,
-#         "Phone": phone,
-#         "CallbackURL": CallbackURL,
-#     }
-#     data = json.dumps(data)
-#     # set content length by data
-#     headers = {'content-type': 'application/json',
-#                'content-length': str(len(data))}
-#     try:
-#         response = requests.post(
-#             ZP_API_REQUEST, data=data, headers=headers, timeout=10)
+def request_payment(request):
+    data = {
+        "MerchantID": settings.MERCHANT,
+        "Amount": 1000,
+        "Description": "Finalize your order",
+        # "Phone": phone,
+        "CallbackURL": 'http://127.0.0.1:8000/thank_you/',
+    }
+    data = json.dumps(data)
+    # set content length by data
+    headers = {'content-type': 'application/json',
+               'content-length': str(len(data))}
+    try:
+        response = requests.post(
+            ZP_API_REQUEST, data=data, headers=headers, timeout=10)
 
-#         if response.status_code == 200:
-#             response = response.json()
-#             global autho
-#             autho = str(response['Authority'])
-#             if response['Status'] == 100:
-#                 return {'status': True, 'url': ZP_API_STARTPAY + str(response['Authority']), 'authority': response['Authority']}
-#             else:
-#                 return {'status': False, 'code': str(response['Status'])}
-#         return response
+        if response.status_code == 200:
+            response = response.json()
+            global autho
+            autho = str(response['Authority'])
+            if response['Status'] == 100:
+                return {'status': True, 'url': ZP_API_STARTPAY + str(response['Authority']), 'authority': response['Authority']}
+            else:
+                return {'status': False, 'code': str(response['Status'])}
+        return response
 
-#     except requests.exceptions.Timeout:
-#         return {'status': False, 'code': 'timeout'}
-#     except requests.exceptions.ConnectionError:
-#         return {'status': False, 'code': 'connection error'}
+    except requests.exceptions.Timeout:
+        return {'status': False, 'code': 'timeout'}
+    except requests.exceptions.ConnectionError:
+        return {'status': False, 'code': 'connection error'}
 
 
 # def verify_payment(request):
