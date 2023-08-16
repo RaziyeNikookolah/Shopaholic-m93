@@ -57,6 +57,7 @@ class Order(BaseModel):
     city = models.CharField(_("city"), max_length=40)
     address = models.TextField(_("adderess"), max_length=100)
     postal_code = models.CharField(_("postal code"), max_length=20)
+    note = models.TextField(null=True, blank=True)
 
     def __str__(self) -> str:
         return f"Order id:{self.id}"
