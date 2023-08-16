@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
@@ -38,6 +39,15 @@ urlpatterns = [
     # path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+
+    path('api/schema/swagger-ui/',
+         SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/',
+         SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
+
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()
