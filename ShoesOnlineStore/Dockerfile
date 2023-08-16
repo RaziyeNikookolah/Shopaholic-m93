@@ -2,9 +2,8 @@ FROM python:3.11.4
 LABEL Maintainer="r.nikookolah@gmail.com"
 LABEL Owner="RaziyeNikookolah"
 LABEL version="v1.1"
-RUN mkdir /app
 
-# set work directory
+# set work directory 
 WORKDIR /app
 
 # set environment variables
@@ -13,9 +12,9 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 RUN pip install --upgrade pip
-COPY ./requirements.txt /requirements.txt
+COPY ./requirements.txt .
 RUN pip install -U pip
-RUN pip install -r /requirements.txt
-COPY . /app/
+RUN pip install -r requirements.txt
+COPY . .
 EXPOSE 8000
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
