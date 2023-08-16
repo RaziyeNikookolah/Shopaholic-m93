@@ -158,3 +158,10 @@ class CheckoutView(APIView):
         #     return Response({"message": "User is Logged in"}, status=status.HTTP_100_CONTINUE)
         # else:
         #     return Response({"message": "login required"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class CreateOrder(APIView):
+    @csrf_exempt
+    def post(self, request):
+        ...
+        return Response()
