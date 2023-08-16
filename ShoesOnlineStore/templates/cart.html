@@ -84,7 +84,7 @@
 
                 <div class="row">
                   <div class="col-md-12">
-                    <a href="{% url 'home:checkout' %}" class="btn btn-primary btn-lg py-3 btn-block " style="color:white;" >Proceed To Checkout</a>
+                    <a href="#" class="btn btn-primary btn-lg py-3 btn-block " onclick="redirectToCheckout(event)" style="color:white;" >Proceed To Checkout</a>
                   </div>
                 </div>
               </div>
@@ -272,11 +272,13 @@
 function cartItemDeleteSessionRequest(product_id){
 }
 
-function redirectToCheckout(){
+function redirectToCheckout(event){
+  event.preventDefault()
   accessToken=window.localStorage.getItem('accessToken');
   refreshToken=window.localStorage.getItem('refreshToken');
   if(accessToken){
-  fetch('http://localhost:8000/order/checkout/', {
+    console.log("access exists")
+  fetch('http://localhost:8000/checkout/', {
     method: 'GET',
     headers: {
         'Content-Type': 'application/json',
@@ -284,10 +286,12 @@ function redirectToCheckout(){
     },
 })
     .then(response => {
-      console.log(401);
-      if(response.status==401){  
+      console.log(response);
 
-        fetch('http://localhost:8000/order/checkout/', {
+      if(response.status==401){  
+        console.log(401,"access token expired");
+
+        fetch('http://localhost:8000/checkout/', {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json',
@@ -295,11 +299,14 @@ function redirectToCheckout(){
           },
       })
           .then(response => {
-            console.log(401);
+            console.log(response);
             if(response.status==401){  
-                window.location = 'http://127.0.0.1:8000/api/v1/accounts/optain_pair_tokens/?next=/cart/checkout/';
+              console.log(401,"refresh token expired");
+              window.location = 'http://127.0.0.1:8000/api/v1/accounts/optain_pair_tokens/?next=/checkout/';
             }
             else{
+              console.log("received new access and refresh tokens using last refresh token");
+
               window.localStorage.setItem('refreshToken', response['refresh_token']);
               window.localStorage.setItem('accessToken', response['access_token']);
             }
@@ -313,7 +320,9 @@ function redirectToCheckout(){
         console.error('Error:', error);
     });}
     else{
-      window.location = 'http://127.0.0.1:8000/accounts/login/?next=/cart/checkout/';
+      window.location = 'http://127.0.0.1:8000/accounts/login/?next=/checkout/';
+      console.log("access token not exists");
+
     }
 
     add_session_to_menuItemRequest();
