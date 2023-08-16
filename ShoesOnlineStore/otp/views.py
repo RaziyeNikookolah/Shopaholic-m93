@@ -66,10 +66,9 @@ class VerifyOtp(APIView):
                     # create jwt token
                     access_token = generate_access_token(user)
                     refresh_token = generate_refresh_token(user)
-                    if 'next' in request.GET:
-                        print("boooooooooood")
-                        return redirect({"access_token": access_token, "refresh_token": refresh_token,
-                                         "redirect_url": request.GET.get('next')}, status=verification_status)
+                    if 'next' in request.POST:
+                        return Response({"access_token": access_token, "refresh_token": refresh_token,
+                                         "redirect_url": request.POST.get('next')}, status=verification_status)
                     else:
                         return Response({"access_token": access_token, "refresh_token": refresh_token}, status=verification_status)
 
