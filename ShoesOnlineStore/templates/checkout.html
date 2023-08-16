@@ -280,10 +280,12 @@ function save_order_and_pay_money(event){
       headers: {
           'Content-Type': 'application/json',
       },
-      body: JSON.stringify(cartData),
+      body: JSON.stringify(data),
   })
       .then(response => response.json())
       .then(data => {
+        console.log("***************")
+        {% comment %} inja create ok shode {% endcomment %}
           console.log(data);
       })
       .catch(error => {
