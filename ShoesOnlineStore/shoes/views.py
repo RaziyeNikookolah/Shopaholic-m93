@@ -46,6 +46,7 @@ class ProductSearchListView(APIView):
 class ProductList(APIView):
     permission_classes = (AllowAny,)
     authentication_classes = []
+    serializer_class = ProductsSerializer
 
     def get(self, request):
         queryset = None
