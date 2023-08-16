@@ -39,7 +39,7 @@
               </div>
 
               <div class="form-group">
-                <input type="text" class="form-control" placeholder="Apartment, suite, unit etc. (optional)">
+                <input id="suit_address" type="text" class="form-control" placeholder="Apartment, suite, unit etc. (optional)">
               </div>
 
               <div class="form-group row">
@@ -67,7 +67,7 @@
 
 
               <div class="form-group">
-                <label for="c_ship_different_address" class="text-black" data-toggle="collapse" href="#ship_different_address" role="button" aria-expanded="false" aria-controls="ship_different_address"><input type="checkbox" value="1" id="c_ship_different_address"> Ship To A Different Address?</label>
+                {% comment %} <label for="c_ship_different_address" class="text-black" data-toggle="collapse" href="#ship_different_address" role="button" aria-expanded="false" aria-controls="ship_different_address"><input type="checkbox" value="1" id="c_ship_different_address"> Ship To A Different Address?</label> {% endcomment %}
                 <div class="collapse" id="ship_different_address">
                   <div class="py-2">
 
@@ -200,7 +200,7 @@
 
 
                   <div class="form-group">
-                    <a class="btn btn-primary btn-lg py-3 btn-block"style="color:white;" href="{% url 'home:thank_you' %}">Place Order</a>
+                    <a class="btn btn-primary btn-lg py-3 btn-block"style="color:white;" onclick="save_order_and_pay_money(event)" href="#">Place Order</a>
                   </div>
 
                 </div>
@@ -247,5 +247,24 @@ error: function (jqXhr, textStatus, errorMessage) { // error callback
   console.log('Error in loading data', errorMessage);
 }
   });});
+
+function save_order_and_pay_money(event){
+  event.preventDefault();
+  fname=$('#c_name').val;
+  console.log(name);
+  lname=$('#c_lname');
+  address_part_one=$('#c_address').val;
+  address_part_tow=$('#suit_address').val;
+  address=address_part_one+address_part_tow;
+  email=$("c_email_address").val;
+  phone_number=$("c_phone").val;
+  state=$("c_state_country").val;
+  postal_zip=$("c_code").val;
+  order_note=$("c_order_notes").val;
+  
+}
+
+
+
 </script>
 {% endblock %}
