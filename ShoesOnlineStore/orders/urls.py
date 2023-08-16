@@ -1,6 +1,6 @@
 
 from django.urls import path
-from . import views
+from . import views, zarrinpal_views
 
 
 urlpatterns = [
@@ -14,6 +14,14 @@ urlpatterns = [
          name="update_cart"),
     path("checkout/", views.CheckoutView.as_view(), name="checkout"),
 
-    # path('request_payment/', views.request_payment, name='request_payment'),
-    # path('verify_payment/', views.verify_payment, name='verify_payment'),
+    #     path('request_payment/', views.ZarrinPalRequestPayment.as_view(),
+    #          name='request_payment'),
+    #     path('verify_payment/', views.ZarrinPalVerifyPayment.as_view(),
+    #          name='verify_payment'),
+
+    #     path('request-payment/', zarinpal_views.request_payment, name='request_payment'),
+    #     path('verify-payment/', zarinpal_views.verify_payment, name='verify_payment')
+    path('request/', zarrinpal_views.send_request, name='request'),
+    path('verify/', zarrinpal_views.verify, name='verify'),
+
 ]

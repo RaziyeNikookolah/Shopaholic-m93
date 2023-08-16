@@ -1,34 +1,86 @@
+from django.shortcuts import redirect
+from django.http import HttpResponse
 import json
 from django.conf import settings
+from django.views import View
 import requests
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
-
 from accounts import authentication
 from .utils import add_product_to_session, session_cart, remove_product_from_session, clear_session
 from orders.serializer import RemoveCartItemsSerializer, CartItemSerializer, OrderItemsSerializer
 
 
-# # ? sandbox merchant
-# if settings.SANDBOX:
-#     sandbox = 'sandbox'
-# else:
-#     sandbox = 'www'
-
-# autho = ""
-
-# ZP_API_REQUEST = f"https://{sandbox}.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
-# ZP_API_VERIFY = f"https://{sandbox}.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
-# ZP_API_STARTPAY = f"https://{sandbox}.zarinpal.com/pg/StartPay/"
+# ZP_API_REQUEST = "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
+# ZP_API_VERIFY = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
+# ZP_API_STARTPAY = "https://sandbox.zarinpal.com/pg/StartPay/"
 
 # amount = 1000  # Rial / Required
 # description = "نهایی کردن خرید شما"  # Required
-# phone = 'YOUR_PHONE_NUMBER'  # Optional
+# # phone = 'YOUR_PHONE_NUMBER'  # Optional
 # # Important: need to edit for realy server.
 # CallbackURL = 'http://127.0.0.1:8080/order/verify_payment/'
+
+
+# class ZarrinPalRequestPayment(View):
+#     # authentication_classes = []
+#     # permission_classes = (AllowAny,)
+
+#     def get(self, request):
+#         data = {
+#             "MerchantID": settings.MERCHANT,
+#             "Amount": 1000,
+#             "Description": "Finalize your order",
+#             # "Phone": phone,
+#             "CallbackURL": 'http://127.0.0.1:8080/order/verify_payment/'
+#             # 'http://127.0.0.1:8000/thank_you/',
+#         }
+#         data = json.dumps(data)
+#         # set content length by data
+#         headers = {"accept": "application/json", 'content-type': 'application/json',
+#                    #    'content-length': str(len(data))
+#                    }
+
+#         req = requests.post(
+#             ZP_API_REQUEST, data=data, headers=headers, timeout=10)
+
+#         # authority = req.json()['data']['authority']
+#         # if len(req.json()['errors']) == 0:
+#         return redirect(ZP_API_STARTPAY.format(authority=autho))
+#         # else:
+#         # e_code = req.json()['errors']['code']
+#         # e_message = req.json()['errors']['message']
+#         # f"Error code: {e_code}, Error Message: {e_message}")
+#         # return HttpResponse("error")
+
+
+# class ZarrinPalVerifyPayment(View):
+#     # authentication_classes = []
+#     # permission_classes = (AllowAny,)
+
+#     def get(self, request):
+#         global autho
+#         data = {
+#             "MerchantID": settings.MERCHANT,
+#             "Amount": amount,
+#             "Authority": autho,
+#         }
+#         data = json.dumps(data)
+#         # set content length by data
+#         headers = {'content-type': 'application/json',
+#                    'content-length': str(len(data))}
+#         response = requests.post(ZP_API_VERIFY, data=data, headers=headers)
+
+#         if response.status_code == 200:
+#             response = response.json()
+#             if response['Status'] == 100:
+#                 return {'status': True, 'RefID': response['RefID']}
+#             else:
+#                 return {'status': False, 'code': str(response['Status'])}
+#         return response
 
 
 class AddToCartView(APIView):
@@ -106,57 +158,3 @@ class CheckoutView(APIView):
         #     return Response({"message": "User is Logged in"}, status=status.HTTP_100_CONTINUE)
         # else:
         #     return Response({"message": "login required"}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-def request_payment(request):
-    data = {
-        "MerchantID": settings.MERCHANT,
-        "Amount": 1000,
-        "Description": "Finalize your order",
-        # "Phone": phone,
-        "CallbackURL": 'http://127.0.0.1:8000/thank_you/',
-    }
-    data = json.dumps(data)
-    # set content length by data
-    headers = {'content-type': 'application/json',
-               'content-length': str(len(data))}
-    try:
-        response = requests.post(
-            ZP_API_REQUEST, data=data, headers=headers, timeout=10)
-
-        if response.status_code == 200:
-            response = response.json()
-            global autho
-            autho = str(response['Authority'])
-            if response['Status'] == 100:
-                return {'status': True, 'url': ZP_API_STARTPAY + str(response['Authority']), 'authority': response['Authority']}
-            else:
-                return {'status': False, 'code': str(response['Status'])}
-        return response
-
-    except requests.exceptions.Timeout:
-        return {'status': False, 'code': 'timeout'}
-    except requests.exceptions.ConnectionError:
-        return {'status': False, 'code': 'connection error'}
-
-
-# def verify_payment(request):
-#     global autho
-#     data = {
-#         "MerchantID": settings.MERCHANT,
-#         "Amount": amount,
-#         "Authority": autho,
-#     }
-#     data = json.dumps(data)
-#     # set content length by data
-#     headers = {'content-type': 'application/json',
-#                'content-length': str(len(data))}
-#     response = requests.post(ZP_API_VERIFY, data=data, headers=headers)
-
-#     if response.status_code == 200:
-#         response = response.json()
-#         if response['Status'] == 100:
-#             return {'status': True, 'RefID': response['RefID']}
-#         else:
-#             return {'status': False, 'code': str(response['Status'])}
-#     return response
