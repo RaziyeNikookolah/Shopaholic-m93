@@ -200,7 +200,7 @@
 
 
                   <div class="form-group">
-                    <a class="btn btn-primary btn-lg py-3 btn-block"style="color:white;" onclick="save_order_and_pay_money(event)" href="#">Place Order</a>
+                    <a class="btn btn-primary btn-lg py-3 btn-block" href="{% url 'home:thank_you' %}">Place Order</a>
                   </div>
 
                 </div>
@@ -246,53 +246,55 @@
 error: function (jqXhr, textStatus, errorMessage) { // error callback 
   console.log('Error in loading data', errorMessage);
 }
-  });});
-
-function save_order_and_pay_money(event){
-  event.preventDefault();
-  fname=$('#c_name').val;
-  console.log(name);
-  lname=$('#c_lname');
-  address_part_one=$('#c_address').val;
-  address_part_tow=$('#suit_address').val;
-  address=address_part_one+address_part_tow;
-  email=$("c_email_address").val;
-  phone_number=$("c_phone").val;
-  state=$("c_state_country").val;
-  postal_zip=$("c_code").val;
-  order_note=$("c_order_notes").val;
+  });
 
 
-  const data = {
-    "fname": fname,
-    "lname":lname,
-    "address": address,
-    "email":email,
-    "phone_number":phone_number,
-    "postal_zip":postal_zip,
-    "order_note":order_note,
- };
+  $('#save_order').click(function(event) {
+    event.preventDefault();
+    window.location = 'http://127.0.0.1:8000/' + Checkout + '/';
+{% comment %}     
+    var fname = $('#c_name').val();
+    var lname = $('#c_lname').val();
+    var address_part_one = $('#c_address').val();
+    var address_part_tow = $('#suit_address').val();
+    var address = address_part_one + address_part_tow;
+    var email = $("#c_email_address").val();
+    var phone_number = $("#c_phone").val();
+    var state = $("#c_state_country").val();
+    var postal_zip = $("#c_code").val();
+    var order_note = $("#c_order_notes").val();
 
+    const data = {
+      "fname": fname,
+      "lname": lname,
+      "address": address,
+      "email": email,
+      "phone_number": phone_number,
+      "postal_zip": postal_zip,
+      "order_note": order_note,
+      "cartData":cartData
+    };
 
-
-  fetch('http://localhost:8000/order/create_order/', {
-    method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
+    $.ajax({
+      url: 'http://localhost:8000/order/create_order/',
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      success: function(response) {
+        console.log("***************");
+        console.log(response);
       },
-      body: JSON.stringify(data),
-  })
-      .then(response => response.json())
-      .then(data => {
-        console.log("***************")
-        {% comment %} inja create ok shode {% endcomment %}
-          console.log(data);
-      })
-      .catch(error => {
-          console.error('Error:', error);
-      });
-}
-}
+      error: function(error) {
+        console.error('Error:', error);
+      }
+    });
+  }); {% endcomment %}
+
+
+
+});
+
+
 
 
 

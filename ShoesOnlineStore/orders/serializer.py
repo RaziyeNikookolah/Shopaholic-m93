@@ -1,3 +1,4 @@
+from .models import Order
 from rest_framework import serializers
 from .models import OrderItems
 from shoes.models import Product
@@ -29,3 +30,9 @@ class CartItemSerializer(serializers.Serializer):
 
 class RemoveCartItemsSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'

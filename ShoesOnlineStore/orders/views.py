@@ -1,3 +1,6 @@
+from orders.models import Order
+from shoes.models import Product
+from .serializer import OrderSerializer
 from django.shortcuts import redirect
 from django.http import HttpResponse
 import json
@@ -163,5 +166,43 @@ class CheckoutView(APIView):
 class CreateOrder(APIView):
     @csrf_exempt
     def post(self, request):
-        ...
-        return Response()
+
+        if request.data:
+            data = request.data  # Access the JSON data
+            # print(data)
+            # Iterate through the top-level keys and values
+            # for key, value in data.items():
+            cartData = data.get('cartData')
+            name = data.get('fname')
+            family_name = data.get("lname")
+            address = data.get("address")
+            email = data.get("email")
+            phone_number = data.get("phone_number")
+            postal_code = data.get("postal_zip")
+            order_note = data.get("order_note")
+            cart_items = cartData.get('cart_items')
+            phone_number = cartData.get('phone_number')
+
+            user = request.user
+            print("***********")
+            print(user)
+            order = Order.objects.create(account=user, receiver_name=name,
+                                         receiver_lastname=family_name, address=address,
+                                         email=email, postal_code=postal_code, note=order_note, receiver_phone_number=phone_number)
+
+            for k, v in cart_items.items():
+                for n, m in v.items():
+                    print(n, m)
+                    product, quantity, final_price = 0, 0, 0
+                    if n == id:
+                        product = Product.objects.filter(id=m)
+                    if n == "quantity":
+                        quantity = m
+                    if n == "sub_total":
+                        final_price = v
+                orderItem = orderItem.objects.create(
+                    order=order, product=product, quantity=quantity, final_price=final_price)
+            total_price = order.get_total_price()
+            return Response({"total_price": total_price, 'message': "Order added successfully"}, status=status.HTTP_201_CREATED)
+
+        return Response({'message': "Error"}, status=status.HTTP_400_BAD_REQUEST)

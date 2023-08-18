@@ -22,6 +22,7 @@ services:
       - .:/app
     depends_on:
       - db
+      # - redis
     expose:
       - "8000"
     networks:
@@ -29,6 +30,27 @@ services:
     ports:
       - "8000:8000"
     restart: on-failure
+  # redis:
+  #   image: redis:alpine
+  # celery:
+  #   build: ./project
+  #   command: celery -A core worker -l info
+  #   volumes:
+  #     - .:/usr/src/app/
+  #   depends_on:
+  #     - redis
+  # celery-beat:
+  #   build: .
+  #   command: celery -A core beat -l info
+  #   volumes:
+  #     - .:/usr/src/app/
+  #   environment:
+  #     - DEBUG=1
+  #   depends_on:
+  #     - redis
+
+
+
 
 volumes:
   postgres_data:

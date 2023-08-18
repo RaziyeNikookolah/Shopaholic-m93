@@ -1,4 +1,6 @@
 from django.db.models import Subquery, OuterRef, Max
+
+from shoes.pagination import ProductPagination
 from .models import Product, Price
 from django.views.generic.list import ListView
 from django.db.models import Q
@@ -27,6 +29,7 @@ class ProductUpdate(RetrieveUpdateDestroyAPIView):
 
 
 class ProductSearchListView(APIView):
+    pagination_class = ProductPagination
 
     def get(self, request):
         queryset = None
@@ -46,6 +49,7 @@ class ProductSearchListView(APIView):
 class ProductList(APIView):
     permission_classes = (AllowAny,)
     authentication_classes = []
+    # pagination_class = ProductPagination
     serializer_class = ProductsSerializer
 
     def get(self, request):

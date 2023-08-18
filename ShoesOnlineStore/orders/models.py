@@ -41,6 +41,7 @@ class Order(BaseModel):
         max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True, blank=True)
     sent_date = models.DateField(null=True, blank=True)
     delivery_date = models.DateField(null=True, blank=True)
+
     tax = models.DecimalField(
         max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True, blank=True)
 
@@ -49,12 +50,15 @@ class Order(BaseModel):
     # agar false bud maghadire payin baz beshe
     receiver_name = models.CharField(max_length=100, null=True, blank=True)
     receiver_lastname = models.CharField(max_length=150, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
     province = models.CharField(
         max_length=7,
         choices=PROVINCES,
         verbose_name=_('Province'),
     )
-    city = models.CharField(_("city"), max_length=40)
+    receiver_phone_number = models.CharField(
+        max_length=150, null=True, blank=True)
+    city = models.CharField(_("city"), max_length=40, null=True, blank=True)
     address = models.TextField(_("adderess"), max_length=100)
     postal_code = models.CharField(_("postal code"), max_length=20)
     note = models.TextField(null=True, blank=True)

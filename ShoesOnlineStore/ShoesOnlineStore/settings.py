@@ -123,7 +123,7 @@ MIDDLEWARE = [
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'ShoesOnlineStore.urls'
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # SESSION_COOKIE_SECURE = True
 TEMPLATES = [
     {
@@ -160,8 +160,9 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     # "DEFAULT_AUTHENTICATION_CLASSES": ("accounts.authentication.JWTAuthentication",),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 3,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+
+    "PAGE_SIZE": 1,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 SPECTACULAR_SETTINGS = {
@@ -276,3 +277,14 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'r.nikookolah@gmail.com'
 EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = 'Celery <r.nikookolah@gmail.com>'
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
