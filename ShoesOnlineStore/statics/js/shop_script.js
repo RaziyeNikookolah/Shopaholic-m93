@@ -32,18 +32,14 @@ $(document).ready(function () {
         },
     });
 
-
-
     $('#search_form').on('keypress', function (e) {
 
         if (e.keyCode == 13) {
             e.preventDefault();
-            // alert('You pressed enter!');
-            // }
+
             $.ajax({
-                url: 'http://localhost:8000/shoes/search_list/',
+                url: 'http://127.0.0.1:8000/shoes/product_list/?search=' + $('#search_form').val(),
                 type: 'GET',
-                data: { search: $('#search_form').val() },
                 dataType: "json",
                 success: function (data, status, xhr) {
 
@@ -65,7 +61,7 @@ $(document).ready(function () {
                     });
                     output += '</div>';
                     $('#all_products').html(output);
-
+                    // window.location = 'http://127.0.0.1:8000';
 
                 },
                 error: function (jqXhr, textStatus, errorMessage) { // error callback 
@@ -75,7 +71,36 @@ $(document).ready(function () {
         }
 
     });
-    // search_list/
+    getCategories();
+    var ul = $('#ulCategories');
+    function getCategories() {
+        var output = '<ul class="list-unstyled mb-0" id="ulCategories">';
+        var ul = $('#ulCategories');  // Store the ul element in a variable
+
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/v1/shoes/categories/',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                for (var categoryKey in response) {
+                    var category = response[categoryKey];
+
+                    output += '<li class="mb-1" id="category_' + categoryKey + '"><a href="#" class="d-flex"><span>' + category.title + '</span> <span class="text-black ml-auto">(2,220)</span></a></li>';
+                }
+                output += '</ul>';
+                ul.html(output);
+
+                // Attach click event using jQuery
+                $('[id^="category_"]').on('click', function () {
+                    var categoryText = $(this).find('span:first-child').text();
+                    console.log('Clicked Category:', categoryText);
+                });
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
 
 
 });
