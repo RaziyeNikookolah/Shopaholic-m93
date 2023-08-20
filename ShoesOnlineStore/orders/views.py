@@ -1,19 +1,18 @@
+import csv
 from orders.models import Order
-from shoes.models import Product
-from .serializer import OrderSerializer
-from django.shortcuts import redirect
 from django.http import HttpResponse
-import json
-from django.conf import settings
-from django.views import View
-import requests
+import time
+from django.utils import timezone
+from orders.models import Order, OrderItem
+from shoes.models import Product
+from decimal import Decimal
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from accounts import authentication
-from .utils import add_product_to_session, session_cart, remove_product_from_session, clear_session
+from .utils import add_product_to_session, session_cart, remove_product_from_session, clear_session, create_orderItems_from_session
 from orders.serializer import RemoveCartItemsSerializer, CartItemSerializer, OrderItemsSerializer
 
 
@@ -98,6 +97,7 @@ class AddToCartView(APIView):
             quantity = serializer.validated_data.get('quantity', '')
             price = serializer.validated_data.get('price', '')
             total_price = serializer.validated_data.get('total_price', '')
+
             add_product_to_session(product_id, price, quantity, total_price)
 
             return Response({'message': 'item_added'}, status=status.HTTP_201_CREATED)
@@ -164,45 +164,54 @@ class CheckoutView(APIView):
 
 
 class CreateOrder(APIView):
+    authentication_classes = [authentication.JWTAuthentication]
+
     @csrf_exempt
     def post(self, request):
-
         if request.data:
-            data = request.data  # Access the JSON data
-            # print(data)
-            # Iterate through the top-level keys and values
-            # for key, value in data.items():
-            cartData = data.get('cartData')
-            name = data.get('fname')
-            family_name = data.get("lname")
+            data = request.data
+            receiver_name = data.get('fname')
+            receiver_last_name = data.get("lname")
             address = data.get("address")
+            city = data.get("city")
+            province = data.get("province")
             email = data.get("email")
-            phone_number = data.get("phone_number")
+            receiver_phone_number = data.get("phone_number")
             postal_code = data.get("postal_zip")
-            order_note = data.get("order_note")
-            cart_items = cartData.get('cart_items')
-            phone_number = cartData.get('phone_number')
+            note = data.get("order_note")
 
             user = request.user
-            print("***********")
-            print(user)
-            order = Order.objects.create(account=user, receiver_name=name,
-                                         receiver_lastname=family_name, address=address,
-                                         email=email, postal_code=postal_code, note=order_note, receiver_phone_number=phone_number)
-
-            for k, v in cart_items.items():
-                for n, m in v.items():
-                    print(n, m)
-                    product, quantity, final_price = 0, 0, 0
-                    if n == id:
-                        product = Product.objects.filter(id=m)
-                    if n == "quantity":
-                        quantity = m
-                    if n == "sub_total":
-                        final_price = v
-                orderItem = orderItem.objects.create(
-                    order=order, product=product, quantity=quantity, final_price=final_price)
+            order = Order.objects.create(account=user, receiver_name=receiver_name,
+                                         receiver_lastname=receiver_last_name, address=address, city=city, province=province,
+                                         email=email, postal_code=postal_code, note=note, receiver_phone_number=receiver_phone_number)
+            create_orderItems_from_session(order)
+            clear_session()
             total_price = order.get_total_price()
             return Response({"total_price": total_price, 'message': "Order added successfully"}, status=status.HTTP_201_CREATED)
 
         return Response({'message': "Error"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def export(request):  # no one can not call this view use user_passes_test
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response)
+    writer.writerow(['Products in order:'])
+    today = timezone.now().date()
+
+    orders_created_today = Order.objects.filter(create_timestamp__date=today).select_related('items').values(
+        'id', 'create_timestamp', 'is_paid', 'receiver_name', 'receiver_lastname', 'city')
+
+    for order in orders_created_today:
+        print(f"Order ID: {order['id']}")
+        writer.writerow([order['create_timestamp'], order['is_paid'],
+                        order['receiver_name'], order['receiver_lastname'], order['city']])
+
+        items = OrderItem.objects.filter(order_id=order['id'])
+        for item in items:
+            print(
+                f" - Product: {item.product}, Quantity: {item.quantity}, Final Price: {item.final_price}")
+            writer.writerow([item.product, item.quantity, item.final_price])
+
+    response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+
+    return response
