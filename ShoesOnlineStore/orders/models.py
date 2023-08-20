@@ -1,11 +1,11 @@
 from django.db import models
 from core.models import BaseModel
-from shoes.models import Product
+from shoes.models import Price, Product
 from accounts.models import Account
 from core.utils import PROVINCES
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-
+from .tasks import send_delivery_status_email, send_order_paid_email
 
 MAX_DIGITS = settings.MAX_DIGITS
 DECIMAL_PLACES = settings.DECIMAL_PLACES
@@ -38,7 +38,7 @@ class Order(BaseModel):
     payment_date = models.DateTimeField(null=True, blank=True)
     tracking_code = models.CharField(max_length=30, null=True, blank=True)
     shipping_cost = models.DecimalField(
-        max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True, blank=True)
+        max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True, blank=True, default=20000)
     sent_date = models.DateField(null=True, blank=True)
     delivery_date = models.DateField(null=True, blank=True)
 
@@ -60,7 +60,8 @@ class Order(BaseModel):
         max_length=150, null=True, blank=True)
     city = models.CharField(_("city"), max_length=40, null=True, blank=True)
     address = models.TextField(_("adderess"), max_length=100)
-    postal_code = models.CharField(_("postal code"), max_length=20)
+    postal_code = models.CharField(
+        _("postal code"), max_length=20, null=True, blank=True)
     note = models.TextField(null=True, blank=True)
 
     def __str__(self) -> str:
@@ -69,8 +70,15 @@ class Order(BaseModel):
     def get_total_price(self):
         return sum(item.get_cost() for item in self.items.all())
 
+    def save(self, *args, **kwargs):
+        if self.delivery_status == 2:
+            send_delivery_status_email.delay(self.id)
+        if self.is_paid == True:
+            send_order_paid_email(self.id)
+        super(Order, self).save(*args, **kwargs)
 
-class OrderItems(BaseModel):
+
+class OrderItem(BaseModel):
     class Meta:
         verbose_name_plural = "OrderItems"
     product = models.ForeignKey(
@@ -79,11 +87,14 @@ class OrderItems(BaseModel):
     order = models.ForeignKey(
         "Order", on_delete=models.PROTECT, related_name="items", null=True, blank=True)
     quantity = models.PositiveSmallIntegerField()
-    final_price = models.DecimalField(
-        max_digits=MAX_DIGITS, decimal_places=2, null=True, blank=True)
 
     def get_cost(self):
-        return self.final_price*self.quantity
+        last_price_query = Price.objects.filter(product=self.product).order_by(
+            '-create_timestamp').values('price')[:1]
+
+        if last_price_query:
+            last_price = last_price_query[0]['price']
+            return last_price * self.quantity
 
     def __str__(self) -> str:
         return f"{self.product} {self.order}"
