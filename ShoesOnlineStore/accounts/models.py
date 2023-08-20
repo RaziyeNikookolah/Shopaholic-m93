@@ -46,7 +46,7 @@ class Account(BaseModel, AbstractBaseUser, PermissionsMixin):
     objects = AccountManager()
 
     def __str__(self) -> str:
-        return f"{self.phone_number}"
+        return f"User with phone number:{self.phone_number}"
 
     def fullname(self):
         if self.first_name or self.last_name:
