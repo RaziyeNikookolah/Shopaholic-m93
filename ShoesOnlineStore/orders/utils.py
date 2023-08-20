@@ -3,6 +3,7 @@ from django.contrib.sessions.backends.db import SessionStore
 from rest_framework.response import Response
 from rest_framework import status
 from decimal import Decimal
+from orders.models import OrderItem
 from shoes.models import Product
 from shoes.serializer import ProductSimpleSerializer
 session = SessionStore()
@@ -90,3 +91,30 @@ def clear_session():
     global session
     del session[session_key]
     session.save()
+
+
+def create_orderItems_from_session(order):
+
+    global product
+
+    product = None
+
+    # Parse the JSON string
+    data = json.loads(session_cart())
+
+    # Access the cart_items and grand_total properties
+    cart_items = data["cart_items"]
+    grand_total = data["grand_total"]
+
+    # Iterate through the cart items
+    for item in cart_items.values():
+
+        product = Product.objects.filter(id=item.get(
+            'id'), available_quantity__gte=item["quantity"]).first()
+        if product:
+            orderItem = OrderItem.objects.create(
+                order=order, product=product, quantity=item["quantity"])
+    # product.update(
+    #     available_quantity=product.available_quantity-item_quantity)
+        else:
+            return Response({'message': "Error:Unavailable product or Invalid product"}, status=status.HTTP_400_BAD_REQUEST)
