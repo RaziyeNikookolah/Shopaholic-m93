@@ -1,106 +1,50 @@
 from django.db.models import Subquery, OuterRef, Max
-
+from django_filters.rest_framework import DjangoFilterBackend
 from shoes.pagination import ProductPagination
 from .models import Product, Price
-from django.views.generic.list import ListView
-from django.db.models import Q
+
 from .serializer import ProductsSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import AllowAny
 # IsAuthenticatedOrReadOnly permission just can run safe method for unauthenticated user
-from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, filters
+from shoes.api.filters import ProductFilter
 
 
-class ListCreateProductView(ListAPIView):
-    queryset = Product.objects.filter(available_quantity__gte=1)
-    serializer_class = ProductsSerializer
-    permission_classes = ((IsAuthenticatedOrReadOnly,))
-
-    def get_queryset(self):
-        return super().get_queryset().select_related('brand', 'category').prefetch_related('color', 'size')
-
-
-class ProductUpdate(RetrieveUpdateDestroyAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductsSerializer
-    permission_classes = ((IsAuthenticatedOrReadOnly,))
-
-
-class ProductSearchListView(APIView):
-    pagination_class = ProductPagination
-
-    def get(self, request):
-        queryset = None
-        if not 'search' in request.GET:
-            queryset = Product.objects.filter(available_quantity__gte=1).select_related(
-                'brand', 'category').prefetch_related('color', 'size')
-        else:
-            queryset = Product.objects.filter(brand__title__icontains=request.GET.get('search'), available_quantity__gte=1).select_related(
-                'brand', 'category').prefetch_related('color', 'size')
-        serializer = ProductsSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    serializer_class = ProductsSerializer
-    queryset = Product.objects.filter(available_quantity__gte=1)
-
-
-class ProductList(APIView):
+class ProductList(ListAPIView):
     permission_classes = (AllowAny,)
     authentication_classes = []
-    # pagination_class = ProductPagination
     serializer_class = ProductsSerializer
+    queryset = Product.objects.filter(
+        available_quantity__gte=1
+    ).select_related('brand', 'category').prefetch_related('color', 'size')
 
-    def get(self, request):
-        queryset = None
-        if not 'search' in request.GET:
-            queryset = Product.objects.filter(available_quantity__gte=1).select_related(
-                'brand', 'category').prefetch_related('color', 'size')
-        else:
-            queryset = Product.objects.filter(brand__title__icontains=request.GET.get('search'), available_quantity__gte=1).select_related(
-                'brand', 'category').prefetch_related('color', 'size')
-
-        # Subquery to get the last added price for each product
-        # last_price_subquery = Price.objects.filter(
-        #     product=OuterRef('pk')).order_by('-create_timestamp')
+    def get_queryset(self):
 
         last_price_subquery = Price.objects.filter(
             product=OuterRef('pk')).order_by('-create_timestamp')
-        last_price_subquery = last_price_subquery.values(
-            'product').annotate(max_create_timestamp=Max('create_timestamp'))
-        last_price_subquery = last_price_subquery.values(
-            'max_create_timestamp')[:1]
+        last_price_subquery = last_price_subquery.values('price')[:1]
 
-        queryset = queryset.annotate(last_price=Subquery(
-            last_price_subquery.values('price')[:1]))
+        queryset = super().get_queryset().annotate(
+            last_price=Subquery(last_price_subquery)
+        )
+        return queryset
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend, ]
+    filterset_fields = ["title", "category__title", "brand__title"]
+    filter_class = ProductFilter
+    search_fields = [
+        'title',
+        'brand__title',
+        'brand__manufacturing_country',
+        'descriptions',
+        'size__number',
+        'color__name',]
 
-        serializer = ProductsSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
 
-    # def get_queryset(self, **kwargs):
-    #     print(222222222222)
-    #     search = self.request.GET.get('search')
-    #     if search:
-    #         self.request.session['search'] = search
-    #     else:
-    #         try:
-    #             search = self.request.session['search']
-    #         except:
-    #             search = ''
+        serializer = self.serializer_class(queryset, many=True)
+        serialized_data = serializer.data
 
-    #     return Product.objects.all().select_related('brand', 'category').prefetch_related('color', 'size').filter(Q(title__contains=search) | Q(descriptions__contains=search))
-
-
-# class ProductList(APIView):
-#     def get(self, request):
-#         queryset = None
-#         if not 'search' in request.GET:
-#             queryset = Product.objects.filter(available_quantity__gte=1).select_related(
-#                 'brand', 'category').prefetch_related('color', 'size')
-#         else:
-#             queryset = Product.objects.filter(brand__title__icontains=request.GET.get('search'), available_quantity__gte=1).select_related(
-#                 'brand', 'category').prefetch_related('color', 'size')
-#         serializer = ProductsSerializer(
-#             queryset, many=True)  # price in special model
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serialized_data, status=status.HTTP_200_OK)
