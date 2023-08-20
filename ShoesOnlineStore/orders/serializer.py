@@ -1,6 +1,6 @@
 from .models import Order
 from rest_framework import serializers
-from .models import OrderItems
+from .models import OrderItem
 from shoes.models import Product
 from shoes.serializer import ProductsSerializer, ProductSimpleSerializer
 from django.conf import settings
