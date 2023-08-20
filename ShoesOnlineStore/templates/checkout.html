@@ -39,7 +39,7 @@
               </div>
 
               <div class="form-group">
-                <input id="suit_address" type="text" class="form-control" placeholder="Apartment, suite, unit etc. (optional)">
+                <input id="c_city" type="text" class="form-control" placeholder="City">
               </div>
 
               <div class="form-group row">
@@ -154,7 +154,7 @@
 
             <div class="row mb-5">
               <div class="col-md-12">
-                <h2 class="h3 mb-3 text-black">Coupon Code</h2>
+                {% comment %} <h2 class="h3 mb-3 text-black">Coupon Code</h2>
                 <div class="p-3 p-lg-5 border">
                   
                   <label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
@@ -165,9 +165,9 @@
                     </div>
                   </div>
 
-                </div>
+                </div> {% endcomment %}
               </div>
-            </div>
+            </div> 
             
             <div class="row mb-5">
               <div class="col-md-12">
@@ -179,7 +179,7 @@
                       <th>Total</th>
                     </thead>
                     <tbody id="order_product">
-                      <tr>
+                      {% comment %} <tr>
                         <td>Top Up T-Shirt <strong class="mx-2">x</strong> 1</td>
                         <td>$250.00</td>
                       </tr>
@@ -194,13 +194,13 @@
                       <tr>
                         <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
                         <td class="text-black font-weight-bold"><strong>$350.00</strong></td>
-                      </tr>
+                      </tr> {% endcomment %}
                     </tbody>
                   </table>
 
 
                   <div class="form-group">
-                    <a class="btn btn-primary btn-lg py-3 btn-block" href="{% url 'home:thank_you' %}">Place Order</a>
+                    <a class="btn btn-primary btn-lg py-3 btn-block" id="save_order" href="#">Place Order</a>
                   </div>
 
                 </div>
@@ -247,48 +247,50 @@ error: function (jqXhr, textStatus, errorMessage) { // error callback
   console.log('Error in loading data', errorMessage);
 }
   });
-
-
   $('#save_order').click(function(event) {
     event.preventDefault();
-    window.location = 'http://127.0.0.1:8000/' + Checkout + '/';
-{% comment %}     
-    var fname = $('#c_name').val();
+    //window.location = 'http://127.0.0.1:8000/checkout/';
+
+    var fname = $('#c_fname').val();
     var lname = $('#c_lname').val();
-    var address_part_one = $('#c_address').val();
-    var address_part_tow = $('#suit_address').val();
-    var address = address_part_one + address_part_tow;
+    var address = $('#c_address').val();
+    var province = $('#c_state_country').val();
     var email = $("#c_email_address").val();
     var phone_number = $("#c_phone").val();
-    var state = $("#c_state_country").val();
-    var postal_zip = $("#c_code").val();
+    var city = $("#c_city").val();
+    var postal_zip = $("#c_postal_zip").val();
     var order_note = $("#c_order_notes").val();
 
     const data = {
       "fname": fname,
       "lname": lname,
-      "address": address,
       "email": email,
       "phone_number": phone_number,
       "postal_zip": postal_zip,
+      "province":province,
+      "address": address,
       "order_note": order_note,
-      "cartData":cartData
+      "cartData":cartData,
+      "city":city
     };
-
+    accessToken=window.localStorage.getItem('accessToken');
+    refreshToken=window.localStorage.getItem('refreshToken');
     $.ajax({
       url: 'http://localhost:8000/order/create_order/',
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify(data),
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+      },
       success: function(response) {
-        console.log("***************");
         console.log(response);
       },
       error: function(error) {
         console.error('Error:', error);
       }
     });
-  }); {% endcomment %}
+  }); 
 
 
 
