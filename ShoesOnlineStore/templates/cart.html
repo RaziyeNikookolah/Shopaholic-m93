@@ -277,7 +277,7 @@ function redirectToCheckout(event){
   accessToken=window.localStorage.getItem('accessToken');
   refreshToken=window.localStorage.getItem('refreshToken');
   if(accessToken){
-    console.log("access exists")
+    {% comment %} console.log("access exists") {% endcomment %}
   fetch('http://localhost:8000/checkout/', {
     method: 'GET',
     headers: {
