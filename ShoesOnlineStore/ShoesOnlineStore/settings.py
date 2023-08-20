@@ -162,8 +162,10 @@ REST_FRAMEWORK = {
     # "DEFAULT_AUTHENTICATION_CLASSES": ("accounts.authentication.JWTAuthentication",),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 
-    "PAGE_SIZE": 1,
+    "PAGE_SIZE": 2,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',]
 }
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Shoes Online Shopping API',
