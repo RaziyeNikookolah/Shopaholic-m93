@@ -1,14 +1,6 @@
 
 {% load static %}
 
-    {% comment %} <div class="bg-light py-3">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 mb-0"><a href="{% url 'index' %}">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Shop</strong></div>
-        </div>
-      </div>
-    </div> {% endcomment %}
-
     <div class="site-section">
       <div class="container">
 
@@ -79,7 +71,7 @@
           <div class="col-md-3 order-1 mb-5 mb-md-0">
             <div class="border p-4 rounded mb-4">
               <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
-              <ul class="list-unstyled mb-0">
+              <ul class="list-unstyled mb-0"  id="ulCategories">
                 <li class="mb-1"><a href="#" class="d-flex"><span>Men</span> <span class="text-black ml-auto">(2,220)</span></a></li>
                 <li class="mb-1"><a href="#" class="d-flex"><span>Women</span> <span class="text-black ml-auto">(2,550)</span></a></li>
                 <li class="mb-1"><a href="#" class="d-flex"><span>Children</span> <span class="text-black ml-auto">(2,124)</span></a></li>
@@ -126,11 +118,5 @@
           </div>
         </div>
         {% load static %}
-
-
       </div>
     </div>
-
-
-
-   
