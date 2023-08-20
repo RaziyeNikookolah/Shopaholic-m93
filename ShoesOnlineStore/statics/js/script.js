@@ -58,6 +58,7 @@ $(document).on('submit', '#code-verify_form', function (e) {
             //console.log(window.localStorage.getItem('refreshToken'));
         },
         error: function (jqXhr, textStatus, errorMessage) {
+            console.log(textStatus);//open login form and take next redirect
             console.log('Error in code-verify_form submission:', errorMessage);
         }
     });
