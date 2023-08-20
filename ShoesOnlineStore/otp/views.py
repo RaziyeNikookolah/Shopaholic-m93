@@ -1,8 +1,5 @@
-from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from .serializers import RequestOtpSerializer, VerifyOtpSerializer
-# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-# from rest_framework_simplejwt.views import TokenObtainPairView
 from .utils import send_otp_request, verify_otp_request
 from accounts.utils import generate_access_token, generate_refresh_token
 from rest_framework.views import APIView
@@ -61,8 +58,9 @@ class VerifyOtp(APIView):
                     user, _ = User.objects.get_or_create(
                         phone_number=phone_number)
                     login(request, user)
-
+                    print(user)
                     # add_session_items_to_orderItem(user)
+
                     # create jwt token
                     access_token = generate_access_token(user)
                     refresh_token = generate_refresh_token(user)
@@ -74,7 +72,11 @@ class VerifyOtp(APIView):
 
                     # goes to profile page
                 else:
-                    return Response({'message': message}, status=verification_status)
+                    if 'next' in request.POST:
+                        return Response({'message': message, "redirect_url": request.POST.get('next')}, status=verification_status)
+                    else:
+                        return Response({'message': message}, status=verification_status)
+
             else:
                 return Response({'error': 'Invalid data provided.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
