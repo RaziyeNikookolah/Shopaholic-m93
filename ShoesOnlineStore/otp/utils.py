@@ -31,7 +31,7 @@ def verify_otp_request(code, otp_request):
 
     if otp_request.is_expired():
         otp_request.delete()
-        return status.HTTP_200_OK, "Too late receive a code"
+        return status.HTTP_203_NON_AUTHORITATIVE_INFORMATION, "Too late receive a code"
 
     if code == otp_request.code:
         otp_request.delete()
