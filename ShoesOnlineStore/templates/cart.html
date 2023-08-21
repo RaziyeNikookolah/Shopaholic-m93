@@ -104,10 +104,15 @@
       <script src="{% static 'js/main.js'%}"></script>
 <script>
     $(document).ready(function() {
+      accessToken=window.localStorage.getItem('accessToken');
+              
       $.ajax({
       url : "http://localhost:8000/order/cart_list/",
       type: 'GET',
       dataType: "json",
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+      },
       success: function (data, status, xhr) {
         cartData = JSON.parse(data);
 
