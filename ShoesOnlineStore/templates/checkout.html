@@ -243,13 +243,13 @@
         output+='</tbody>';
   $('#order_product').html(output);
     },
-error: function (jqXhr, textStatus, errorMessage) { // error callback 
-  console.log('Error in loading data', errorMessage);
-}
+  error: function (jqXhr, textStatus, errorMessage) { // error callback 
+    console.log('Error in loading data', errorMessage);
+  }
   });
   $('#save_order').click(function(event) {
     event.preventDefault();
-    //window.location = 'http://127.0.0.1:8000/checkout/';
+  
 
     var fname = $('#c_fname').val();
     var lname = $('#c_lname').val();
@@ -291,14 +291,6 @@ error: function (jqXhr, textStatus, errorMessage) { // error callback
       }
     });
   }); 
-
-
-
 });
-
-
-
-
-
 </script>
 {% endblock %}
