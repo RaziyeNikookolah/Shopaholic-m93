@@ -1,11 +1,9 @@
 import csv
+from accounts.authentication import LoginAuthentication
 from orders.models import Order
 from django.http import HttpResponse
-import time
 from django.utils import timezone
 from orders.models import Order, OrderItem
-from shoes.models import Product
-from decimal import Decimal
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -86,46 +84,66 @@ from orders.serializer import RemoveCartItemsSerializer, CartItemSerializer, Ord
 
 
 class AddToCartView(APIView):
-    authentication_classes = []
     permission_classes = (AllowAny,)
 
     @csrf_exempt
     def post(self, request, format=None):
-        serializer = CartItemSerializer(data=request.data)
-        if serializer.is_valid():
-            product_id = serializer.validated_data.get('product_id', '')
-            quantity = serializer.validated_data.get('quantity', '')
-            price = serializer.validated_data.get('price', '')
-            total_price = serializer.validated_data.get('total_price', '')
-
-            add_product_to_session(product_id, price, quantity, total_price)
-
-            return Response({'message': 'item_added'}, status=status.HTTP_201_CREATED)
+        if request.user.is_authenticated:
+            user = request.user
+            print(user)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = CartItemSerializer(data=request.data)
+            if serializer.is_valid():
+                product_id = serializer.validated_data.get('product_id', '')
+                quantity = serializer.validated_data.get('quantity', '')
+                price = serializer.validated_data.get('price', '')
+                total_price = serializer.validated_data.get('total_price', '')
+
+                add_product_to_session(
+                    product_id, price, quantity, total_price)
+
+                return Response({'message': 'item_added'}, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RemoveCartItemView(APIView):
-    authentication_classes = []
     permission_classes = (AllowAny,)
 
     @csrf_exempt
     def post(self, request):
-        serializer = RemoveCartItemsSerializer(data=request.data)
-        if serializer.is_valid():
-            product_id = serializer.validated_data.get('product_id', '')
-            return remove_product_from_session(product_id)
+        if request.user.is_authenticated:
+            user = request.user
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = RemoveCartItemsSerializer(data=request.data)
+            if serializer.is_valid():
+                product_id = serializer.validated_data.get('product_id', '')
+                return remove_product_from_session(product_id)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CartListView(APIView):
-    authentication_classes = []
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
-        session_with_serialized_product = session_cart()
-        return Response(session_with_serialized_product)
+        if request.user.is_authenticated:
+            user = request.user
+            user_last_order = Order.objects.filter(
+                account=user, is_paid=False).order_by('-create_timestamp')
+
+            if user_last_order.exists():
+                user_last_orderItems = OrderItem.objects.filter(
+                    order=user_last_order.first())
+                for orderItem in list(user_last_orderItems):
+                    print(orderItem)
+                    # bayad yeki yeki order item haro bekhunam serializeresh yeki yeki bedam be ye dict o befrestam
+            else:
+                print("User has no active order.")
+        else:
+            print("User not authenticated.")
+            session_data = session_cart()
+            return Response(session_data)
 
 
 class OrderCreateView(APIView):
@@ -153,7 +171,6 @@ class UpdateCartItemView(APIView):
 
 
 class CheckoutView(APIView):
-    authentication_classes = [authentication.LoginAuthentication]
 
     def get(self, request):
         ...
@@ -179,11 +196,13 @@ class CreateOrder(APIView):
             receiver_phone_number = data.get("phone_number")
             postal_code = data.get("postal_zip")
             note = data.get("order_note")
-
             user = request.user
-            order = Order.objects.create(account=user, receiver_name=receiver_name,
-                                         receiver_lastname=receiver_last_name, address=address, city=city, province=province,
-                                         email=email, postal_code=postal_code, note=note, receiver_phone_number=receiver_phone_number)
+            order = Order.objects.filter(
+                account=user, is_paid=False).order_by('-create_timestamp')
+            if not order.exists():
+                order = Order.objects.create(account=user, receiver_name=receiver_name,
+                                             receiver_lastname=receiver_last_name, address=address, city=city, province=province,
+                                             email=email, postal_code=postal_code, note=note, receiver_phone_number=receiver_phone_number)
             create_orderItems_from_session(order)
             clear_session()
             total_price = order.get_total_price()
