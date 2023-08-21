@@ -69,6 +69,12 @@ $(document).on('submit', '#code-verify_form', function (e) {
     $('#code').val("")
 
 });
+$(document).on('click', '#li_login', function (e) {
+    e.preventDefault();
+    var nextUrl = '';
+    window.location = 'http://127.0.0.1:8000/accounts/login/?next=' + nextUrl;
 
 
 
+
+});
