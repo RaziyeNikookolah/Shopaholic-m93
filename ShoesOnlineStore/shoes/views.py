@@ -31,13 +31,13 @@ class ProductList(ListAPIView):
         )
         return queryset
     filter_backends = [filters.SearchFilter, DjangoFilterBackend, ]
-    filterset_fields = ["title", "category__title", "brand__title"]
+    filterset_fields = ["title", "category__title", "brand__title", 'size__number',
+                        'color__name']
     filter_class = ProductFilter
     search_fields = [
-        'title',
+        'title', 'category__title',
         'brand__title',
         'brand__manufacturing_country',
         'descriptions',
         'size__number',
         'color__name',]
-
