@@ -123,6 +123,7 @@
         for (var itemId in cartData.cart_items) {
           var item = cartData.cart_items[itemId];
           createTableRow(item);
+          cart_item_count++;
         }
         
         // Display the grand total
@@ -341,11 +342,12 @@ function update_cart() {
   event.preventDefault();
   console.log(cartData);
 
-
+accessToken=window.localStorage.getItem('accessToken');
 fetch('http://localhost:8000/order/update_cart/', {
     method: 'POST',
       headers: {
           'Content-Type': 'application/json',
+          "Authorization": "Bearer " + refreshToken ,
       },
       body: JSON.stringify(cartData),
   })

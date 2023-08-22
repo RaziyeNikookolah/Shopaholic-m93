@@ -224,11 +224,15 @@
 
 
 <script>
-  $(document).ready(function() {
+  $(document).ready(function() {    
+    accessToken=window.localStorage.getItem('accessToken');
     $.ajax({
     url : "http://localhost:8000/order/cart_list/",
     type: 'GET',
     dataType: "json",
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+    },
     success: function (data, status, xhr) {
       cartData = JSON.parse(data);
       console.log(cartData);
@@ -270,11 +274,10 @@
       "province":province,
       "address": address,
       "order_note": order_note,
-      "cartData":cartData,
+      {% comment %} "cartData":cartData, {% endcomment %}
       "city":city
     };
     accessToken=window.localStorage.getItem('accessToken');
-    refreshToken=window.localStorage.getItem('refreshToken');
     $.ajax({
       url: 'http://localhost:8000/order/create_order/',
       type: 'POST',

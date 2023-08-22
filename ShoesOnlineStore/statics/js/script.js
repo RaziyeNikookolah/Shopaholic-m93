@@ -4,7 +4,9 @@ $(document).on('submit', '#login_form', function (e) {
     e.preventDefault();
     phone_number = $('#phone_number').val();
     next = $('#hidden_next').val();
-    console.log(next)
+    console.log(next);
+    accessToken = window.localStorage.getItem('accessToken');
+
     $.ajax({
 
         url: 'http://localhost:8000/otp/request_otp/',
@@ -15,6 +17,9 @@ $(document).on('submit', '#login_form', function (e) {
             'csrfmiddlewaretoken': '{{csrf_token}}'
         },
         dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+        },
         success: function (data, status, xhr) {
             console.log(status);
         },
@@ -36,6 +41,7 @@ $(document).on('submit', '#code-verify_form', function (e) {
     // Retrieve the value of the path parameter from the appropriate index
     const pathParamValue = urlParts[6]; // Adjust the index based on your URL structure
     console.log(pathParamValue);
+    accessToken = window.localStorage.getItem('accessToken');
 
     $.ajax({
 
@@ -48,6 +54,9 @@ $(document).on('submit', '#code-verify_form', function (e) {
             'csrfmiddlewaretoken': '{{csrf_token}}'
         },
         dataType: "json",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+        },
         success: function (res, status, xhr) {
             console.log(res);
             console.log("tokens and next must be here");
@@ -70,11 +79,38 @@ $(document).on('submit', '#code-verify_form', function (e) {
 
 });
 $(document).on('click', '#li_login', function (e) {
+    accessToken = window.localStorage.getItem('accessToken');
+
     e.preventDefault();
     var nextUrl = '';
     window.location = 'http://127.0.0.1:8000/accounts/login/?next=' + nextUrl;
+});
+$(document).on('click', '#li_logout', function (e) {
+    accessToken = window.localStorage.getItem('accessToken');
 
+    e.preventDefault();
+    var nextUrl = '';
+    window.location = 'http://127.0.0.1:8000/accounts/logout/?next=' + nextUrl;
+});
+$(document).on('click', '#logout_btn', function (e) {
+    accessToken = window.localStorage.getItem('accessToken');
 
+    e.preventDefault();
+    var nextUrl = '';
+    $.ajax({
+        url: 'http://localhost:8000/accounts/request_logout/',
+        type: 'GET',
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+        },
+        success: function (res, status, xhr) {
+            console.log("logged out successfully..")
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            console.log(textStatus);
 
+        }
+    });
 
+    window.location = 'http://127.0.0.1:8000/accounts/login/?next=' + nextUrl;
 });
