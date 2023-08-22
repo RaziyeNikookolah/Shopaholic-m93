@@ -25,14 +25,18 @@ class JWTAuthentication(authentication.BaseAuthentication):
                 jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
 
         except jwt.exceptions.InvalidSignatureError:
+
             raise AuthenticationFailed("Invalid signature")
         except jwt.exceptions.ExpiredSignatureError:
+
             raise AuthenticationFailed("Signature expired")
         except:
+
             raise AuthenticationFailed("Could not parse token")
         # Get the user from the database
         user_id = payload.get("user_id")
         if not user_id:
+
             raise AuthenticationFailed("User Id not found in JWT")
             # return None
 
