@@ -3,7 +3,7 @@ import datetime
 from django.conf import settings
 
 
-def generate_access_token(user, expiration_time_minutes=5):
+def generate_access_token(user, expiration_time_minutes=25):
     access_token_payload = {
         "user_id": user.id,
         "exp": datetime.datetime.utcnow()
