@@ -15,6 +15,9 @@ body {
   /* Optional: If you want the container to take the full viewport height */
 }
 
+.bg-purple {
+  background-color: purple;
+}
 
 ::-moz-selection {
   background: #000;
