@@ -1,5 +1,4 @@
 import csv
-from accounts.authentication import LoginAuthentication
 from orders.models import Order
 from django.http import HttpResponse
 from django.utils import timezone
@@ -88,23 +87,20 @@ class AddToCartView(APIView):
 
     @csrf_exempt
     def post(self, request, format=None):
-        if request.user.is_authenticated:
-            user = request.user
-            print(user)
+
+        serializer = CartItemSerializer(data=request.data)
+        if serializer.is_valid():
+            product_id = serializer.validated_data.get('product_id', '')
+            quantity = serializer.validated_data.get('quantity', '')
+            price = serializer.validated_data.get('price', '')
+            total_price = serializer.validated_data.get('total_price', '')
+
+            add_product_to_session(
+                product_id, price, quantity, total_price)
+
+            return Response({'message': 'item_added'}, status=status.HTTP_201_CREATED)
         else:
-            serializer = CartItemSerializer(data=request.data)
-            if serializer.is_valid():
-                product_id = serializer.validated_data.get('product_id', '')
-                quantity = serializer.validated_data.get('quantity', '')
-                price = serializer.validated_data.get('price', '')
-                total_price = serializer.validated_data.get('total_price', '')
-
-                add_product_to_session(
-                    product_id, price, quantity, total_price)
-
-                return Response({'message': 'item_added'}, status=status.HTTP_201_CREATED)
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RemoveCartItemView(APIView):
@@ -112,43 +108,26 @@ class RemoveCartItemView(APIView):
 
     @csrf_exempt
     def post(self, request):
-        if request.user.is_authenticated:
-            user = request.user
+
+        serializer = RemoveCartItemsSerializer(data=request.data)
+        if serializer.is_valid():
+            product_id = serializer.validated_data.get('product_id', '')
+            return remove_product_from_session(product_id)
         else:
-            serializer = RemoveCartItemsSerializer(data=request.data)
-            if serializer.is_valid():
-                product_id = serializer.validated_data.get('product_id', '')
-                return remove_product_from_session(product_id)
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CartListView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
-        if request.user.is_authenticated:
-            user = request.user
-            user_last_order = Order.objects.filter(
-                account=user, is_paid=False).order_by('-create_timestamp')
 
-            if user_last_order.exists():
-                user_last_orderItems = OrderItem.objects.filter(
-                    order=user_last_order.first())
-                for orderItem in list(user_last_orderItems):
-                    print(orderItem)
-                    # bayad yeki yeki order item haro bekhunam serializeresh yeki yeki bedam be ye dict o befrestam
-            else:
-                print("User has no active order.")
-        else:
-            print("User not authenticated.")
-            session_data = session_cart()
-            return Response(session_data)
+        session_data = session_cart()
+        return Response(session_data)
 
 
 class OrderCreateView(APIView):
     def post(self, request, format=None):
-        # Your logic for order creation here
         ...
         return Response("Order created successfully.")
 
@@ -171,6 +150,7 @@ class UpdateCartItemView(APIView):
 
 
 class CheckoutView(APIView):
+    permission_classes = (AllowAny,)
 
     def get(self, request):
         ...
@@ -182,6 +162,7 @@ class CheckoutView(APIView):
 
 class CreateOrder(APIView):
     authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = (AllowAny,)
 
     @csrf_exempt
     def post(self, request):
@@ -204,7 +185,7 @@ class CreateOrder(APIView):
                                              receiver_lastname=receiver_last_name, address=address, city=city, province=province,
                                              email=email, postal_code=postal_code, note=note, receiver_phone_number=receiver_phone_number)
             create_orderItems_from_session(order)
-            clear_session()
+            # clear_session() not here it will be done when order paid
             total_price = order.get_total_price()
             return Response({"total_price": total_price, 'message': "Order added successfully"}, status=status.HTTP_201_CREATED)
 
@@ -221,14 +202,12 @@ def export(request):  # no one can not call this view use user_passes_test
         'id', 'create_timestamp', 'is_paid', 'receiver_name', 'receiver_lastname', 'city')
 
     for order in orders_created_today:
-        print(f"Order ID: {order['id']}")
         writer.writerow([order['create_timestamp'], order['is_paid'],
                         order['receiver_name'], order['receiver_lastname'], order['city']])
 
         items = OrderItem.objects.filter(order_id=order['id'])
         for item in items:
-            print(
-                f" - Product: {item.product}, Quantity: {item.quantity}, Final Price: {item.final_price}")
+
             writer.writerow([item.product, item.quantity, item.final_price])
 
     response['Content-Disposition'] = 'attachment; filename="orders.csv"'

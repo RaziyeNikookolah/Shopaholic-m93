@@ -7,7 +7,7 @@ class CartItemline(admin.TabularInline):
     model = CartItem
 
 
-@admin.register(Cart)
+# @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     list_display = ('user', 'status', 'modify_timestamp')
     inlines = (CartItemline,)
@@ -15,7 +15,7 @@ class CartAdmin(admin.ModelAdmin):
     #     return False
 
 
-@admin.register(CartItem)
+# @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'product', 'modify_timestamp')
 

@@ -58,7 +58,7 @@ class VerifyOtp(APIView):
                     user, _ = User.objects.get_or_create(
                         phone_number=phone_number)
                     login(request, user)
-                    print(user)
+
                     # add_session_items_to_orderItem(user)
 
                     # create jwt token

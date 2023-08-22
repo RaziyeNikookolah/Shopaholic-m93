@@ -42,10 +42,6 @@ def add_product_to_session(id, price, quantity, total_price):
 
     session[session_key].update(product)
     session.save()
-
-    # for k, v in session[session_key].items():
-    #     print(k, v)
-
     return session[session_key]
 
 

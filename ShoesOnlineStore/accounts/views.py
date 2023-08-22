@@ -6,6 +6,8 @@ from .tasks import send_mail_func
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 from django.shortcuts import render
 from django.views import View
+from django.contrib.auth import logout
+from rest_framework.views import APIView
 
 
 class LoginView(View):
@@ -14,6 +16,21 @@ class LoginView(View):
     def get(self, request, *args, **kwargs):
         # form = UserRegiterOrLoginForm()
         return render(request, self.template_name)
+
+
+class LogoutView(View):
+    template_name = "logout.html"
+
+    def get(self, request, *args, **kwargs):
+        # form = UserRegiterOrLoginForm()
+        return render(request, self.template_name)
+
+
+class RequestLogoutView(APIView):
+    template_name = "logout.html"
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
 
 
 def test(request):
