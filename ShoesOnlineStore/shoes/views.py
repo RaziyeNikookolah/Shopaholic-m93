@@ -41,10 +41,3 @@ class ProductList(ListAPIView):
         'size__number',
         'color__name',]
 
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        serializer = self.serializer_class(queryset, many=True)
-        serialized_data = serializer.data
-
-        return Response(serialized_data, status=status.HTTP_200_OK)
