@@ -13,6 +13,6 @@ class ProductFilter(django_filters.FilterSet):
             'brand__manufacturing_country': ['icontains'],
             'descriptions': ['icontains'],
             'size': ['icontains'],
-            'color': ['exact'],
+            'color__name': ['exact'],
             # 'price':['lt','gt'],
         }
