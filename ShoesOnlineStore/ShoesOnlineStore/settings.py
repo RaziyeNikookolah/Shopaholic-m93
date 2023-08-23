@@ -45,10 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    # 'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'django_filters',
-    # 'rest_framework_simplejwt',
     'home.apps.HomeConfig',
     'core.apps.CoreConfig',
     'orders.apps.OrdersConfig',
@@ -56,7 +54,6 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'otp.apps.OtpConfig',
     "ckeditor",
-    'cart.apps.CartConfig',
     'drf_spectacular',
     'django_celery_results',
     'django_celery_beat',
@@ -290,4 +287,40 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     }
+}
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'log/file.log',
+        },
+        "report": {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'log/report.log',
+            "formatter": "verbose",
+
+        }
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{ "time": "%(asctime)s", "level": "%(levelname)s", "logger": "%(name)s", "message": "%(message)s" }'
+        },
+    },
+    'loggers': {
+        # 'django': {
+        #     'handlers': ['file'],
+        #     'level': 'INFO',
+        #     'propagate': False,
+        # },
+
+        'ShoesOnlineStore.orders': {
+            'handlers': ['report'],
+            'level': 'INFO',
+        },
+    },
+
 }
