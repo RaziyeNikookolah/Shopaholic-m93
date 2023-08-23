@@ -1,8 +1,10 @@
 from django.db.models import Subquery, OuterRef, Max
+from django.utils.decorators import method_decorator
+
 from django_filters.rest_framework import DjangoFilterBackend
 from shoes.pagination import ProductPagination
 from .models import Product, Price
-
+from django.views.decorators.cache import cache_page
 from .serializer import ProductsSerializer
 from rest_framework.permissions import AllowAny
 # IsAuthenticatedOrReadOnly permission just can run safe method for unauthenticated user
@@ -31,8 +33,10 @@ class ProductList(ListAPIView):
         )
         return queryset
     filter_backends = [filters.SearchFilter, DjangoFilterBackend, ]
-    filterset_fields = ["title", "category__title", "brand__title", 'size__number',
-                        'color__name']
+
+    filterset_fields = ['title', 'category__title',
+                        'brand__title', 'color__name', 'size__name',  # 'min_price', 'max_price'
+                        ]
     filter_class = ProductFilter
     search_fields = [
         'title', 'category__title',
@@ -40,4 +44,9 @@ class ProductList(ListAPIView):
         'brand__manufacturing_country',
         'descriptions',
         'size__number',
-        'color__name',]
+        'color__name',
+    ]
+
+    @method_decorator(cache_page(2*60))
+    def dispatch(self, *args, **kwargs):
+        return super(ProductList, self).dispatch(*args, **kwargs)

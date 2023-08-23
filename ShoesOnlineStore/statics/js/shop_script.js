@@ -107,6 +107,9 @@ $(document).ready(function () {
     // });
 
 
+
+
+
     $('#search_form').on('keypress', function (e) {
         if (e.keyCode == 13) {
             e.preventDefault();
@@ -146,6 +149,25 @@ $(document).ready(function () {
         }
 
     }
+
+    $("#slider-range").slider({
+        range: true,
+        min: 0,
+        max: 1000,  // Adjust the maximum value based on your actual data
+        values: [0, 1000],  // Adjust initial values as needed
+        slide: function (event, ui) {
+            $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+        },
+        stop: function (event, ui) {
+            // Extract selected price range
+            var minPrice = ui.values[0];
+            var maxPrice = ui.values[1];
+
+            // Send a request to the server to filter products by price range
+            var url = "http://localhost:8000/shoes/product_list/?min_price=" + minPrice + "&max_price=" + maxPrice;
+            loadPageData(url);
+        }
+    });
 
 
     var div_color = $('#colors');

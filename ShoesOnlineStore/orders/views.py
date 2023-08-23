@@ -1,4 +1,7 @@
 import csv
+import logging
+
+
 from orders.models import Order
 from django.http import HttpResponse
 from django.utils import timezone
@@ -81,6 +84,8 @@ from orders.serializer import RemoveCartItemsSerializer, CartItemSerializer, Ord
 #                 return {'status': False, 'code': str(response['Status'])}
 #         return response
 
+logger = logging.getLogger('ShoesOnlineStore.orders')
+
 
 class AddToCartView(APIView):
     permission_classes = (AllowAny,)
@@ -94,7 +99,7 @@ class AddToCartView(APIView):
             quantity = serializer.validated_data.get('quantity', '')
             price = serializer.validated_data.get('price', '')
             total_price = serializer.validated_data.get('total_price', '')
-
+            logger.info(f"order_id:{product_id} quantity:{quantity}")
             add_product_to_session(
                 product_id, price, quantity, total_price)
 

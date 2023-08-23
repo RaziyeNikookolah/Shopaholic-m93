@@ -72,7 +72,16 @@ class Quantity (BaseModel):
         return f"{self.quantity}"
 
 
+class SHOES_SIZE_NAME(models.IntegerChoices):
+    ADULT = 1, " ADULT"  # 15-25
+    TEENAGER = 2, "TEENAGER "  # 25-35
+    KIDS = 3, "KIDS"  # 35-45
+
+
 class Size(BaseModel):
+    name = models.IntegerField(
+        choices=SHOES_SIZE_NAME.choices, default=2)
+
     class Meta:
         verbose_name_plural = "sizes"
     number = models.PositiveSmallIntegerField()
