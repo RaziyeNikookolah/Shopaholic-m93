@@ -22,19 +22,14 @@ celery_app.conf.enable_utc = False
 
 celery_app.conf.update(timezone='Asia/Tehran')
 celery_app.config_from_object(settings, namespace='CELERY')
-# Celery Beat Settings
+
 celery_app.conf.beat_schedule = {
-    'send-mail-every-day-at-8': {
-        'task': 'send_mail_app.tasks.send_mail_func',
-        'schedule': crontab(hour=0, minute=46, day_of_month=19, month_of_year=6),
-        # 'args': (2,)
-    }
+    'export_orders_daily': {
+        'task': 'orders.tasks.email_export',
+        # This will run the task every day at midnight
+        'schedule': crontab(minute=10, hour=19),
+    },
 }
-# Celery Schedules - https://docs.celeryproject.org/en/stable/reference/celery.schedules.html
+
 
 celery_app.autodiscover_tasks()
-
-
-@celery_app.task(bind=True)
-def debug_task(self):
-    print(f'Request: {self.request!r}')
