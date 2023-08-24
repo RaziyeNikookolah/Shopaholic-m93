@@ -3,13 +3,15 @@ from orders.models import Order, OrderItem
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = OrderItem
-        fields = "__all__"
+        exclude = ('id',)
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrdersSerializer(serializers.ModelSerializer):
     orderItems = serializers.SerializerMethodField()
+    account = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Order
