@@ -1,6 +1,5 @@
 $(document).ready(function () {
     accessToken = window.localStorage.getItem('accessToken');
-    var cart_item_count = 0
 
 
     // Define a function to load data for the given URL
@@ -69,45 +68,6 @@ $(document).ready(function () {
         // Load the data for the previous page
         loadPageData(prevPageUrl);
     });
-
-
-    // $.ajax({
-    //     url: 'http://localhost:8000/shoes/product_list/',
-    //     type: 'GET',
-    //     dataType: "json",
-    //     beforeSend: function (xhr) {
-    //         xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-    //     },
-    //     success: function (data, status, xhr) {
-
-    //         output = '<div class="row mb-5" id="all_products">'
-    //         data.results.forEach((element, index) => {
-    //             // console.log(`Element ${index}:`, element);
-    //             output += '<div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up" >' +
-    //                 '<div class="block-4 text-center border">' +
-    //                 '<figure class="block-4-image">' +
-    //                 ' <a href=""><img src="' + element.image + '"  alt="Image placeholder" class="img-fluid"></a>' +
-    //                 '</figure>' +
-    //                 '<div class="block-4-text p-4">' +
-    //                 '<h3 "><a  href="/shop_single/' + element.id + '/">' + element.brand + '</a></h3>' +
-    //                 '<p class="mb-0">' + element.descriptions + '</p>' +
-    //                 '<p class="text-primary font-weight-bold">$' + element.last_price + '</p>' +
-    //                 '</div>' +
-    //                 '</div>' +
-    //                 '</div>';
-    //         });
-    //         output += '</div>';
-    //         $('#all_products').html(output);
-
-
-    //     },
-    //     error: function (jqXhr, textStatus, errorMessage) { // error callback 
-    //         console.log('Error in loading data', errorMessage);
-    //     },
-    // });
-
-
-
 
 
     $('#search_form').on('keypress', function (e) {

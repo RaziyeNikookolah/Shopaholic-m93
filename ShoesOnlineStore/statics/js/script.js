@@ -4,7 +4,6 @@ $(document).on('submit', '#login_form', function (e) {
     e.preventDefault();
     phone_number = $('#phone_number').val();
     next = $('#hidden_next').val();
-    console.log(next);
     accessToken = window.localStorage.getItem('accessToken');
 
     $.ajax({
@@ -25,10 +24,16 @@ $(document).on('submit', '#login_form', function (e) {
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback 
             console.log('Error in login_form submission:', errorMessage);
-        },
+            if (errorMessage == 'Bad Request') {
+                $('#phone_number').val("");
+            }
+            else if (errorMessage == 'Internal Server Error') {
+                $('#signup-div').hide();
+                $('#code-verify-div').show();
+            }
+        }
     });
-    $('#signup-div').hide();
-    $('#code-verify-div').show();
+
 
 });
 $(document).on('submit', '#code-verify_form', function (e) {
@@ -78,19 +83,29 @@ $(document).on('submit', '#code-verify_form', function (e) {
     $('#code').val("")
 
 });
+
+
+
+
+
 $(document).on('click', '#li_login', function (e) {
+    e.preventDefault();
     accessToken = window.localStorage.getItem('accessToken');
 
-    e.preventDefault();
-    var nextUrl = '';
+
+    // Set the desired URL for redirection after login
+    var nextUrl = 'http://127.0.0.1:8000';  // Replace with the actual URL
+
     window.location = 'http://127.0.0.1:8000/accounts/login/?next=' + nextUrl;
 });
+
 $(document).on('click', '#li_logout', function (e) {
+    e.preventDefault();
     accessToken = window.localStorage.getItem('accessToken');
 
-    e.preventDefault();
-    var nextUrl = '';
+    var nextUrl = 'http://127.0.0.1:8000';
     window.location = 'http://127.0.0.1:8000/accounts/logout/?next=' + nextUrl;
+
 });
 $(document).on('click', '#logout_btn', function (e) {
     accessToken = window.localStorage.getItem('accessToken');
@@ -104,7 +119,10 @@ $(document).on('click', '#logout_btn', function (e) {
             xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
         },
         success: function (res, status, xhr) {
-            console.log("logged out successfully..")
+            console.log("logged out successfully..");
+            window.localStorage.removeItem('accessToken')
+            window.localStorage.removeItem('refreshToken')
+
         },
         error: function (jqXhr, textStatus, errorMessage) {
             console.log(textStatus);
