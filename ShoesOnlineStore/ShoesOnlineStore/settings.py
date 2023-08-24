@@ -30,9 +30,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"] if DEBUG else ['127.0.0.1']
+
+# CORS engine configuration (django-cors-headers) :
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = ["http://0.0.0.0:8000, http://localhost:8000"]
 
 
 # Application definition
@@ -118,7 +122,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'ShoesOnlineStore.urls'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # SESSION_COOKIE_SECURE = True
@@ -232,6 +236,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "statics",
 ]
 
+
 # STATIC_ROOT = os.path.join(BASE_DIR, "statics")
 AUTH_USER_MODEL = 'accounts.Account'
 SMS_API_KEY = getenv("SMS_API_KEY")
@@ -248,12 +253,10 @@ MESSAGE_TAGS = {
 }
 # SANDBOX MODE ZARRINPAL
 
-MERCHANT = "00000000-0000-0000-0000-000000000000"
 
 SANDBOX = True
 
-# MERCHANT = getenv("MERCHANT")
-# dyzupayxhklqngjb
+MERCHANT = getenv("MERCHANT")
 
 
 # CELERY SETTINGS
@@ -324,3 +327,48 @@ LOGGING = {
     },
 
 }
+# Django's SSL security configurations :
+REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
+    "rest_framework.renderers.JSONRenderer",)
+
+# Https settings
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = "HTTP_X_FORWARDED_PROTO", "https"
+
+# HSTS settings
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_SECONDS = 86400
+
+# more security settings
+USE_X_FORWARDED_HOST = True
+SECURE_REFERRER_POLICY = "strict-origin"
+
+
+# Internationalization Configs:
+USE_TZ = True
+USE_L10 = True
+USE_L10N = True
+USE_I18N = True
+
+# Serving Configs:
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static/"
+
+# Basic Security Configs
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SESSION_TIMEOUT = 24 * 60 * 60
+SESSION_COOKIE_AGE = 3 * 60 * 60
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Content Security Policy
+CSP_DEFAULT_SRC = "'none'",
+CSP_STYLE_SRC = "'self'",
+CSP_SCRIPT_SRC = "'self'",
+CSP_IMG_SRC = "'self'",
+CSP_FONT_SRC = "'self'",
