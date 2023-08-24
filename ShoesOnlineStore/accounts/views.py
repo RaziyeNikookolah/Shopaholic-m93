@@ -27,8 +27,6 @@ class LogoutView(View):
 
 
 class RequestLogoutView(APIView):
-    template_name = "logout.html"
-
     def get(self, request, *args, **kwargs):
         logout(request)
 
