@@ -1,4 +1,4 @@
-from orders.serializer import OrderSerializer
+from .serializers import OrdersSerializer
 from ..models import Order
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
@@ -12,7 +12,7 @@ class ListOrder(ViewSet):
     http_method_names = ['get']
 
     def list(self, request):
-        serializer = OrderSerializer(self.queryset, many=True)
+        serializer = OrdersSerializer(self.queryset, many=True)
         return Response(serializer.data)
 
 

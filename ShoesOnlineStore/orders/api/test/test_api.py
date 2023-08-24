@@ -1,9 +1,9 @@
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 from django.urls import reverse
-from ..models import Order
+from ...models import Order
 from orders.serializer import OrderSerializer
-from ..views import ListOrder
+from ...views import ListOrder
 
 class ListOrderViewTest(TestCase):
     def setUp(self):
