@@ -248,7 +248,7 @@
   $('#order_product').html(output);
     },
   error: function (jqXhr, textStatus, errorMessage) { // error callback 
-    console.log('Error in loading data', errorMessage);
+    //console.log('Error in loading data', errorMessage);
   }
   });
   $('#save_order').click(function(event) {
@@ -287,9 +287,29 @@
         xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
       },
       success: function(response) {
-        console.log(response);
+         //console.log(response); 
          //new request should be here
-         //window.location = 'http://127.0.0.1:8000/order/request//';....
+         //window.location = 'http://127.0.0.1:8000/order/request//';
+          accessToken=window.localStorage.getItem('accessToken');
+         $.ajax({
+           url: 'http://localhost:8000/order/request/'+response['order_id'],
+           type: 'GET',
+           contentType: 'application/json',
+           beforeSend: function(xhr) {
+             xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+           },
+           success: function(response) {
+             console.log(response);
+              //new request should be here
+              //window.location = 'http://127.0.0.1:8000/order/request//';....
+           },
+           error: function(error) {
+             console.error('Error:', error);
+           }
+         }); 
+
+
+
       },
       error: function(error) {
         console.error('Error:', error);

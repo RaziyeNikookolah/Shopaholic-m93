@@ -73,10 +73,8 @@ class LoginAuthentication(authentication.BaseAuthentication):
                 jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
 
         except jwt.exceptions.ExpiredSignatureError:
-
             return None
         except:
-
             return None
 
         # Get the user from the database
@@ -85,7 +83,6 @@ class LoginAuthentication(authentication.BaseAuthentication):
             return None
 
         user = User.objects.filter(id=user_id).first()
-
         if not user:
             return None
         # Return the user and token payload

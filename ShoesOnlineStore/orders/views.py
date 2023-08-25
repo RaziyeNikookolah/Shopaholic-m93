@@ -98,7 +98,6 @@ class CheckoutView(APIView):
 
 
 class CreateOrder(APIView):
-    authentication_classes = [authentication.JWTAuthentication]
     permission_classes = (AllowAny,)
 
     @csrf_exempt
@@ -115,12 +114,17 @@ class CreateOrder(APIView):
             postal_code = data.get("postal_zip")
             note = data.get("order_note")
             user = request.user
+            print(user)
+            # user=Account.objects.filter(p)
             order = Order.objects.filter(
                 account=user, is_paid=False).order_by('-create_timestamp')
             if not order.exists():
                 order = Order.objects.create(account=user, receiver_name=receiver_name,
                                              receiver_lastname=receiver_last_name, address=address, city=city, province=province,
                                              email=email, postal_code=postal_code, note=note, receiver_phone_number=receiver_phone_number)
+                order = Order.objects.filter(
+                    account=user, is_paid=False).order_by('-create_timestamp').first()
+            order = order.first()
             create_orderItems_from_session(order)
             # clear_session() not here it will be done when order paid
             total_price = order.get_total_price()
