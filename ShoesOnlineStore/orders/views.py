@@ -114,43 +114,20 @@ class CreateOrder(APIView):
             postal_code = data.get("postal_zip")
             note = data.get("order_note")
             user = request.user
-            print(user)
             # user=Account.objects.filter(p)
-            order = Order.objects.filter(
+            order_queryset = Order.objects.filter(
                 account=user, is_paid=False).order_by('-create_timestamp')
-            if not order.exists():
+            if not order_queryset.exists():
                 order = Order.objects.create(account=user, receiver_name=receiver_name,
                                              receiver_lastname=receiver_last_name, address=address, city=city, province=province,
                                              email=email, postal_code=postal_code, note=note, receiver_phone_number=receiver_phone_number)
-                order = Order.objects.filter(
-                    account=user, is_paid=False).order_by('-create_timestamp').first()
-            order = order.first()
-            create_orderItems_from_session(order)
-            # clear_session() not here it will be done when order paid
-            total_price = order.get_total_price()
-            return Response({"order_id": order.id, "total_price": total_price, 'message': "Order added successfully"}, status=status.HTTP_201_CREATED)
+                order_instance = order_queryset.first()
+            else:
+                order_instance = order_queryset.first()
+
+            create_orderItems_from_session(order_instance)
+            total_price = order_instance.get_total_price()
+
+            return Response({"order_id": order_instance.id, "total_price": total_price, 'message': "Order added successfully"}, status=status.HTTP_201_CREATED)
 
         return Response({'message': "Error"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-# def export(request):  # no one can not call this view use user_passes_test
-#     response = HttpResponse(content_type='text/csv')
-#     writer = csv.writer(response)
-#     writer.writerow(['Products in order:'])
-#     today = timezone.now().date()
-
-#     orders_created_today = Order.objects.filter(create_timestamp__date=today).select_related('items').values(
-#         'id', 'create_timestamp', 'is_paid', 'receiver_name', 'receiver_lastname', 'city')
-
-#     for order in orders_created_today:
-#         writer.writerow([order['create_timestamp'], order['is_paid'],
-#                         order['receiver_name'], order['receiver_lastname'], order['city']])
-
-#         items = OrderItem.objects.filter(order_id=order['id'])
-#         for item in items:
-
-#             writer.writerow([item.product, item.quantity, item.final_price])
-
-#     response['Content-Disposition'] = 'attachment; filename="orders.csv"'
-
-#     return response
