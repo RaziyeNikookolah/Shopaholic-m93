@@ -1,15 +1,14 @@
-from django.urls import path
+from django.urls import include, path
 from . import views
+from accounts.api.views import router as accounts_router
 
 
 urlpatterns = [
-    # path('login/', views.LoginOrRegisterView.as_view(), name="login_or_register"),
-    # path('access_token/', views.AccessTokenView.as_view(), name="access_token"),
-    # path('refresh_token/', views.RefreshTokenView.as_view(), name="refresh_token"),
     path('optain_pair_tokens/', views.TokenObtainPairView.as_view(),
          name="optain_pair_tokens"),
-
+    path('accounts/', include(accounts_router.urls)),
 ]
 # api/v1/accounts/access_token/
 # api/v1/accounts/refresh_token/
 # api/v1/accounts/optain_pair_tokens/
+# api/v1/accounts/profiles/
