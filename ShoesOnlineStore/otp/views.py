@@ -47,7 +47,8 @@ class VerifyOtp(APIView):
         if serializer.is_valid():
             phone_number = serializer.validated_data['phone_number']
             code = serializer.validated_data['code']
-            otp_requests = OtpRequest.objects.filter(phone_number=phone_number)
+            otp_requests = OtpRequest.objects.filter(
+                phone_number=phone_number).order_by('-create_timestamp')
             if otp_requests.exists():
                 otp_request = otp_requests.first()
                 verification_status, message = verify_otp_request(
@@ -58,6 +59,7 @@ class VerifyOtp(APIView):
                     user, _ = User.objects.get_or_create(
                         phone_number=phone_number)
                     login(request, user)
+                    print(user, "   logged in")
 
                     # add_session_items_to_orderItem(user)
 
