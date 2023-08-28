@@ -11,7 +11,7 @@ urlpatterns = [
     #     name="remove_from_cart"),
     path("update_cart/", views.UpdateCartItemView.as_view(),
          name="update_cart"),
-    path("checkout/", views.CheckoutView.as_view(), name="checkout"),
+
     path("create_order/", views.CreateOrder.as_view(), name="create_order"),
 
     path('request/<int:order_id>/',

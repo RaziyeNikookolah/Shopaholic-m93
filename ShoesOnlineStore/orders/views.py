@@ -61,19 +61,6 @@ class UpdateCartItemView(APIView):
             return Response({'message': "Bad data"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CheckoutView(APIView):
-    authentication_classes = [authentication.JWTAuthentication]
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        print("*******checkout*******     ********", request.user)
-        ...
-        # if request.user:
-        #     return Response({"message": "User is Logged in"}, status=status.HTTP_100_CONTINUE)
-        # else:
-        #     return Response({"message": "login required"}, status=status.HTTP_401_UNAUTHORIZED)
-
-
 class CreateOrder(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = [authentication.JWTAuthentication]
