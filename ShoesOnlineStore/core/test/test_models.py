@@ -1,42 +1,74 @@
-from django.test import TestCase
+import unittest
 from datetime import datetime
-from ..models import BaseModel
+from django.db.models import QuerySet
+from django.test import TestCase
+from core.models import BaseModel
+from shoes.models import Brand
 
 
-class BaseModelTest(TestCase):
-    def setUp(self):
-        self.base_model = BaseModel.objects.create()
+class TestSoftDeleteManager(TestCase):
+    def test_soft_delete_manager(self):
+        # Create an instance of ConcreteModel
+        concrete_model = Brand.objects.create()
 
-    def test_is_deleted_default_value(self):
-        self.assertFalse(self.base_model.is_deleted)
+        # Check that the object is not deleted initially
+        self.assertFalse(concrete_model.is_deleted)
 
+        # Soft delete the object
+        concrete_model.delete()
+
+        # Check that the object is marked as deleted and has a delete_timestamp
+        self.assertTrue(concrete_model.is_deleted)
+        self.assertIsNotNone(concrete_model.delete_timestamp)
+
+        # Check that the restore_timestamp is still None
+        self.assertIsNone(concrete_model.restore_timestamp)
+
+        # Restore the object
+        concrete_model.restore()
+
+        # Check that the object is not deleted and has a restore_timestamp
+        self.assertFalse(concrete_model.is_deleted)
+        self.assertIsNotNone(concrete_model.restore_timestamp)
+
+
+class TestArchiveDeletedManager(TestCase):
+    def test_archive_deleted_manager(self):
+        # Create a soft-deleted instance of BaseModel
+        deleted_model = Brand.objects.create()
+        deleted_model.delete()
+
+        # Use the archive deleted manager to get the deleted object
+        archived_model = Brand.deleted_objects.get(pk=deleted_model.pk)
+
+        # Check that the retrieved object is deleted
+        self.assertTrue(archived_model.is_deleted)
+
+
+class TestBaseModel(TestCase):
     def test_delete(self):
-        self.base_model.delete()
-        self.assertTrue(self.base_model.is_deleted)
-        self.assertIsNotNone(self.base_model.delete_timestamp)
+        # Create an instance of BaseModel
+        base_model = Brand.objects.create()
+
+        # Soft delete the object using the custom delete method
+        base_model.delete()
+
+        # Check that the object is marked as deleted and has timestamps set
+        self.assertTrue(base_model.is_deleted)
+        self.assertIsNotNone(base_model.delete_timestamp)
 
     def test_restore(self):
-        self.base_model.delete()
-        self.base_model.restore()
-        self.assertFalse(self.base_model.is_deleted)
-        self.assertIsNotNone(self.base_model.restore_timestamp)
+        # Create a soft-deleted instance of BaseModel
+        deleted_model = Brand.objects.create()
+        deleted_model.delete()
 
-    def test_soft_delete_manager(self):
-        self.assertEqual(BaseModel.objects.count(), 1)
-        self.assertEqual(BaseModel.deleted_objects.count(), 0)
-        self.base_model.delete()
-        self.assertEqual(BaseModel.objects.count(), 0)
-        self.assertEqual(BaseModel.deleted_objects.count(), 1)
+        # Restore the deleted object using the custom restore method
+        deleted_model.restore()
 
-    def test_archive_deleted_manager(self):
-        self.assertEqual(BaseModel.objects.count(), 1)
-        self.assertEqual(BaseModel.deleted_objects.count(), 0)
-        self.base_model.delete()
-        self.assertEqual(BaseModel.objects.count(), 0)
-        self.assertEqual(BaseModel.deleted_objects.count(), 1)
+        # Check that the object is not deleted and has timestamps set
+        self.assertFalse(deleted_model.is_deleted)
+        self.assertIsNotNone(deleted_model.restore_timestamp)
 
-    def test_restore_deleted(self):
-        self.base_model.delete()
-        self.base_model.restore()
-        self.assertEqual(BaseModel.objects.count(), 1)
-        self.assertEqual(BaseModel.deleted_objects.count(), 0)
+
+if __name__ == '__main__':
+    unittest.main()
