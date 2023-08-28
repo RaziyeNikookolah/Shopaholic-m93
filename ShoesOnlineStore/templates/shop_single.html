@@ -110,7 +110,7 @@ function add_to_cart() {
     "total_price":total_price,
  };
  console.log(data);
-accessToken = window.localStorage.getItem('accessToken');
+const accessToken = window.localStorage.getItem('accessToken');
 
   fetch('http://localhost:8000/order/add_to_cart/', {
     method: 'POST',
