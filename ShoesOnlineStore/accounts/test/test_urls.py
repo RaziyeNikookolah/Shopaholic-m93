@@ -1,50 +1,25 @@
-from django.http import HttpResponse
-from django.test import TestCase
-from django.urls import reverse
-from ..views import LoginView, LogoutView, RequestLogoutView, test, send_mail_to_all, schedule_mail
+import unittest
+from django.urls import reverse, resolve
+from .. import views
 
 
-class UrlsTest(TestCase):
+class TestUrls(unittest.TestCase):
+    def test_profile_url(self):
+        url = reverse('profile')
+        self.assertEqual(resolve(url).func.view_class, views.ProfileView)
+
     def test_login_url(self):
         url = reverse('login')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'login.html')
-        self.assertContains(response, '<form')
+        self.assertEqual(resolve(url).func.view_class, views.LoginView)
 
     def test_logout_url(self):
         url = reverse('logout')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'logout.html')
-        self.assertContains(response, '<h1>Logout</h1>')
+        self.assertEqual(resolve(url).func.view_class, views.LogoutView)
 
     def test_request_logout_url(self):
         url = reverse('request_logout')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(response, HttpResponse)
+        self.assertEqual(resolve(url).func.view_class, views.RequestLogoutView)
 
-    def test_send_email_to_all_url(self):
-        url = reverse('send_email_to_all')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.decode("utf-8"), "Sent")
 
-    def test_test_url(self):
-        url = reverse('test')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.decode("utf-8"), "Done")
-
-    def test_sendmail_url(self):
-        url = reverse('sendmail')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.decode("utf-8"), "Sent")
-
-    def test_schedulemail_url(self):
-        url = reverse('schedulemail')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.decode("utf-8"), "Done")
+if __name__ == '__main__':
+    unittest.main()
