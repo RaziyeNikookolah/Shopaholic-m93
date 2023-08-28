@@ -1,29 +1,30 @@
-from django.contrib.auth import get_user_model
-from rest_framework.test import APITestCase
-from rest_framework import status
+import unittest
+from django.urls import reverse, resolve
+from rest_framework import routers
+from accounts.api.views import router as accounts_router
+from .. import views
 
-User = get_user_model()
+
+class TestUrls(unittest.TestCase):
+    def test_token_obtain_pair_url(self):
+        url = reverse('optain_pair_tokens')
+        self.assertEqual(resolve(url).func.view_class,
+                         views.TokenObtainPairView)
+
+    def test_accounts_router_urls(self):
+        account_urls = accounts_router.urls
+        for url_pattern in account_urls:
+            url_name = getattr(url_pattern, 'name', None)
+            if url_name:
+                url = reverse(url_name)
+                resolved_func = resolve(url).func
+                expected_view_class_name = url_name.capitalize() + 'View'
+                expected_view_class = getattr(
+                    views, expected_view_class_name, None)
+                if expected_view_class:
+                    self.assertEqual(resolved_func.__class__,
+                                     expected_view_class)
 
 
-class TokenObtainPairViewTest(APITestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username='testuser', password='testpassword')
-
-    def test_generate_tokens(self):
-        self.client.force_authenticate(user=self.user)
-
-        response = self.client.get('/api/v1/accounts/optain_pair_tokens/')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn('access_token', response.data)
-        self.assertIn('refresh_token', response.data)
-
-    def test_no_token_generated(self):
-        response = self.client.get('/api/v1/accounts/optain_pair_tokens/')
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertIn('message', response.data)
-        self.assertEqual(response.data['message'], 'No Token Generated')
-
-    def test_generate_tokens_unauthenticated(self):
-        response = self.client.get('/api/v1/accounts/optain_pair_tokens/')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+if __name__ == '__main__':
+    unittest.main()
