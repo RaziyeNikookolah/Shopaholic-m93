@@ -4,7 +4,6 @@ $(document).on('submit', '#login_form', function (e) {
     e.preventDefault();
     phone_number = $('#phone_number').val();
     next = $('#hidden_next').val();
-    accessToken = window.localStorage.getItem('accessToken');
 
     $.ajax({
 
@@ -16,9 +15,6 @@ $(document).on('submit', '#login_form', function (e) {
             'csrfmiddlewaretoken': '{{csrf_token}}'
         },
         dataType: "json",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-        },
         success: function (data, status, xhr) {
             console.log(status);
         },
@@ -36,8 +32,12 @@ $(document).on('submit', '#login_form', function (e) {
 
 
 });
+
+
 $(document).on('submit', '#code-verify_form', function (e) {
     e.preventDefault();
+
+
 
     const url = window.location.href;
     // Split the URL by '/'
@@ -45,8 +45,7 @@ $(document).on('submit', '#code-verify_form', function (e) {
 
     // Retrieve the value of the path parameter from the appropriate index
     const pathParamValue = urlParts[6]; // Adjust the index based on your URL structure
-    console.log(pathParamValue);
-    accessToken = window.localStorage.getItem('accessToken');
+
 
     $.ajax({
 
@@ -59,9 +58,6 @@ $(document).on('submit', '#code-verify_form', function (e) {
             'csrfmiddlewaretoken': '{{csrf_token}}'
         },
         dataType: "json",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
-        },
         success: function (res, status, xhr) {
             console.log(res);
             console.log("tokens and next must be here");
@@ -69,7 +65,11 @@ $(document).on('submit', '#code-verify_form', function (e) {
 
             window.localStorage.setItem('refreshToken', res['refresh_token']);
             window.localStorage.setItem('accessToken', res['access_token']);
-            //console.log(window.localStorage.getItem('refreshToken'));
+            console.log(window.localStorage.getItem('accessToken'));
+            console.log(window.localStorage.getItem('refreshToken'));
+
+            showLiElement();
+            hideLiElement();
         },
         error: function (jqXhr, textStatus, errorMessage) {
             console.log(textStatus);//open login form and take next redirect
@@ -88,27 +88,27 @@ $(document).on('submit', '#code-verify_form', function (e) {
 
 
 
-$(document).on('click', '#li_login', function (e) {
-    e.preventDefault();
-    accessToken = window.localStorage.getItem('accessToken');
+// $(document).on('click', '#li_login', function (e) {
+//     e.preventDefault();
+//     accessToken = window.localStorage.getItem('accessToken');
 
 
-    // Set the desired URL for redirection after login
-    var nextUrl = 'http://127.0.0.1:8000';  // Replace with the actual URL
+//     // Set the desired URL for redirection after login
+//     var nextUrl = 'http://127.0.0.1:8000';  // Replace with the actual URL
 
-    window.location = 'http://127.0.0.1:8000/accounts/login/?next=' + nextUrl;
-});
+//     window.location = 'http://127.0.0.1:8000/accounts/login/?next=' + nextUrl;
+// });
 
-$(document).on('click', '#li_logout', function (e) {
-    e.preventDefault();
-    accessToken = window.localStorage.getItem('accessToken');
+// $(document).on('click', '#li_logout', function (e) {
+//     e.preventDefault();
+//     accessToken = window.localStorage.getItem('accessToken');
 
-    var nextUrl = 'http://127.0.0.1:8000';
-    window.location = 'http://127.0.0.1:8000/accounts/logout/?next=' + nextUrl;
+//     var nextUrl = 'http://127.0.0.1:8000';
+//     window.location = 'http://127.0.0.1:8000/accounts/logout/?next=' + nextUrl;
 
-});
+// });
 $(document).on('click', '#logout_btn', function (e) {
-    accessToken = window.localStorage.getItem('accessToken');
+    const accessToken = window.localStorage.getItem('accessToken');
 
     e.preventDefault();
     var nextUrl = '';
