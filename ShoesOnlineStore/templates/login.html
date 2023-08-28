@@ -15,7 +15,6 @@
                                 {% csrf_token %}
                                 <div class="form-floating mb-2 mt-3">
                                     <input type="text" id="phone_number"  name="phone_number" class="form-control" placeholder="Phone number" />
-                                    {% comment %} pattern="[09][0-9]{2}-[0-9]{3}-[0-9]{4}" {% endcomment %}
                                     <label for="phone_number">Phone number</label>
                                 </div>
                                 {% if request.GET.next %}                                    
@@ -29,7 +28,6 @@
                                 {% csrf_token %}
                                 <div class="form-floating mb-2 mt-3"> 
                                     <input type="text" id="code"  name="code" class="form-control" placeholder="Verification Code" />
-                                    {% comment %} pattern="[09][0-9]{2}-[0-9]{3}-[0-9]{4}" {% endcomment %}
                                     <label for="code">Code</label>
                                 </div>    
                                 {% if request.POST.next %}                                    
