@@ -1096,3 +1096,30 @@ a:hover {
   border-radius: 50%;
   margin-bottom: 20px;
 }
+
+/*me write*/
+
+/* Basic styling for the menu */
+ul.dropdown {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 0px solid #ccc;
+  padding: 0;
+  list-style: none;
+}
+
+li.has-children:hover>ul.dropdown {
+  display: block;
+}
+
+li.user_menu {
+  position: relative;
+  padding: 3px;
+  width: 70px;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
