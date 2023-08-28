@@ -146,7 +146,67 @@
               <div class="form-group">
                 <label for="c_order_notes" class="text-black">Order Notes</label>
                 <textarea name="c_order_notes" id="c_order_notes" cols="30" rows="5" class="form-control" placeholder="Write your notes here..."></textarea>
+              </div>             
+
+              <div class="form-group">
+                <label for="c_ship_different_address" class="text-black" data-toggle="collapse" href="#ship_different_address" role="button" aria-expanded="false" aria-controls="ship_different_address"><input type="checkbox" value="1" id="c_ship_different_address"> Ship To Another Address?</label> 
+                <div class="collapse" id="ship_different_address">
+                  <div class="py-2">
+
+                    <div class="form-group">
+                      <label for="c_diff_country" class="text-black">Province <span class="text-danger">*</span></label>
+                      <select id="c_diff_country" class="form-control">
+                        <option value="">Select a province</option>
+                        {% for province_code, province_name in PROVINCES %}
+                          <option value="{{ province_code }}">{{ province_name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-md-6">
+                        <label for="c_diff_city" class="text-black">City <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_city" name="c_diff_city">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="c_diff_postal_zip" class="text-black">Postal / Zip <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_postal_zip" name="c_diff_postal_zip">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-md-12">
+                        <label for="c_diff_address" class="text-black">Address <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_address" name="c_diff_address" placeholder="Street address">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-md-6">
+                        <label for="c_diff_fname" class="text-black">First Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_fname" name="c_diff_fname">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="c_diff_lname" class="text-black">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_lname" name="c_diff_lname">
+                      </div>
+                    </div>
+
+                    <div class="form-group row mb-5">
+                      <div class="col-md-6">
+                        <label for="c_diff_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_email_address" name="c_diff_email_address">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="c_diff_phone" class="text-black">Phone <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_phone" name="c_diff_phone" placeholder="Phone Number">
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
               </div>
+
+
+
 
             </div>
           </div>
@@ -225,7 +285,7 @@
 
 <script>
   $(document).ready(function() {    
-    accessToken=window.localStorage.getItem('accessToken');
+    const accessToken=window.localStorage.getItem('accessToken');
     $.ajax({
     url : "http://localhost:8000/order/cart_list/",
     type: 'GET',
@@ -277,7 +337,7 @@
       {% comment %} "cartData":cartData, {% endcomment %}
       "city":city
     };
-    accessToken=window.localStorage.getItem('accessToken');
+    const accessToken=window.localStorage.getItem('accessToken');
     $.ajax({
       url: 'http://localhost:8000/order/create_order/',
       type: 'POST',
@@ -290,7 +350,7 @@
          //console.log(response); 
          //new request should be here
          //window.location = 'http://127.0.0.1:8000/order/request//';
-          accessToken=window.localStorage.getItem('accessToken');
+          const accessToken=window.localStorage.getItem('accessToken');
          $.ajax({
            url: 'http://localhost:8000/order/request/'+response['order_id'],
            type: 'GET',
