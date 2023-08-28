@@ -1,16 +1,16 @@
-from django.db.models import Subquery, OuterRef, Max
+from django.db.models import Subquery, OuterRef
 from django.utils.decorators import method_decorator
-
+from rest_framework import status
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from shoes.pagination import ProductPagination
 from .models import Product, Price
 from django.views.decorators.cache import cache_page
 from .serializer import ProductsSerializer
 from rest_framework.permissions import AllowAny
 # IsAuthenticatedOrReadOnly permission just can run safe method for unauthenticated user
-from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
-from rest_framework import status, filters
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework import filters
+
 from shoes.api.filters import ProductFilter
 
 
@@ -50,3 +50,11 @@ class ProductList(ListAPIView):
     @method_decorator(cache_page(2*60))
     def dispatch(self, *args, **kwargs):
         return super(ProductList, self).dispatch(*args, **kwargs)
+
+
+class ProductDetails(RetrieveAPIView):
+    permission_classes = (AllowAny,)
+    authentication_classes = []
+    serializer_class = ProductsSerializer
+    queryset = Product.objects.filter(available_quantity__gte=1).select_related(
+        'brand', 'category').prefetch_related('color', 'size')
