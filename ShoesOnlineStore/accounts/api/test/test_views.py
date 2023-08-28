@@ -1,30 +1,38 @@
-from django.contrib.auth import get_user_model
-from rest_framework.test import APITestCase
+from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
-from accounts.utils import generate_access_token, generate_refresh_token
+from rest_framework.test import APIClient
+from accounts.models import Account
+from ..serializers import AccountSerializer
 
-User = get_user_model()
+from datetime import timedelta
 
 
-class TokenObtainPairViewTest(APITestCase):
+class ViewsTestCase(TestCase):
+
     def setUp(self):
-        self.user = User.objects.create_user(
-            username='testuser', password='testpassword')
-
-    def test_generate_tokens(self):
+        # access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjpudWxsLCJleHAiOjE2OTMyMDU5NjQsImlhdCI6MTY5MzIwNTc4NH0.weqCufxzcWAmC-6jG-7GDClUo_vXiHhbgYbfnIpZ6rk",
+        # refresh_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjpudWxsLCJleHAiOjE2OTU3OTc3ODQsImlhdCI6MTY5MzIwNTc4NH0.pApYvB-XMJlKv6CuyJqqQiyLUfyJnkUVOFCdmKJKW-g"
+        self.client = APIClient()
+        self.user = Account.objects.create(phone_number='1234567890')
         self.client.force_authenticate(user=self.user)
 
-        response = self.client.get('/token/')
+    def test_token_obtain_pair_view(self):
+        url = reverse('optain_pair_tokens')
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn('access_token', response.data)
         self.assertIn('refresh_token', response.data)
 
-    def test_no_token_generated(self):
-        response = self.client.get('/token/')
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertIn('message', response.data)
-        self.assertEqual(response.data['message'], 'No Token Generated')
+    def test_account_list_view(self):
+        url = reverse('account-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        serializer = AccountSerializer(Account.objects.all(), many=True)
+        self.assertEqual(response.data, serializer.data)
 
-    def test_generate_tokens_unauthenticated(self):
-        response = self.client.get('/token/')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    def test_account_list_view_unauthenticated(self):
+        self.client.logout()
+        url = reverse('account-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
