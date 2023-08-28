@@ -68,7 +68,11 @@ class Order(BaseModel):
         return f"Order id:{self.id}"
 
     def get_total_price(self):
-        return sum(item.get_cost() for item in self.items.all())
+        items = self.items.all()
+        if items.first():
+            return sum(item.get_cost() for item in items)
+        else:
+            return 0
 
     def save(self, *args, **kwargs):
         if self.delivery_status == 2:
