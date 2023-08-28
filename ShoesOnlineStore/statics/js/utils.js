@@ -1,4 +1,4 @@
-accessToken = window.localStorage.getItem('accessToken');
+const accessToken = window.localStorage.getItem('accessToken');
 refreshToken = window.localStorage.getItem('refreshToken');
 if (accessToken) {
     console.log("access exists")
