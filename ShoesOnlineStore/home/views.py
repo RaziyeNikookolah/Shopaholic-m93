@@ -1,5 +1,3 @@
-from django.utils.decorators import method_decorator
-from django.core import serializers
 from django.shortcuts import render
 from django.views import View
 from rest_framework.views import APIView
@@ -8,7 +6,6 @@ from rest_framework import status
 from shoes.serializer import ProductsSerializer
 from django.db.models import OuterRef, Subquery
 from shoes.models import Product, Price
-from django.contrib.auth.decorators import login_required
 
 
 class HomeView(View):
