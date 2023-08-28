@@ -26,6 +26,8 @@ class AddToCartView(APIView):
             quantity = serializer.validated_data.get('quantity', '')
             price = serializer.validated_data.get('price', '')
             total_price = serializer.validated_data.get('total_price', '')
+            if not quantity > 0:
+                return Response({'message': 'Invalid quantity'}, status=status.HTTP_400_BAD_REQUEST)
             logger.info(f"order_id:{product_id} quantity:{quantity}")
             add_product_to_session(
                 product_id, price, quantity, total_price)

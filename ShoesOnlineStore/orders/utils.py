@@ -88,8 +88,9 @@ def print_session_items():
 
 def clear_session():
     global session
-    del session[session_key]
-    session.save()
+    if session_key in session:
+        del session[session_key]
+        session.save()
 
 
 def create_orderItems_from_session(order):
