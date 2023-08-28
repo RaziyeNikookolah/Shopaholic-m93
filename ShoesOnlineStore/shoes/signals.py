@@ -1,4 +1,4 @@
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.text import slugify
 import os
@@ -6,11 +6,11 @@ from .models import Product, Category
 
 
 # this line connect func to receiver,func call when sender makes signal
-@receiver(post_save, sender=Product)
-def create_new_product(sender, instance, created, **kwargs):
-    if created:
-        os.mkdir(os.path.join(
-            os.getcwd(), f"media\shoes\images\{instance.id}"))
+# @receiver(post_save, sender=Product)
+# def create_new_product(sender, instance, created, **kwargs):
+#     if created:
+#         os.mkdir(os.path.join(
+#             os.getcwd(), f"media\shoes\images\{instance.id}"))
 
 
 @receiver(pre_save, sender=Product)
