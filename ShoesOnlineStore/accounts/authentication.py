@@ -7,6 +7,8 @@ from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 
 User = get_user_model()
 
+# this is for login
+
 
 class JWTAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
@@ -20,17 +22,18 @@ class JWTAuthentication(authentication.BaseAuthentication):
             authorization_header
         )  # clean the token
         # Decode the JWT and verify its signature
+        payload = {}
+
         try:
             payload = jwt.decode(
                 jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
-
         except jwt.exceptions.InvalidSignatureError:
 
             raise AuthenticationFailed("Invalid signature")
         except jwt.exceptions.ExpiredSignatureError:
 
             raise AuthenticationFailed("Signature expired")
-        except:
+        except Exception as e:
 
             raise AuthenticationFailed("Could not parse token")
         # Get the user from the database
@@ -72,8 +75,6 @@ class LoginAuthentication(authentication.BaseAuthentication):
             payload = jwt.decode(
                 jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
 
-        except jwt.exceptions.ExpiredSignatureError:
-            return None
         except:
             return None
 
