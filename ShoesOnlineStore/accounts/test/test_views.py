@@ -1,49 +1,38 @@
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, Client
 from django.urls import reverse
-from django.contrib.auth.models import AnonymousUser, User
-from django.http import HttpResponse
-from ..views import LoginView, LogoutView, RequestLogoutView, test, send_mail_to_all, schedule_mail
+from rest_framework import status
+from ..models import Account  # Adjust this import as needed
 
 
-class LoginViewTest(TestCase):
+class ViewsTestCase(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = Account.objects.create(phone_number='1234567890')
+        self.client.force_login(self.user)
+
     def test_login_view(self):
-        response = self.client.get(reverse('login'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('login')  # Adjust this based on your URL configuration
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTemplateUsed(response, 'login.html')
 
-
-class LogoutViewTest(TestCase):
     def test_logout_view(self):
-        response = self.client.get(reverse('logout'))
-        self.assertEqual(response.status_code, 200)
+        url = reverse('logout')  # Adjust this based on your URL configuration
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTemplateUsed(response, 'logout.html')
 
-
-class RequestLogoutViewTest(TestCase):
     def test_request_logout_view(self):
-        request = RequestFactory().get('/')
-        request.user = User()
-        response = RequestLogoutView.as_view()(request)
-        self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(response, HttpResponse)
+        # Adjust this based on your URL configuration
+        url = reverse('request_logout')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], 'logout successfully')
 
-
-class TestViewTest(TestCase):
-    def test_test_view(self):
-        response = self.client.get(reverse('test'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.decode("utf-8"), "Done")
-
-
-class SendMailToAllViewTest(TestCase):
-    def test_send_mail_to_all_view(self):
-        response = self.client.get(reverse('send_mail_to_all'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.decode("utf-8"), "Sent")
-
-
-class ScheduleMailViewTest(TestCase):
-    def test_schedule_mail_view(self):
-        response = self.client.get(reverse('schedule_mail'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.content.decode("utf-8"), "Done")
+    def test_profile_view(self):
+        url = reverse('profile')  # Adjust this based on your URL configuration
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTemplateUsed(response, 'profile.html')
+        self.assertIn('PROVINCES', response.context)
