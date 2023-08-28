@@ -1,6 +1,16 @@
 $(document).ready(function () {
-    accessToken = window.localStorage.getItem('accessToken');
+    const accessToken = window.localStorage.getItem('accessToken');
 
+    if (accessToken) {
+        console.log("access token is here");
+        showLiElement(); // Show logout element
+        hideLiLogin();  // Hide login element
+    } else {
+        console.log("access token is not here");
+
+        showLiLogin();   // Show login element
+        hideLiElement(); // Hide logout element
+    }
 
     // Define a function to load data for the given URL
     function loadPageData(url) {
@@ -73,7 +83,7 @@ $(document).ready(function () {
     $('#search_form').on('keypress', function (e) {
         if (e.keyCode == 13) {
             e.preventDefault();
-            accessToken = window.localStorage.getItem('accessToken');
+            const accessToken = window.localStorage.getItem('accessToken');
             loadPageData('http://127.0.0.1:8000/shoes/product_list/?search=' + $('#search_form').val());
 
         }
@@ -134,7 +144,7 @@ $(document).ready(function () {
 
     function getColors() {
         var div_color = $('#colors');
-        accessToken = window.localStorage.getItem('accessToken');
+        const accessToken = window.localStorage.getItem('accessToken');
         $.ajax({
             url: 'http://127.0.0.1:8000/api/v1/shoes/colors/',
             type: 'GET',
@@ -173,7 +183,7 @@ $(document).ready(function () {
     function getCategories() {
         var output = '<ul class="list-unstyled mb-0" id="ulCategories">';
         var ul = $('#ulCategories');  // Store the ul element in a variable
-        accessToken = window.localStorage.getItem('accessToken');
+        const accessToken = window.localStorage.getItem('accessToken');
         $.ajax({
             url: 'http://127.0.0.1:8000/api/v1/shoes/categories/',
             type: 'GET',
