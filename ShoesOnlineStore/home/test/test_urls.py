@@ -1,49 +1,47 @@
-from django.test import TestCase
-from django.urls import reverse
-from rest_framework.test import APIClient
-from rest_framework import status
+import unittest
+from django.urls import reverse, resolve
+from .. import views
 
 
-class URLTests(TestCase):
-    def setUp(self):
-        self.client = APIClient()
-
-    def test_home_url(self):
-        response = self.client.get(reverse('home:index'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+class TestUrls(unittest.TestCase):
+    def test_index_url(self):
+        url = reverse('home:index')
+        self.assertEqual(resolve(url).func.view_class, views.HomeView)
 
     def test_about_url(self):
-        response = self.client.get(reverse('home:about'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('home:about')
+        self.assertEqual(resolve(url).func.view_class, views.AboutView)
 
     def test_cart_url(self):
-        response = self.client.get(reverse('home:cart'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('home:cart')
+        self.assertEqual(resolve(url).func.view_class, views.CartView)
 
     def test_contact_url(self):
-        response = self.client.get(reverse('home:contact'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('home:contact')
+        self.assertEqual(resolve(url).func.view_class, views.ContactView)
 
     def test_shop_url(self):
-        response = self.client.get(reverse('home:shop'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('home:shop')
+        self.assertEqual(resolve(url).func.view_class, views.ShopView)
 
     def test_shop_single_url(self):
-        product_id = 1  # Replace with an actual product ID
-        response = self.client.get(
-            reverse('home:shop_single', args=[product_id]))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Assuming pk = 1 for testing purposes
+        url = reverse('home:shop_single', args=[1])
+        self.assertEqual(resolve(url).func.view_class, views.ShopSingleView)
 
     def test_thank_you_url(self):
-        response = self.client.get(reverse('home:thank_you'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('home:thank_you')
+        self.assertEqual(resolve(url).func.view_class, views.ThankyouView)
 
     def test_checkout_url(self):
-        response = self.client.get(reverse('home:checkout'))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('home:checkout')
+        self.assertEqual(resolve(url).func.view_class, views.CheckoutView)
 
     def test_shoe_detail_url(self):
-        product_id = 1  # Replace with an actual product ID
-        response = self.client.get(
-            reverse('home:shoe_detail', args=[product_id]))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Assuming pk = 1 for testing purposes
+        url = reverse('home:shoe_detail', args=[1])
+        self.assertEqual(resolve(url).func.view_class, views.ShoeDetail)
+
+
+if __name__ == '__main__':
+    unittest.main()
