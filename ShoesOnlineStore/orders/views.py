@@ -102,7 +102,6 @@ class CreateOrder(APIView):
                 order_instance = order_queryset.first()
             else:
                 order_instance = order_queryset.first()
-            print("order created")
 
             create_orderItems_from_session(order_instance)
             total_price = order_instance.get_total_price()

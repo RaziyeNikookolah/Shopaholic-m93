@@ -55,8 +55,10 @@ class DecimalEncoder(json.JSONEncoder):
 def session_cart() -> dict:
 
     global session
-
-    if session[session_key]:
+    global session_key
+    # session.get(session_key, {})
+    if session_key in session:
+        # if session[session_key]:  # != {}:
         cart_item = {}
         main_total = Decimal(0)
         for k, v in session[session_key].items():
@@ -72,8 +74,9 @@ def session_cart() -> dict:
             cart_item[serilized_product['id']] = serilized_product
 
         data = {'cart_items': cart_item, 'grand_total': main_total}
-        return json.dumps(data, cls=DecimalEncoder)
+        return data  # json.dumps(data, cls=DecimalEncoder)
     else:
+        # clear_session()
         return {"message": "Empty cart"}
 
 
@@ -94,23 +97,25 @@ def create_orderItems_from_session(order):
     global product
 
     product = None
-
     # Parse the JSON string
-    data = json.loads(session_cart())
+    # data = json.loads(session_cart())
+    data = session_cart()
+    if "cart_items" in data:
+        # Access the cart_items and grand_total properties
+        cart_items = data["cart_items"]
+        grand_total = data["grand_total"]
 
-    # Access the cart_items and grand_total properties
-    cart_items = data["cart_items"]
-    grand_total = data["grand_total"]
+        # Iterate through the cart items
+        for item in cart_items.values():
 
-    # Iterate through the cart items
-    for item in cart_items.values():
-
-        product = Product.objects.filter(id=item.get(
-            'id'), available_quantity__gte=item["quantity"]).first()
-        if product:
-            orderItem = OrderItem.objects.create(
-                order=order, product=product, quantity=item["quantity"])
-    # product.update(
-    #     available_quantity=product.available_quantity-item_quantity)
-        else:
-            return Response({'message': "Error:Unavailable product or Invalid product"}, status=status.HTTP_400_BAD_REQUEST)
+            product = Product.objects.filter(id=item.get(
+                'id'), available_quantity__gte=item["quantity"]).first()
+            if product:
+                orderItem = OrderItem.objects.create(
+                    order=order, product=product, quantity=item["quantity"])
+        # product.update(
+        #     available_quantity=product.available_quantity-item_quantity)
+            else:
+                return Response({'message': "Error:Unavailable product or Invalid product"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message': "Error:Unavailable product or Invalid product"})
