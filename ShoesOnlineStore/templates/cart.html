@@ -84,7 +84,7 @@
 
                 <div class="row">
                   <div class="col-md-12">
-                    <a href="#" class="btn btn-primary btn-lg py-3 btn-block " onclick="redirectToCheckout(event)" style="color:white;" >Proceed To Checkout</a>
+                    <a href="#" class="btn btn-primary btn-lg py-3 btn-block " id="redirectToCheckout" style="color:white;" >Proceed To Checkout</a>
                   </div>
                 </div>
               </div>
@@ -104,7 +104,7 @@
       <script src="{% static 'js/main.js'%}"></script>
 <script>
     $(document).ready(function() {
-      accessToken=window.localStorage.getItem('accessToken');
+      const accessToken=window.localStorage.getItem('accessToken');
               
       $.ajax({
       url : "http://localhost:8000/order/cart_list/",
@@ -114,7 +114,7 @@
         xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
       },
       success: function (data, status, xhr) {
-        cartData = JSON.parse(data);
+        cartData = data;
 
         var tableBody = document.getElementById('cart_table_body');
         var grandTotalElement = document.getElementById('grandTotal');
@@ -274,15 +274,15 @@
     },
   });
 });  
-function cartItemDeleteSessionRequest(product_id){
-}
+const chckout=document.getElementById("redirectToCheckout");
 
-function redirectToCheckout(event){
-  event.preventDefault()
-  accessToken=window.localStorage.getItem('accessToken');
+chckout.addEventListener("click", function(event){
+
+  event.preventDefault();
+  const accessToken=window.localStorage.getItem('accessToken');
   refreshToken=window.localStorage.getItem('refreshToken');
   if(accessToken){
-    {% comment %} console.log("access exists") {% endcomment %}
+  console.log("access exists");
   fetch('http://localhost:8000/checkout/', {
     method: 'GET',
     headers: {
@@ -292,8 +292,12 @@ function redirectToCheckout(event){
 })
     .then(response => {
       console.log(response);
+      if(response.status==200){
+        window.location = 'http://127.0.0.1:8000/checkout/';
 
-      if(response.status==401){  
+      } 
+
+      else if(response.status==401){  
         console.log(401,"access token expired");
 
         fetch('http://localhost:8000/checkout/', {
@@ -330,18 +334,14 @@ function redirectToCheckout(event){
 
     }
 
-    add_session_to_menuItemRequest();
 
 }
-
-function add_session_to_menuItemRequest(){
-
-}
+);
 function update_cart() {
   event.preventDefault();
   console.log(cartData);
 
-accessToken=window.localStorage.getItem('accessToken');
+const accessToken=window.localStorage.getItem('accessToken');
 fetch('http://localhost:8000/order/update_cart/', {
     method: 'POST',
       headers: {
