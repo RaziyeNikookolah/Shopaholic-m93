@@ -83,8 +83,8 @@ class PaymentVerify(View):
                 # delete session
                 order.save()
 
-                return HttpResponse(f"Transaction success RefID:{str(response['RefID'])} , Status:{response['status']}")
+                return HttpResponse(f"Transaction success RefID:{str(response['RefID'])} , Status:{response['Status']}")
             else:
 
-                return HttpResponse(f"Transaction failed Status:{response['status']}")
+                return HttpResponse(f"Transaction failed Status:{response['Status']}")
         return response
