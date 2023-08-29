@@ -27,7 +27,7 @@ celery_app.conf.beat_schedule = {
     'export_orders_daily': {
         'task': 'orders.tasks.email_export',
         # This will run the task every day at midnight
-        'schedule': crontab(minute=10, hour=19),
+        'schedule': crontab(minute=0, hour=0),
     },
 }
 
