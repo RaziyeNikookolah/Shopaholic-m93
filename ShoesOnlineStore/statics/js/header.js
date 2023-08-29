@@ -46,7 +46,7 @@ liLogin.addEventListener('click', function () {
 
     const nextUrl = 'http://127.0.0.1:8000';  // Replace with the actual URL
 
-    window.location = 'http://127.0.0.1:8000/accounts/login/?next=' + nextUrl;
+    loadNewPage('http://127.0.0.1:8000/accounts/login/?next=' + nextUrl);
 
 });
 
@@ -66,3 +66,25 @@ liLogin.addEventListener('click', function () {
 
 // });
 
+function loadNewPage(url) {
+    const accessToken = window.localStorage.getItem('accessToken');
+    // Create a new XMLHttpRequest or use Fetch API to load the content of the new page
+    fetch(url,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + accessToken,
+            },
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Replace the current document's content with the content of the new page
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(error => {
+            console.error('Error loading page:', error);
+        });
+}
