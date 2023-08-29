@@ -339,7 +339,6 @@ chckout.addEventListener("click", function(event){
 );
 function update_cart() {
   event.preventDefault();
-  console.log(cartData);
 
 const accessToken=window.localStorage.getItem('accessToken');
 fetch('http://localhost:8000/order/update_cart/', {

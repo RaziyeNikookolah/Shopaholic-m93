@@ -1,5 +1,5 @@
 const accessToken = window.localStorage.getItem('accessToken');
-refreshToken = window.localStorage.getItem('refreshToken');
+const refreshToken = window.localStorage.getItem('refreshToken');
 if (accessToken) {
     console.log("access exists")
     fetch('http://localhost:8000/checkout/', {
@@ -49,4 +49,19 @@ else {
     window.location = 'http://127.0.0.1:8000/accounts/login/?next=/checkout/';
     console.log("access token not exists");
 
+}
+
+function loadNewPage(url) {
+    // Create a new XMLHttpRequest or use Fetch API to load the content of the new page
+    fetch(url)
+        .then(response => response.text())
+        .then(html => {
+            // Replace the current document's content with the content of the new page
+            document.open();
+            document.write(html);
+            document.close();
+        })
+        .catch(error => {
+            console.error('Error loading page:', error);
+        });
 }

@@ -294,9 +294,7 @@
       xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
     },
     success: function (data, status, xhr) {
-      cartData = JSON.parse(data);
-      console.log(cartData);
-      
+      cartData = data;      
      output='<tbody id="order_product">';
       // Iterate over the cart items and create a table row for each item
       
@@ -339,6 +337,7 @@
     };
     const accessToken=window.localStorage.getItem('accessToken');
     $.ajax({
+      
       url: 'http://localhost:8000/order/create_order/',
       type: 'POST',
       contentType: 'application/json',
