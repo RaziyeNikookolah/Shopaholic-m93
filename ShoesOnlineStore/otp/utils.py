@@ -17,14 +17,11 @@ def send_otp_request(otp_request):
             'type': 'sms',  # sms vs call
         }
         response = api.verify_lookup(params)
-        print(response)
-        return Response({"message": "OTP send successfully"})
+        return status.HTTP_200_OK, "OTP send successfully"
     except APIException as e:
-        print(e)
-        return Response({'message': 'Send OTP of kavenegar without api authorization...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return status.HTTP_500_INTERNAL_SERVER_ERROR, 'Send OTP of kavenegar without api authorization...'
     except HTTPException as e:
-        print(e)
-        return Response({'error': 'Failed to send OTP'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return status.HTTP_500_INTERNAL_SERVER_ERROR, 'Failed to send OTP'
 
 
 def verify_otp_request(code, otp_request):
