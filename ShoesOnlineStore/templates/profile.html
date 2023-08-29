@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}
   Shoes Online Shop
+ 
+
 {% endblock %}
 {% block content %}
 {% load static %} 
@@ -249,10 +251,42 @@
       </div>
     </div>
 
-
-
-
     <script>
+      const userId = {{ user.id }};
+      const userId = {{ user}};
+      console.log('User ID:', userId);
+      console.log('***********');
+    </script>
+
+
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+      $(document).ready(function () {
+        const accessToken = window.localStorage.getItem('accessToken');
+        const url="http://127.0.0.1:8000/api/v1/account/accounts/"+userId+"/";
+        $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'json',
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+          },
+          success: function (data) {
+            console.log("%%%%%%%%%%");
+            console.log(data);
+          },
+          error: function (jqXhr, textStatus, errorMessage) {
+              console.log('Error in loading data', errorMessage);
+          },
+      });
+  }); 
+
+
+
+
+
       const addresses = [
         { id: 1, address: '123 Main St', city: 'City A', state: 'State A', postal: '12345' },
         { id: 2, address: '456 Elm St', city: 'City B', state: 'State B', postal: '67890' },
@@ -291,24 +325,7 @@
 
 
 
-      {% comment %} $(document).ready(function () {
 
-        const accessToken = window.localStorage.getItem('accessToken');
-        const url="";
-        $.ajax({
-          url: url,
-          type: 'GET',
-          dataType: 'json',
-          beforeSend: function (xhr) {
-              xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-          },
-          success: function (data) {
-          },
-          error: function (jqXhr, textStatus, errorMessage) {
-              console.log('Error in loading data', errorMessage);
-          },
-      });
-  }); {% endcomment %}
 
 
     </script>
