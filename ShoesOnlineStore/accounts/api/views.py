@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.routers import DefaultRouter
 from rest_framework.viewsets import ViewSet
 from ..models import Account
@@ -21,11 +22,16 @@ class TokenObtainPairView(APIView):
 class AccountViewSet(ViewSet):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
-    http_method_names = ['get']
+    # http_method_names = ['get']
 
     def list(self, request):
         serializer = AccountSerializer(self.queryset, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, pk):
+        account = get_object_or_404(Account, pk=pk)
+        serializer = AccountSerializer(instance=account)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 router = DefaultRouter()
