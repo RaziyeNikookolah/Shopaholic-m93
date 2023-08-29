@@ -1,45 +1,35 @@
+from django.test import TestCase
+from rest_framework.test import APIRequestFactory, force_authenticate
+from shoes.models import Category, Color
+from shoes.api.views import ListCategory, ListColor
+from shoes.api.serializers import CategorySerializer, ColorSerializer
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
-from shoes.models import Category, Color
-from shoes.api.serializers import CategorySerializer, ColorSerializer
+import json
 
 
-class ListCategoryAndColorViewsetTest(APITestCase):
+class CategoryColorAPITest(TestCase):
     def setUp(self):
-        self.category1 = Category.objects.create(title="Footwear")
-        self.category2 = Category.objects.create(title="Apparel")
-
-        self.color1 = Color.objects.create(name="Red")
-        self.color2 = Color.objects.create(name="Blue")
+        self.factory = APIRequestFactory()
+        self.category = Category.objects.create(title='Test Category')
+        self.color = Color.objects.create(name='Red')
 
     def test_list_categories(self):
-        url = reverse('category-list')  # Replace with actual URL name
-        response = self.client.get(url)
+        url = reverse('category-list')
+        request = self.factory.get(url)
+        view = ListCategory.as_view({'get': 'list'})
+        response = view(request)
+        expected_data = CategorySerializer([self.category], many=True).data
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data, expected_data)
 
     def test_list_colors(self):
-        url = reverse('color-list')  # Replace with actual URL name
-        response = self.client.get(url)
+        url = reverse('color-list')
+        request = self.factory.get(url)
+        view = ListColor.as_view({'get': 'list'})
+        response = view(request)
+        expected_data = ColorSerializer([self.color], many=True).data
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-
-    def test_list_categories_with_serializer(self):
-        serializer = CategorySerializer(
-            [self.category1, self.category2], many=True)
-        url = reverse('category-list')  # Replace with actual URL name
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, serializer.data)
-
-    def test_list_colors_with_serializer(self):
-        serializer = ColorSerializer([self.color1, self.color2], many=True)
-        url = reverse('color-list')  # Replace with actual URL name
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, serializer.data)
+        self.assertEqual(response.data, expected_data)
