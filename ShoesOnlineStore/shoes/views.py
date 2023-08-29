@@ -58,3 +58,14 @@ class ProductDetails(RetrieveAPIView):
     serializer_class = ProductsSerializer
     queryset = Product.objects.filter(available_quantity__gte=1).select_related(
         'brand', 'category').prefetch_related('color', 'size')
+
+    def get_queryset(self):
+
+        last_price_subquery = Price.objects.filter(
+            product=OuterRef('pk')).order_by('-create_timestamp')
+        last_price_subquery = last_price_subquery.values('price')[:1]
+
+        queryset = super().get_queryset().annotate(
+            last_price=Subquery(last_price_subquery)
+        )
+        return queryset
