@@ -11,4 +11,4 @@ urlpatterns = [
 # api/v1/accounts/access_token/
 # api/v1/accounts/refresh_token/
 # api/v1/accounts/optain_pair_tokens/
-# api/v1/accounts/profiles/
+# api/v1/accounts/accounts/

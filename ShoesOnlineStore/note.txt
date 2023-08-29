@@ -1,0 +1,8 @@
+celery -A ShoesOnlineStore worker -l info -P ShoesOnlineStore
+celery -A ShoesOnlineStore beat
+
+redis-cli
+
+python manage.py test 
+coverage run manage.py test
+coverage report
