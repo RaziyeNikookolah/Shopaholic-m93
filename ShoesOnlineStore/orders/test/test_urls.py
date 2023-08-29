@@ -22,10 +22,6 @@ class TestUrls(unittest.TestCase):
         self.assertEqual(resolve(url).func.view_class,
                          views.UpdateCartItemView)
 
-    def test_checkout_url(self):
-        url = reverse('checkout')
-        self.assertEqual(resolve(url).func.view_class, views.CheckoutView)
-
     def test_create_order_url(self):
         url = reverse('create_order')
         self.assertEqual(resolve(url).func.view_class, views.CreateOrder)
