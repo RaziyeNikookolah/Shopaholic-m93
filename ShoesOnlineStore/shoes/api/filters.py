@@ -13,15 +13,15 @@ class ProductFilter(filters.FilterSet):
         field_name='color__name', lookup_expr='icontains', label='Color name')
     size__name = filters.CharFilter(
         field_name='size__name', lookup_expr='icontains', label='Size name')
-    min_price = filters.NumberFilter(
-        method='filter_min_price', label="Min price")
-    max_price = filters.NumberFilter(
-        method='filter_max_price', label='Max price')
+    # min_price = filters.NumberFilter(
+    #     method='filter_min_price', label="Min price")
+    # max_price = filters.NumberFilter(
+    #     method='filter_max_price', label='Max price')
 
     class Meta:
         model = Product
         fields = ['title', 'category__title',
-                  'brand__title', 'color__name', 'size__name', 'min_price', 'max_price']
+                  'brand__title', 'color__name', 'size__name', ]  # 'min_price', 'max_price']
 
         def filter_min_price(self, queryset, name, value):
             min_price_qs = Price.objects.filter(
