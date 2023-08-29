@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from .serializers import RequestOtpSerializer, VerifyOtpSerializer
 from .utils import send_otp_request, verify_otp_request
@@ -32,8 +33,14 @@ class RequestOTP(APIView):
             otp_request.generate_code()
             print("*****  "+otp_request.code+"  *****")
             otp_request.save()
-
-            return send_otp_request(otp_request)
+            status, message = send_otp_request(otp_request)
+            if status.status_code == 200:
+                if 'next' in request.POST:
+                    return Response({"message": message, "next": request.POST.get('next')}, status=status)
+                else:
+                    return Response({"message": message, "next": reverse("login")}, status=status)
+            else:
+                return Response({"message": message}, status=status)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
