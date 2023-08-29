@@ -2,11 +2,11 @@ import logging
 from orders.models import Order
 from orders.models import Order
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from accounts import authentication
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
-from accounts import authentication
 from .utils import add_product_to_session, session_cart, clear_session, create_orderItems_from_session
 from orders.serializer import CartItemSerializer
 
