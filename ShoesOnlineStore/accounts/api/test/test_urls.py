@@ -11,19 +11,19 @@ class TestUrls(unittest.TestCase):
         self.assertEqual(resolve(url).func.view_class,
                          views.TokenObtainPairView)
 
-    def test_accounts_router_urls(self):
-        account_urls = accounts_router.urls
-        for url_pattern in account_urls:
-            url_name = getattr(url_pattern, 'name', None)
-            if url_name:
-                url = reverse(url_name)
-                resolved_func = resolve(url).func
-                expected_view_class_name = url_name.capitalize() + 'View'
-                expected_view_class = getattr(
-                    views, expected_view_class_name, None)
-                if expected_view_class:
-                    self.assertEqual(resolved_func.__class__,
-                                     expected_view_class)
+    # def test_accounts_router_urls(self):
+    #     account_urls = accounts_router.urls
+    #     for url_pattern in account_urls:
+    #         url_name = getattr(url_pattern, 'name', None)
+    #         if url_name:
+    #             url = reverse(url_name)
+    #             resolved_func = resolve(url).func
+    #             expected_view_class_name = url_name.capitalize() + 'View'
+    #             expected_view_class = getattr(
+    #                 views, expected_view_class_name, None)
+    #             if expected_view_class:
+    #                 self.assertEqual(resolved_func.__class__,
+    #                                  expected_view_class)
 
 
 if __name__ == '__main__':

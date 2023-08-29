@@ -76,8 +76,8 @@ class Order(BaseModel):
 
     def save(self, *args, **kwargs):
         if self.delivery_status == 2:
-            send_delivery_status_email.delay(self.id)
-        if self.is_paid == True:
+            send_delivery_status_email(self.id)
+        if self.is_paid:
             send_order_paid_email(self.id)
         super(Order, self).save(*args, **kwargs)
 
