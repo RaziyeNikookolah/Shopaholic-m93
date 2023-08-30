@@ -34,7 +34,8 @@ class RequestOTP(APIView):
             print("*****  "+otp_request.code+"  *****")
             otp_request.save()
             status, message = send_otp_request(otp_request)
-            if status.status_code == 200:
+
+            if status == 200:
                 if 'next' in request.POST:
                     return Response({"message": message, "next": request.POST.get('next')}, status=status)
                 else:
