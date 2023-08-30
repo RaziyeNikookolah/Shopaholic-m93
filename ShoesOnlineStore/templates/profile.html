@@ -22,55 +22,58 @@
             <h2 class="h3 mb-3 text-black">Account Details</h2>
             <div class="p-3 p-lg-5 border">
 
-              <div class="form-group row">
-                <div class="col-md-6">
-                  <label for="c_fname" class="text-black">First Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_fname" name="c_fname">
-                </div>
-                <div class="col-md-6">
-                  <label for="c_lname" class="text-black">Last Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_lname" name="c_lname">
-                </div>
-              </div>
-              
-              <div class="form-group row mb-5">
-                <div class="col-md-6">
-                  <label for="c_gender" class="text-black">Gender <span class="text-danger">*</span></label>
-                  <select class="form-control" id="c_gender" name="c_gender">
-                    <option value="" disabled selected>Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                
-                <div class="col-md-6">
-                  <label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_phone" name="c_phone" placeholder="Phone Number">
-                </div>
-              </div>
-
-
-              <div class="form-group row">
-                <div class="col-md-6">
-                  <label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_email_address" name="c_email_address">
-                </div>
-                <div class="col-md-6">
-                  <label for="c_birthdate" class="text-black">Birthdate <span class="text-danger">*</span></label>
-                  <input type="date" class="form-control" id="c_birthdate" name="c_birthdate">
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-md-12">
-                  <label for="c_card_number" class="text-black">Card Shaba Number <span class="text-danger">*</span></label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">IR</span>
-                    </div>
-                    <input type="text" class="form-control" id="c_card_number" name="c_card_number" placeholder="Card Number">
+              <div id="account_details">
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label for="c_fname" class="text-black">First Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_fname" name="c_fname" >
+                  </div>
+                  <div class="col-md-6">
+                    <label for="c_lname" class="text-black">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_lname" name="c_lname">
                   </div>
                 </div>
+                
+                <div class="form-group row mb-5">
+                  <div class="col-md-6">
+                    <label for="c_gender" class="text-black">Gender <span class="text-danger">*</span></label>
+                    <select class="form-control" id="c_gender" name="c_gender">
+                      <option value="" disabled selected>Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_phone" name="c_phone" placeholder="Phone Number">
+                  </div>
+                </div>
+  
+  
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_email_address" name="c_email_address">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="c_birthdate" class="text-black">Birthdate <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="c_birthdate" name="c_birthdate">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="c_card_number" class="text-black">Card Shaba Number <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">IR</span>
+                      </div>
+                      <input type="text" class="form-control" id="c_card_number" name="c_card_number" placeholder="Card Number">
+                    </div>
+                  </div>
+                </div>
+
               </div>
               <div class="form-group row">
                 <div class="col-md-12">
@@ -251,19 +254,12 @@
       </div>
     </div>
 
-    <script>
-      const userId = {{ user.id }};
-      const userId = {{ user}};
-      console.log('User ID:', userId);
-      console.log('***********');
-    </script>
-
-
-    
+     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
 
-      $(document).ready(function () {
+
+      function loadAccountDetails(userId) {
         const accessToken = window.localStorage.getItem('accessToken');
         const url="http://127.0.0.1:8000/api/v1/account/accounts/"+userId+"/";
         $.ajax({
@@ -274,15 +270,122 @@
               xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
           },
           success: function (data) {
-            console.log("%%%%%%%%%%");
             console.log(data);
+            const output='<div id="account_details">'+
+              '<div class="form-group row">'+
+                '<div class="col-md-6">'+
+                  '<label for="c_fname" class="text-black">First Name <span class="text-danger">*</span></label>'+
+                  '<input type="text" class="form-control" id="c_fname" name="c_fname" value="'+data.profile.first_name+'" >'+
+                '</div>'+
+                '<div class="col-md-6">'+
+                  '<label for="c_lname" class="text-black">Last Name <span class="text-danger">*</span></label>'+
+                 ' <input type="text" class="form-control" id="c_lname" name="c_lname" value="'+data.profile.last_name+'">'+
+               ' </div>'+
+              '</div>'+
+              
+              '<div class="form-group row mb-5">'+
+                '<div class="col-md-6">'+
+                  '<label for="c_gender" class="text-black">Gender <span class="text-danger">*</span></label>'+
+                  '<select class="form-control" id="c_gender" name="c_gender">'+
+                    '<option value="" disabled selected>Select Gender</option>'+
+                    '<option value="male" '+
+                     (data.profile.gender==1?"selected": "")
+                    +'>Male</option>'+
+                    '<option value="female" '+
+                    (data.profile.gender==2?"selected" : "")
+                    +'>Female</option>'+
+                    '<option value="other"'+
+                    (data.profile.gender==3?"selected" : "")
+                    +'>Other</option>'+
+                  '</select>'+
+                '</div>'+
+                
+                '<div class="col-md-6">'+
+                  '<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>'+
+                  '<input type="text" class="form-control" id="c_phone" name="c_phone" placeholder="Phone Number"  readonly value="'+data.phone_number+'">'+
+                '</div>'+
+              '</div>'+
+
+
+              '<div class="form-group row">'+
+                '<div class="col-md-6">'+
+                  '<label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>'+
+                  '<input type="text" class="form-control" id="c_email_address" name="c_email_address"value="'+data.profile.email+'">'+
+                '</div>'+
+                '<div class="col-md-6">'+
+                  '<label for="c_birthdate" class="text-black">Birthdate <span class="text-danger">*</span></label>'+
+                  '<input type="date" class="form-control" id="c_birthdate" name="c_birthdate" value="'+data.profile.birthday+'">'+
+                '</div>'+
+              '</div>'+
+              '<div class="form-group row">'+
+                '<div class="col-md-12">'+
+                 ' <label for="c_card_number" class="text-black">Card Shaba Number <span class="text-danger">*</span></label>'+
+                 ' <div class="input-group">'+
+                   ' <div class="input-group-prepend">'+
+                     ' <span class="input-group-text">IR</span>'+
+                    '</div>'+
+                   ' <input type="text" class="form-control" id="c_card_number" name="c_card_number" placeholder="Card Number"value="'+data.profile.card_shaba_number+'">'+
+                 ' </div>'+
+               ' </div>'+
+             ' </div>'+
+
+            '</div>';
+          $("#account_details").html(output);
+
+$('#update-profile_details-btn').click(function(event) {
+  event.preventDefault();
+
+
+  var fname = $('#c_fname').val();
+  var lname = $('#c_lname').val();
+  var gender = $('#c_gender').val();
+  var email = $('#c_email_address').val();
+  var birthday = $('#c_birthdate').val();
+  var card_number = $('#c_card_number').val();
+
+
+
+
+
+
+  
+});
+
+
           },
           error: function (jqXhr, textStatus, errorMessage) {
               console.log('Error in loading data', errorMessage);
           },
       });
-  }); 
+  }
 
+
+
+
+
+      $(document).ready(
+
+      function(){
+
+        const accessToken = window.localStorage.getItem('accessToken');
+        const url="http://127.0.0.1:8000/api/v1/accounts/get_user_id_from_token/";
+        $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'json',
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+          },
+          success: function (data) {
+            const userId=data.userId;
+            loadAccountDetails(userId);
+          },
+          error: function (jqXhr, textStatus, errorMessage) {
+              console.log('Error in loading data', errorMessage);
+          },
+      });
+
+      }); 
 
 
 
