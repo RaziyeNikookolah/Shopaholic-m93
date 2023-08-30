@@ -36,3 +36,8 @@ class AccountViewSet(ViewSet):
 
 router = DefaultRouter()
 router.register(r'accounts', AccountViewSet, basename='account')
+
+
+class get_user_id_in_token(APIView):
+    def get(self, request):
+        return Response({"userId": request.user.id})
