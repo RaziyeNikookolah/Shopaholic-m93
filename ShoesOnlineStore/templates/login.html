@@ -16,10 +16,8 @@
                                 <div class="form-floating mb-2 mt-3">
                                     <input type="text" id="phone_number"  name="phone_number" class="form-control" placeholder="Phone number" />
                                     <label for="phone_number">Phone number</label>
-                                </div>
-                                {% if request.GET.next %}                                    
-                                <input type="hidden" name="next" id="hidden_next" value="{{ next }}">
-                                {% endif %}
+                                </div>                               
+
                                 <button id="login_btn" type="submit" class="btn btn-primary btn-sm">Login</button>
                             </form>
                         </div>
@@ -29,10 +27,8 @@
                                 <div class="form-floating mb-2 mt-3"> 
                                     <input type="text" id="code"  name="code" class="form-control" placeholder="Verification Code" />
                                     <label for="code">Code</label>
-                                </div>    
-                                {% if request.POST.next %}                                    
-                                <input type="hidden" name="next" value="{{ next }}">
-                                {% endif %}                           
+                                </div>   
+                                                          
                                 <button id="verify_btn" type="submit" class="btn btn-primary btn-sm">Verify</button>                                
                             </form>
                         </div>

@@ -15,7 +15,7 @@ class ModelsTestCase(TestCase):
         self.assertEqual(account.phone_number, "1234567890")
         self.assertEqual(account.role, ROLE.USER)
         self.assertFalse(account.is_staff)
-        self.assertFalse(account.is_active)
+        self.assertTrue(account.is_active)
         self.assertFalse(account.is_superuser)
         self.assertEqual(
             str(account), f"User with phone number:{account.phone_number}")

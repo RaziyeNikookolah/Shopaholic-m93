@@ -1,28 +1,58 @@
-version: '3'
-
 services:
   db:
     container_name: postgres
     image: postgres:latest
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_DB=online_shoes_shopping
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
     networks:
       - main_net
     ports:
       - "5432:5432"
     restart: on-failure
     volumes:
-      - postgres_data:/var/lib/postgresql/postgres_data
+      - postgres_data:/var/lib/postgresql/data
 
-  app:
+  celery_worker:
+    container_name: celery_worker
+    command: "celery -A onlineshop worker -l INFO"
+    depends_on:
+      - redis
+      - db
+      - djangoonlineshop
+    image: celery
+    environment:
+      - C_FORCE_ROOT="true"
+    networks:
+      - main_net
+    restart: on_failure
+
+  celery_beat:
+    container_name: celery_beat
+    command: "celery -A onlineshop beat -l info"
+    depends_on:
+      - celery_worker
+      - redis
+      - djangoonlineshop
+      - db
+    image: celerybeat
+    environment:
+      - C_FORCE_ROOT="true"
+    networks:
+      - main_net
+    restart: on_failure
+
+  djangoonlineshop:
     build: .
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-    container_name: app
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && gunicorn onlineshop.wsgi:application 0.0.0.0:8000"
+
+    container_name: djangoonlineshop
     volumes:
-      - .:/app
+      - .:/djangoonlineshop
     depends_on:
       - db
-      # - redis
+      - redis
     expose:
       - "8000"
     networks:
@@ -30,27 +60,29 @@ services:
     ports:
       - "8000:8000"
     restart: on-failure
-  # redis:
-  #   image: redis:alpine
-  # celery:
-  #   build: ./project
-  #   command: celery -A core worker -l info
-  #   volumes:
-  #     - .:/usr/src/app/
-  #   depends_on:
-  #     - redis
-  # celery-beat:
-  #   build: .
-  #   command: celery -A core beat -l info
-  #   volumes:
-  #     - .:/usr/src/app/
-  #   environment:
-  #     - DEBUG=1
-  #   depends_on:
-  #     - redis
 
+  redis:
+    container_name: redis
+    image: redis:latest
+    networks:
+      - main_net
+    ports:
+      - "6379:6379"
+    restart: on-failure
 
-
+  nginx:
+    container_name: nginx
+    command: nginx -g "daemon off;"
+    depends_on:
+      - djangoonlineshop
+    image: nginx:latest
+    networks:
+      - main_net
+    ports:
+      - "80:80"
+    restart: on_failure
+    volumes:
+      - ./nginx-config:/etc/nginx/conf.d
 
 volumes:
   postgres_data:

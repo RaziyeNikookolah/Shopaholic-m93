@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from .serializers import RequestOtpSerializer, VerifyOtpSerializer
@@ -34,22 +35,17 @@ class RequestOTP(APIView):
             print("*****  "+otp_request.code+"  *****")
             otp_request.save()
             status, message = send_otp_request(otp_request)
-
-            if status == 200:
-                if 'next' in request.POST:
-                    return Response({"message": message, "next": request.POST.get('next')}, status=status)
-                else:
-                    return Response({"message": message, "next": reverse("login")}, status=status)
-            else:
-                return Response({"message": message}, status=status)
+            return Response({"message": message}, status=status)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyOtp(APIView):
+
     permission_classes = (AllowAny,)
     authentication_classes = []
 
+    @csrf_exempt
     def post(self, request):
         serializer = VerifyOtpSerializer(data=request.data)
         if serializer.is_valid():
@@ -67,25 +63,13 @@ class VerifyOtp(APIView):
                     user, _ = User.objects.get_or_create(
                         phone_number=phone_number)
                     login(request, user)
-                    print(user, "   logged in")
-
-                    # add_session_items_to_orderItem(user)
-
-                    # create jwt token
                     access_token = generate_access_token(user)
                     refresh_token = generate_refresh_token(user)
-                    if 'next' in request.POST:
-                        return Response({"access_token": access_token, "refresh_token": refresh_token,
-                                         "redirect_url": request.POST.get('next')}, status=verification_status)
-                    else:
-                        return Response({"access_token": access_token, "refresh_token": refresh_token}, status=verification_status)
 
-                    # goes to profile page
+                    return Response({"access_token": access_token, "refresh_token": refresh_token}, status=verification_status)
+
                 else:
-                    if 'next' in request.POST:
-                        return Response({'message': message, "redirect_url": request.POST.get('next')}, status=verification_status)
-                    else:
-                        return Response({'message': message}, status=verification_status)
+                    return Response({'message': message}, status=verification_status)
 
             else:
                 return Response({'error': 'Invalid data provided.'}, status=status.HTTP_400_BAD_REQUEST)

@@ -9,7 +9,7 @@
     <div class="bg-light py-3">
       <div class="container">
         <div class="row">
-          <div class="col-md-12 mb-0"><a href="{% url 'home:index' %}">Home</a> <span class="mx-2 mb-0">/</span> <a href="">Accounts</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Profile</strong></div>
+          <div class="col-md-12 mb-0"><a href="{% url 'home:index' %}">Home</a> <span class="mx-2 mb-0">/</span> <a href="">Accounts</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Profile</strong><span class="mx-2 mb-0">/</span> <a href="{% url 'logout' %}">Logout</a> </div>
         </div>
       </div>
     </div>
@@ -80,7 +80,8 @@
                     <button id="update-profile_details-btn" type="button" class="btn btn-primary w-100">Save Changes</button>
                 </div>  
               </div>   
-            </div><div class="p-3 p-lg-5 border">           
+            </div>
+            <div class="p-3 p-lg-5 border">           
               <div class="form-group row">
                 <div class="col-md-12">
                   <h2 class="h3 mb-3 text-black">Addresses</h2>
@@ -98,6 +99,7 @@
                       <div class="col-md-12">
                         <label for="c_address" class="text-black">Address <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="c_address" name="c_address" placeholder="Street address">
+                        <input type="hidden" class="form-control" id="c_address_id" name="c_address_id" placeholder="Street address">
                       </div>
                     </div>
                 
@@ -120,7 +122,7 @@
                       <div class="col-md-6">
                         <!-- Button for updating the address -->
                         <button id="update-address-btn" type="button" class="btn btn-primary">Save Changes</button>
-                      </div>
+                      </div>    
                       <div class="col-md-6">
                         <!-- Button for deleting the address -->
                         <button id="delete-address-btn" type="button" class="btn btn-primary">Delete</button>
@@ -138,7 +140,7 @@
                   <div class="py-2">
 
                     <div class="form-group">
-                      <label for="c_diff_country" class="text-black">Province <span class="text-danger">*</span></label>
+                      <label for="c_diff_country" class="text-black">Province <span class="text-danger" readonly>*</span></label>
                       <select id="c_diff_country" class="form-control">
                         <option value="">Select a province</option>
                         {% for province_code, province_name in PROVINCES %}
@@ -162,28 +164,10 @@
                         <input type="text" class="form-control" id="c_diff_address" name="c_diff_address" placeholder="Street address">
                       </div>
                     </div>
-                    <div class="form-group row">
-                      <div class="col-md-6">
-                        <label for="c_diff_fname" class="text-black">First Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="c_diff_fname" name="c_diff_fname">
-                      </div>
-                      <div class="col-md-6">
-                        <label for="c_diff_lname" class="text-black">Last Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="c_diff_lname" name="c_diff_lname">
-                      </div>
+                    <div class="col-md-12">
+                      <!-- Button for deleting the address -->
+                      <button id="add-address-btn" type="button" class="btn btn-primary w-100">Add New Address</button>
                     </div>
-
-                    <div class="form-group row mb-5">
-                      <div class="col-md-6">
-                        <label for="c_diff_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="c_diff_email_address" name="c_diff_email_address">
-                      </div>
-                      <div class="col-md-6">
-                        <label for="c_diff_phone" class="text-black">Phone <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="c_diff_phone" name="c_diff_phone" placeholder="Phone Number">
-                      </div>
-                    </div>
-
                   </div>
 
                 </div>
@@ -198,13 +182,13 @@
                 <h2 class="h3 mb-3 text-black">Your Wishes</h2>
                 <div class="p-3 p-lg-5 border">
                   
-                  <label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
-                  <div class="input-group w-75">
-                    <input type="text" class="form-control" id="c_code" placeholder="Coupon Code" aria-label="Coupon Code" aria-describedby="button-addon2">
-                    <div class="input-group-append">
-                      <button class="btn btn-primary btn-sm" type="button" id="button-addon2">Apply</button>
-                    </div>
-                  </div>
+                  Dear Customer,
+
+At My Online Shoes Store, your wishes matter. We're here to turn your preferences into reality, offering shoes that align with your unique style. Your feedback shapes our offerings, ensuring a curated shopping experience that exceeds expectations. Share your ideas and desires, and we'll deliver shoes that reflect your individuality. From a wide range of styles to personalization options, we're dedicated to staying ahead of trends and bringing your wishes to life. Thank you for being a part of our journey; we're committed to your satisfaction and fashion needs. Reach out to us anytime, and let's make your shoe dreams a reality.
+
+Warm regards,
+Raziye N.
+Online Shoes Store
 
                 </div> 
               </div>
@@ -221,27 +205,27 @@
                     </thead>
                     <tbody id="order_product">
                       <tr>
-                        <td>Top Up T-Shirt <strong class="mx-2">x</strong> 1</td>
-                        <td>$250.00</td>
+                        <td><strong class="mx-2">x</strong> 1</td>
+                        <td></td>
                       </tr>
                       <tr>
-                        <td>Polo Shirt <strong class="mx-2">x</strong>   1</td>
-                        <td>$100.00</td>
+                        <td><strong class="mx-2">x</strong>   1</td>
+                        <td></td>
                       </tr>
                       <tr>
                         <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
-                        <td class="text-black">$350.00</td>
+                        <td class="text-black"></td>
                       </tr>
                       <tr>
-                        <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
-                        <td class="text-black font-weight-bold"><strong>$350.00</strong></td>
+                        <td class="text-black font-weight-bold"><strong></strong></td>
+                        <td class="text-black font-weight-bold"><strong></strong></td>
                       </tr> 
                     </tbody>
                   </table>
 
 
                   <div class="form-group">
-                    <a class="btn btn-primary btn-lg py-3 btn-block" id="save_order" href="#">Place Order</a>
+                    <a class="btn btn-primary btn-lg py-3 btn-block" id="save_order" href="#">Place New Order</a>
                   </div>
 
                 </div>
@@ -257,7 +241,7 @@
      
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
+      let userId=0;
 
       function loadAccountDetails(userId) {
         const accessToken = window.localStorage.getItem('accessToken');
@@ -332,25 +316,50 @@
             '</div>';
           $("#account_details").html(output);
 
+getAddresses(data);
 $('#update-profile_details-btn').click(function(event) {
   event.preventDefault();
-
+  const genderValueMap = {
+    'male': 1,
+    'female': 2,
+    'other': 3
+  };
 
   var fname = $('#c_fname').val();
   var lname = $('#c_lname').val();
-  var gender = $('#c_gender').val();
+  var genderString = $('#c_gender').val(); 
+  var gender = genderValueMap[genderString]; 
   var email = $('#c_email_address').val();
   var birthday = $('#c_birthdate').val();
   var card_number = $('#c_card_number').val();
-
-
-
-
-
-
+  const data = {
+    "first_name": fname,
+    "last_name": lname,
+    "email": email,
+    "gender": gender,
+    "birthday":birthday,
+    "card_shaba_number": card_number,
+  };
+  const url="http://127.0.0.1:8000/api/v1/account/profiles/"+userId+"/";
   
+  const accessToken=window.localStorage.getItem('accessToken');
+  $.ajax({
+    
+    url: url,
+    type: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify(data),
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+    },
+    success: function(response) {
+      console.log("changed")
+    },
+    error: function(error) {
+      console.error('Error:', error);
+    }
+  });
 });
-
 
           },
           error: function (jqXhr, textStatus, errorMessage) {
@@ -360,46 +369,51 @@ $('#update-profile_details-btn').click(function(event) {
   }
 
 
+function getAddresses(data){
+
+
+const provinceValueMap={
+
+
+  'thr':'Tehran',
+  'az-sh':'Azarbayejan Sharghi',
+  'az-gh':'Azarbayejan Gharbi',
+  'ard':'Ardebil',
+  'esf':'Esfehan',
+  'alb':'Alborz',
+  'ilm':'Ilam',
+  'bsh':'Booshehr',
+  'chm':'Charmahal o Bakhtiari',
+  'kh-j':'Khorasan Jonobi',
+  'kh-r':'Khorasan Razavi',
+  'kh-sh':'Khorasan Shomali',
+  'khz':'Khoozestan',
+  'znj':'Zanjan',
+  'smn':'Semnan',
+  'sbch':'Sistan Baloochestan',
+  'frs':'Fars',
+  'ghz':'Ghazvin',
+  'qom':'Qom',
+  'krd':'Kordestan',
+  'krm':'Kerman',
+  'kr-sh':'Kerman Shah',
+  'khb':'Kohkilooye Boyer Ahmad',
+  'gls':'Golestan',
+  'gil':'Gilan',
+  'lor':'Lorestan',
+  'maz':'Mazandaran',
+  'mrk':'Markazi',
+  'hrm':'Hormozgan',
+  'hmd':'Hamedan',
+  'yzd':'Yazd',
+};
 
 
 
-      $(document).ready(
-
-      function(){
-
-        const accessToken = window.localStorage.getItem('accessToken');
-        const url="http://127.0.0.1:8000/api/v1/accounts/get_user_id_from_token/";
-        $.ajax({
-          url: url,
-          type: 'GET',
-          dataType: 'json',
-          beforeSend: function (xhr) {
-              xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-          },
-          success: function (data) {
-            const userId=data.userId;
-            loadAccountDetails(userId);
-          },
-          error: function (jqXhr, textStatus, errorMessage) {
-              console.log('Error in loading data', errorMessage);
-          },
-      });
-
-      }); 
-
-
-
-
-      const addresses = [
-        { id: 1, address: '123 Main St', city: 'City A', state: 'State A', postal: '12345' },
-        { id: 2, address: '456 Elm St', city: 'City B', state: 'State B', postal: '67890' },
-        { id: 3, address: '789 Oak St', city: 'City C', state: 'State C', postal: '54321' }
-      ];
-    
       const addressList = document.getElementById('address-list');
       const selectedAddressFields = document.getElementById('selected-address-fields');
     
-      addresses.forEach(address => {
+      data.addresses.forEach(address => {//////////////////////////////////////////
         const radioContainer = document.createElement('div');
         radioContainer.className = 'radio-container';
     
@@ -410,7 +424,7 @@ $('#update-profile_details-btn').click(function(event) {
         radioContainer.appendChild(radioInput);
     
         const radioLabel = document.createElement('label');
-        radioLabel.textContent = address.address;
+        radioLabel.textContent = address.address+' '+address.city;
         radioContainer.appendChild(radioLabel);
     
         radioInput.addEventListener('change', () => {
@@ -419,17 +433,142 @@ $('#update-profile_details-btn').click(function(event) {
           // Update the address fields with the corresponding values
           document.getElementById('c_address').value = address.address;
           document.getElementById('c_city').value = address.city;
-          document.getElementById('c_state_country').value = address.state;
-          document.getElementById('c_postal_zip').value = address.postal;
+          document.getElementById('c_address_id').value = address.id;
+          document.getElementById('c_state_country').value = provinceValueMap[address.province];
+          document.getElementById('c_postal_zip').value = address.postal_code;
+
+          
+          
         });
-    
+        
         addressList.appendChild(radioContainer);
-      });
+      });}
+      
 
 
 
+function update_address(){      
+        var address = $('#c_address').val();
+        var city = $('#c_city').val();
+        var address_id = $('#c_address_id').val();
+        var postal_code = $('#c_postal_zip').val();
+        const data = {
+          "address": address,
+          "city": city,
+          "postal_code": postal_code,
+        };
+        const url="http://127.0.0.1:8000/api/v1/account/addresses/"+address_id+"/";
+        
+        const accessToken=window.localStorage.getItem('accessToken');
+        $.ajax({          
+          url: url,
+          type: 'PUT',
+          contentType: 'application/json',
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+          },
+          success: function(response) {
+            console.log("changed");
+          },
+          error: function(error) {
+            console.error('Error:', error);
+          }
+        });     
+
+    }
+    function delete_address(){      
+      var address_id = $('#c_address_id').val();
+
+      const url="http://127.0.0.1:8000/api/v1/account/addresses/"+address_id+"/";
+      
+      const accessToken=window.localStorage.getItem('accessToken');
+      $.ajax({          
+        url: url,
+        type: 'DELETE',
+        contentType: 'application/json',
+
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+        },
+        success: function(response) {
+          console.log("deleted");
+
+        },
+        error: function(error) {
+          console.error('Error:', error);
+        }
+      });     
+
+  }
+  function add_address(){      
+    var address = $('#c_diff_address').val();
+    var city = $('#c_diff_city').val();
+    var province = $('#c_diff_country').val();
+    var postal_code = $('#c_diff_postal_zip').val();
+    const data = {
+      "address": address,
+      "city": city,
+      "province": province,
+      "postal_code": postal_code,
+      "account":userId
+    };
+    console.log(data);
+    const url="http://127.0.0.1:8000/api/v1/account/addresses/";    
+    const accessToken=window.localStorage.getItem('accessToken');
+    $.ajax({          
+      url: url,
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+      },
+      success: function(response) {
+        console.log("deleted");
+
+      },
+      error: function(error) {
+        console.error('Error:', error);
+      }
+    });     
+
+}
 
 
+$(document).ready(
+
+function(){
+
+  const accessToken = window.localStorage.getItem('accessToken');
+  const url="http://127.0.0.1:8000/api/v1/accounts/get_user_id_from_token/";
+  $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'json',
+    beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+    },
+    success: function (data) {
+      userId=data.userId;
+      loadAccountDetails(userId);
+    },
+    error: function (jqXhr, textStatus, errorMessage) {
+        console.log('Error in loading data', errorMessage);
+    },
+});
+$("#update-address-btn").click(function() {
+  update_address(); // Call the function without arguments
+});
+$("#delete-address-btn").click(function() {
+delete_address(); // Call the function without arguments
+});
+
+$("#add-address-btn").click(function() {
+add_address(); // Call the function without arguments
+});
+
+
+}); 
 
     </script>
 

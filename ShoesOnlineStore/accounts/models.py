@@ -38,7 +38,7 @@ class Account(BaseModel, AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     objects = AccountManager()
 

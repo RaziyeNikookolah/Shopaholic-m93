@@ -16,7 +16,7 @@ class AccountManagerTests(TestCase):
         self.assertIsNotNone(account)
         self.assertFalse(account.is_staff)
         self.assertFalse(account.is_superuser)
-        self.assertFalse(account.is_active)
+        self.assertTrue(account.is_active)
         self.assertEqual(account.role, ROLE.USER)
 
     def test_create_superuser(self):

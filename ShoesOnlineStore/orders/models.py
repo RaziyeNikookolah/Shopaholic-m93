@@ -2,7 +2,6 @@ from django.db import models
 from core.models import BaseModel
 from shoes.models import Price, Product
 from accounts.models import Account
-from core.utils import PROVINCES
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from .tasks import send_delivery_status_email, send_order_paid_email
@@ -51,11 +50,7 @@ class Order(BaseModel):
     receiver_name = models.CharField(max_length=100, null=True, blank=True)
     receiver_lastname = models.CharField(max_length=150, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
-    province = models.CharField(
-        max_length=7,
-        choices=PROVINCES,
-        verbose_name=_('Province'),
-    )
+    province = models.CharField(max_length=70)
     receiver_phone_number = models.CharField(
         max_length=150, null=True, blank=True)
     city = models.CharField(_("city"), max_length=40, null=True, blank=True)

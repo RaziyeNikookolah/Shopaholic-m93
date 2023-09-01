@@ -16,10 +16,6 @@ class TestUrls(unittest.TestCase):
         url = reverse('logout')
         self.assertEqual(resolve(url).func.view_class, views.LogoutView)
 
-    def test_request_logout_url(self):
-        url = reverse('request_logout')
-        self.assertEqual(resolve(url).func.view_class, views.RequestLogoutView)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,16 +1,67 @@
-$(document).ready(function () {
-    const accessToken = window.localStorage.getItem('accessToken');
 
+$(document).ready(function () {
+
+
+
+
+    const accessToken = window.localStorage.getItem('accessToken');
     if (accessToken) {
-        console.log("access token is here");
+        console.log("access token is here in shop");
         showLiElement(); // Show logout element
         hideLiLogin();  // Hide login element
     } else {
-        console.log("access token is not here");
+        console.log("access token is not here in shop");
 
         showLiLogin();   // Show login element
         hideLiElement(); // Hide logout element
     }
+
+    function showLiLogin() {
+        $('#liLogin').css('display', 'block');
+    }
+    // Hide the li element
+    function hideLiLogin() {
+        $('#liLogin').css('display', 'none');
+    }
+    function showLiElement() {
+        $('#liLogout').css('display', 'block');
+    }
+    // Hide the li element
+    function hideLiElement() {
+        $('#liLogout').css('display', 'none');
+    }
+    $('#liLogin').on('click', function () {
+        const nextUrl = 'http://127.0.0.1:8000'; // Replace with the actual URL
+        loadNewPage('http://127.0.0.1:8000/accounts/login/?next=' + nextUrl);
+    });
+
+
+
+    function loadNewPage(url) {
+        const accessToken = window.localStorage.getItem('accessToken');
+        // Create a new XMLHttpRequest or use Fetch API to load the content of the new page
+        fetch(url,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": "Bearer " + accessToken,
+                },
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Replace the current document's content with the content of the new page
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => {
+                console.error('Error loading page:', error);
+            });
+    }
+
+
+
 
     // Define a function to load data for the given URL
     function loadPageData(url) {

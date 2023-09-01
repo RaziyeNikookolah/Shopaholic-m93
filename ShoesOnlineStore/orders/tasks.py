@@ -69,7 +69,7 @@ def email_export(self):  # no one can not call this view use user_passes_test
     with open(csv_file_path, 'w') as file:
         file.write(response.content.decode('utf-8'))
 
-    mail_subject = 'Your order Send today'
+    mail_subject = 'Today Export'
     target_mail = 'r.nikookolah@gmail.com'
     message = f'Order was sent successfully'
 

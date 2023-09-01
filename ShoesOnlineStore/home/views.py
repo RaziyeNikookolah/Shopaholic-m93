@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views import View
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from core.utils import PROVINCES
 from shoes.serializer import ProductsSerializer
 from django.db.models import OuterRef, Subquery
 from shoes.models import Product, Price
@@ -37,9 +38,10 @@ class CartView(View):
 
 
 class CheckoutView(View):
-    # @method_decorator(login_required(login_url="/accounts/login/"))
+
     def get(self, request):
-        return render(request, "checkout.html"
+
+        return render(request, "checkout.html", {"PROVINCES": PROVINCES}
                       )
 
 

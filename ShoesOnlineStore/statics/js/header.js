@@ -1,90 +1,43 @@
-
-
 $(document).ready(function () {
     const accessToken = window.localStorage.getItem('accessToken');
+    const liLoginSpan = $("#li_login span");
+
     if (accessToken) {
-        console.log("access token is here");
-        showLiElement(); // Show logout element
-        hideLiLogin();  // Hide login element
+        liLoginSpan.find('i').removeClass('bi bi-arrow-right-square');
+        liLoginSpan.find('i').addClass("bi bi-person-fill");
+        liLoginSpan.html('<i class="bi bi-person-fill"></i>'); // Change span content
     } else {
-        console.log("access token is not here");
-
-        showLiLogin();   // Show login element
-        hideLiElement(); // Hide logout element
+        liLoginSpan.find('i').removeClass('bi bi-person-fill');
+        liLoginSpan.find('i').addClass("bi bi-arrow-right-square");
+        liLoginSpan.html('LOGIN <i class="bi bi-arrow-right-square"></i>'); // Change span content
     }
-});
-// Get the li element by its ID
-const liLogin = document.getElementById('li_login');
-
-// Show the li element
-function showLiLogin() {
-    liLogin.style.display = 'block';
-}
-
-// Hide the li element
-function hideLiLogin() {
-    liLogin.style.display = 'none';
-}
-
-const liLogout = document.getElementById('li_logout');
-
-// Show the li element
-function showLiElement() {
-    liLogout.style.display = 'block';
-}
-
-// Hide the li element
-function hideLiElement() {
-    liLogout.style.display = 'none';
-}
 
 
 
+    function loadNewPage(url, nextUrl) {
+        const accessToken = window.localStorage.getItem('accessToken');
+        // Add the nextUrl parameter to the URL if provided
+        if (nextUrl) {
+            url += (url.includes('?') ? '&' : '?') + 'next=' + nextUrl;
+        }
 
-
-liLogin.addEventListener('click', function () {
-
-    const nextUrl = 'http://127.0.0.1:8000';  // Replace with the actual URL
-
-    loadNewPage('http://127.0.0.1:8000/accounts/login/?next=' + nextUrl);
-
-});
-
-// const menu_item_logout = document.getElementById('menu_item_logout');
-// menu_item_logout.addEventListener('click', function () {
-
-//     hideLiElement(); // Hide logout element
-//     showLiLogin();   // Show login element
-//     window.location = 'http://127.0.0.1:8000/accounts/logout/?next=/';
-
-// });
-
-// const menu_item_profile = document.getElementById('menu_item_profile');
-// liLogout.addEventListener('click', function () {
-
-//     window.location = 'http://127.0.0.1:8000/accounts/profile/'; // it should send account id
-
-// });
-
-function loadNewPage(url) {
-    const accessToken = window.localStorage.getItem('accessToken');
-    // Create a new XMLHttpRequest or use Fetch API to load the content of the new page
-    fetch(url,
-        {
+        fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 "Authorization": "Bearer " + accessToken,
             },
         })
-        .then(response => response.text())
-        .then(html => {
-            // Replace the current document's content with the content of the new page
-            document.open();
-            document.write(html);
-            document.close();
-        })
-        .catch(error => {
-            console.error('Error loading page:', error);
-        });
-}
+            .then(response => response.text())
+            .then(html => {
+                // Replace the current document's content with the content of the new page
+                document.open();
+                document.write(html);
+                document.close();
+            })
+            .catch(error => {
+                console.error('Error loading page:', error);
+            });
+    }
+
+});

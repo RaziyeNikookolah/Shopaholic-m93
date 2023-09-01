@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.routers import DefaultRouter
 from rest_framework.viewsets import ViewSet
-from ..models import Account
-from .serializers import AccountSerializer
+from django.views.decorators.csrf import csrf_exempt
+from ..models import Account, Address, Profile
+from .serializers import AccountSerializer, AddressSerializer, ProfileSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView, status
 from accounts.utils import generate_access_token, generate_refresh_token
@@ -41,3 +42,60 @@ router.register(r'accounts', AccountViewSet, basename='account')
 class get_user_id_in_token(APIView):
     def get(self, request):
         return Response({"userId": request.user.id})
+
+
+class ProfileViewSet(ViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    @csrf_exempt
+    def update(self, request, pk):
+        account = get_object_or_404(Account, pk=pk)
+        profile = get_object_or_404(Profile, account=account)
+        serializer = ProfileSerializer(
+            instance=profile, data=request.data, partial=True)
+        print(request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+router.register(r'profiles', ProfileViewSet, basename='profile')
+
+
+class AddressViewSet(ViewSet):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+
+    @csrf_exempt
+    def create(self, request):
+        serializer = AddressSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid():
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(request.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @csrf_exempt
+    def update(self, request, pk):
+        address = get_object_or_404(Address, pk=pk)
+        serializer = AddressSerializer(
+            instance=address, data=request.data, partial=True)
+        print(request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @csrf_exempt
+    def destroy(self, request, pk):
+        address = get_object_or_404(Address, pk=pk)
+        address.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+router.register(r'addresses', AddressViewSet, basename='address')

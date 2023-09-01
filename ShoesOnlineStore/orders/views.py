@@ -1,5 +1,5 @@
 import logging
-from orders.models import Order
+from orders.models import Order, OrderItem
 from orders.models import Order
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from accounts import authentication
@@ -7,8 +7,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
-from .utils import add_product_to_session, session_cart, clear_session, create_orderItems_from_session
-from orders.serializer import CartItemSerializer
+from .utils import add_product_to_session, remove_product_from_session, session_cart, clear_session, create_orderItems_from_session
+from orders.serializer import CartItemSerializer, RemoveCartItemsSerializer
 
 
 logger = logging.getLogger('ShoesOnlineStore.orders')
@@ -76,21 +76,22 @@ class CreateOrder(APIView):
             address = data.get("address")
             city = data.get("city")
             province = data.get("province")
-            email = data.get("email")
             receiver_phone_number = data.get("phone_number")
             postal_code = data.get("postal_zip")
             note = data.get("order_note")
             user = request.user
-            # user=Account.objects.filter(p)
+            if not (receiver_name and receiver_last_name and address and city and province and receiver_phone_number
+                    and postal_code and (user != "Anonymous")):
+                return Response({'message': "Error"}, status=status.HTTP_400_BAD_REQUEST)
             order_queryset = Order.objects.filter(
                 account=user, is_paid=False).order_by('-create_timestamp')
-            if not order_queryset.exists():
-                order = Order.objects.create(account=user, receiver_name=receiver_name,
-                                             receiver_lastname=receiver_last_name, address=address, city=city, province=province,
-                                             email=email, postal_code=postal_code, note=note, receiver_phone_number=receiver_phone_number)
+            if order_queryset.exists():
                 order_instance = order_queryset.first()
-            else:
-                order_instance = order_queryset.first()
+                OrderItem.objects.filter(order=order_instance).delete()
+                order_instance.delete()
+            order_instance = Order.objects.create(account=user, receiver_name=receiver_name,
+                                                  receiver_lastname=receiver_last_name, address=address, city=city, province=province,
+                                                  postal_code=postal_code, note=note, receiver_phone_number=receiver_phone_number)
 
             create_orderItems_from_session(order_instance)
             total_price = order_instance.get_total_price()
@@ -100,15 +101,15 @@ class CreateOrder(APIView):
         return Response({'message': "Error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class RemoveCartItemView(APIView):
-#     permission_classes = (AllowAny,)
+class RemoveCartItemView(APIView):
+    permission_classes = (AllowAny,)
 
-#     @csrf_exempt
-#     def post(self, request):
+    @csrf_exempt
+    def post(self, request):
 
-#         serializer = RemoveCartItemsSerializer(data=request.data)
-#         if serializer.is_valid():
-#             product_id = serializer.validated_data.get('product_id', '')
-#             return remove_product_from_session(product_id)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = RemoveCartItemsSerializer(data=request.data)
+        if serializer.is_valid():
+            product_id = serializer.validated_data.get('product_id', '')
+            return remove_product_from_session(product_id)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

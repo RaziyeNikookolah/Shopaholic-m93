@@ -1,6 +1,7 @@
 from typing import Any, Dict, Tuple
 from django.db import models
 from datetime import datetime
+from django.utils import timezone
 from django.db.models.query import QuerySet
 
 
@@ -34,10 +35,10 @@ class BaseModel(models.Model):
 
     def delete(self, **kwargs) -> Tuple[int, Dict[str, int]]:
         self.is_deleted = True
-        self.delete_timestamp = datetime.now()
+        self.delete_timestamp = timezone.now()
         self.save(using=kwargs.get("using"))
 
     def restore(self):
         self.is_deleted = False
-        self.restore_timestamp = datetime.now()
+        self.restore_timestamp = timezone.now()
         self.save()

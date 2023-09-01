@@ -1,4 +1,4 @@
-celery -A ShoesOnlineStore worker -l info -P ShoesOnlineStore
+celery -A ShoesOnlineStore worker -l info -P solo
 celery -A ShoesOnlineStore beat
 
 redis-cli
@@ -6,3 +6,7 @@ redis-cli
 python manage.py test 
 coverage run manage.py test
 coverage report
+
+docker login -u raziyenikookolah
+dckr_pat_kVf-kT4XWOchUj5Gs6X-b5pvask
+docker-compose up --build

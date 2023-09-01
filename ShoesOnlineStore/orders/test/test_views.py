@@ -43,7 +43,7 @@ class CreateOrderViewTest(APITestCase):
         # Manually set session data
         session = self.client.session
         session['products'] = {
-            str(self.product.id): {'price': '50', 'quantity': 2, 'total_price': '100'}
+            str(self.product.id): {'price': 50, 'quantity': 2, 'total_price': 100}
         }
         session.save()
 
