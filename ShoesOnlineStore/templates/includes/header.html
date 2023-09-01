@@ -16,12 +16,8 @@
 
           <div class="col-2 col-md-4 order-3 order-md-3 text-right">
             <div class="site-top-icons">
-              <ul>    
-                
-                  <li id="li_logout" style="display:none"class="right_menu">{% comment %}has-children" >{% endcomment %}
-                    <a href="{% url 'profile' %}">
-                      <span class="icon icon-person"></span>
-                  </a>
+              <ul>               
+                 
                    
                     {% comment %} <ul class="dropdown">
                       <li class="user_menu" id="menu_item_profile"><a href="#">Profile</a></li>
@@ -29,16 +25,15 @@
                       <li  class="user_menu"><a href="#">Favorite</a></li>
                       <li id="menu_item_logout" class="user_menu"><a href="#">Logout</a></li>
                     </ul> {% endcomment %}
-                  </li>
+                  
                                
 
-                <li id="li_login" class="right_menu" style="display:none"><a href="#"><span >LOGIN <i class="bi bi-arrow-right-square"></i></span></a></li>                  
+                <li id="li_login" class="right_menu"><a href="{% url 'profile' %}"><span >LOGIN <i class="bi bi-arrow-right-square"></i></span></a></li>                  
               
-                <li class="right_menu"><a href="#"><span class="icon icon-heart-o"></span></a></li>
+                <li class="right_menu"><a href="{% url 'profile' %}"><span class="icon icon-heart-o"></span></a></li>
                 <li>
                   <a href="{% url 'home:cart' %}" class="site-cart">
                     <span class="icon icon-shopping_cart"></span>
-                    {% comment %} <span class="count" >{{ cart|length }}</span> {% endcomment %}
 
                   </a>
                 </li> 
