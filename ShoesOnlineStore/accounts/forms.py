@@ -1,5 +1,5 @@
 from django import forms
 
 
-class UserCreationOrLoginForm(forms.Form):
+class UserRegiterOrLoginForm(forms.Form):
     phone_number = forms.CharField(max_length=14)

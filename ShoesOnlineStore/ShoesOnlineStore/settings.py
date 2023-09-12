@@ -12,8 +12,13 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-import os
+from os import getenv
+from dotenv import load_dotenv
+
 from django.contrib.messages import constants as messages
+
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,14 +27,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g(*4lu&$@2f*n@%rf$k9+0w6$-8op_nkulysk&2ve+30*r$d62'
+SECRET_KEY = getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]  # ["*"] if DEBUG else ['127.0.0.1']
 
+# CORS engine configuration (django-cors-headers) :
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ["http://0.0.0.0:8000",
+                        "http://localhost:8000", "https://sandbox.zarinpal.com "]
 
+CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,71 +50,42 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
-    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'django_filters',
     'home.apps.HomeConfig',
     'core.apps.CoreConfig',
     'orders.apps.OrdersConfig',
     'shoes.apps.ShoesConfig',
     'accounts.apps.AccountsConfig',
     'otp.apps.OtpConfig',
-    'cart.apps.CartConfig',
+    "ckeditor",
+    'drf_spectacular',
+    'django_celery_results',
+    'django_celery_beat',
 
 ]
+AUTHENTICATION_BACKENDS = [
+    "accounts.backends.PhoneNumberBackend",
+]
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "UPDATE_LAST_LOGIN": True,
 
-    "ALGORITHM": "HS256",
-    "VERIFYING_KEY": "",
-    "AUDIENCE": None,
-    "ISSUER": None,
-    "JSON_ENCODER": None,
-    "JWK_URL": None,
-    "LEEWAY": 0,
-
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-    "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
-    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-    "TOKEN_TYPE_CLAIM": "token_type",
-    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
-
-    "JTI_CLAIM": "jti",
-
-    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
-
-    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
-    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
-    "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
-    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
-    "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
-    "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
-}
-
+MAX_DIGITS = 20
+DECIMAL_PLACES = 0
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
-
+CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'ShoesOnlineStore.urls'
-
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+# SESSION_COOKIE_SECURE = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -116,6 +97,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'orders.context_processors.cart'
             ],
         },
     },
@@ -130,30 +112,31 @@ WSGI_APPLICATION = 'ShoesOnlineStore.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'online_shoes_shopping',
-        'USER': 'postgres',
-        'PASSWORD': '123',
-        'HOST': '127.0.0.1',
-        'PORT': '5432'
+        'NAME': getenv("NAME"),
+        'USER': getenv("USER"),
+        'PASSWORD': getenv("PASSWORD"),
+        'HOST': getenv("HOST"),
+        'PORT': getenv("PORT"),
     }
 }
 
-
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": ("accounts.authentication.LoginAuthentication",),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        # it makes defualt for all methods
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ]
+    "PAGE_SIZE": 3,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',]
 }
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Shoes Online Shopping API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -198,9 +181,10 @@ STATICFILES_DIRS = [
     BASE_DIR / "statics",
 ]
 
+
 # STATIC_ROOT = os.path.join(BASE_DIR, "statics")
 AUTH_USER_MODEL = 'accounts.Account'
-SMS_API_KEY = "563470796A30362B74617A5167474C4A614F774970523458474632726E724E63343852434A34586C5A44593D"
+SMS_API_KEY = getenv("SMS_API_KEY")
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
@@ -212,3 +196,123 @@ MESSAGE_TAGS = {
     messages.WARNING: "alert-warning",
     messages.ERROR: "alert-warning",
 }
+# SANDBOX MODE ZARRINPAL
+
+
+SANDBOX = True
+
+MERCHANT = getenv("MERCHANT")
+
+
+# CELERY SETTINGS
+CELERY_BROKER_URL = "redis://"+getenv("REDIS")+':6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Tehran'
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+# CELERY BEAT
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# SMTP Settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'r.nikookolah@gmail.com'
+EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = 'Celery <r.nikookolah@gmail.com>'
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'log/file.log',
+        },
+        "report": {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'log/report.log',
+            "formatter": "verbose",
+
+        }
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{ "time": "%(asctime)s", "level": "%(levelname)s", "logger": "%(name)s", "message": "%(message)s" }'
+        },
+    },
+    'loggers': {
+        # 'django': {
+        #     'handlers': ['file'],
+        #     'level': 'INFO',
+        #     'propagate': False,
+        # },
+
+        'ShoesOnlineStore.orders': {
+            'handlers': ['report'],
+            'level': 'INFO',
+        },
+    },
+
+}
+# Django's SSL security configurations :
+# REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
+#     "rest_framework.renderers.JSONRenderer",)
+
+# Https settings
+# SECURE_SSL_REDIRECT = True
+# SECURE_PROXY_SSL_HEADER = "HTTP_X_FORWARDED_PROTO", "https"
+
+# # HSTS settings
+# SECURE_HSTS_PRELOAD = True
+# SECURE_HSTS_SECONDS = 86400
+
+# # more security settings
+# USE_X_FORWARDED_HOST = True
+# SECURE_REFERRER_POLICY = "strict-origin"
+
+
+# # Internationalization Configs:
+# USE_TZ = True
+# USE_L10 = True
+# USE_L10N = True
+# USE_I18N = True
+
+# # Serving Configs:
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
+# STATIC_URL = "/static/"
+# STATIC_ROOT = BASE_DIR / "static/"
+
+# # Basic Security Configs
+# X_FRAME_OPTIONS = "SAMEORIGIN"
+# SESSION_TIMEOUT = 24 * 60 * 60
+# SESSION_COOKIE_AGE = 3 * 60 * 60
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# # Content Security Policy
+# CSP_DEFAULT_SRC = "'none'",
+# CSP_STYLE_SRC = "'self'",
+# CSP_SCRIPT_SRC = "'self'",
+# CSP_IMG_SRC = "'self'",
+# CSP_FONT_SRC = "'self'",

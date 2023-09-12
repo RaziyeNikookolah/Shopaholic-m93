@@ -3,11 +3,16 @@
   Shoes Online Shop
 {% endblock %}
 {% block content %}
+{% load static %} 
 
     <div class="bg-light py-3">
       <div class="container">
         <div class="row">
-          <div class="col-md-12 mb-0"><a href="{% url 'index' %}">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Cart</strong></div>
+          <div class="col-md-12 mb-0">
+            <a href="{% url 'home:index' %}">Home</a> 
+            <span class="mx-2 mb-0">/</span> 
+            <strong class="text-black">Cart</strong>
+          </div>
         </div>
       </div>
     </div>
@@ -28,65 +33,20 @@
                     <th class="product-remove">Remove</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td class="product-thumbnail">
-                      <img src="{% static 'images/cloth_1.jpg'%}" alt="Image" class="img-fluid">
-                    </td>
-                    <td class="product-name">
-                      <h2 class="h5 text-black">Top Up T-Shirt</h2>
-                    </td>
-                    <td>$49.00</td>
-                    <td>
-                      <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                        </div>
-                        <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                        </div>
-                      </div>
-
-                    </td>
-                    <td>$49.00</td>
-                    <td><a href="#" class="btn btn-primary btn-sm">X</a></td>
-                  </tr>
-
-                  <tr>
-                    <td class="product-thumbnail">
-                      <img src="{% static 'images/cloth_2.jpg'%}" alt="Image" class="img-fluid">
-                    </td>
-                    <td class="product-name">
-                      <h2 class="h5 text-black">Polo Shirt</h2>
-                    </td>
-                    <td>$49.00</td>
-                    <td>
-                      <div class="input-group mb-3" style="max-width: 120px;">
-                        <div class="input-group-prepend">
-                          <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                        </div>
-                        <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                        <div class="input-group-append">
-                          <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                        </div>
-                      </div>
-
-                    </td>
-                    <td>$49.00</td>
-                    <td><a href="#" class="btn btn-primary btn-sm">X</a></td>
-                  </tr>
+                <tbody id="cart_table_body" >
+                  
                 </tbody>
               </table>
             </div>
           </form>
         </div>
+        {% load static %} 
 
         <div class="row">
           <div class="col-md-6">
             <div class="row mb-5">
               <div class="col-md-6 mb-3 mb-md-0">
-                <button class="btn btn-primary btn-sm btn-block">Update Cart</button>
+                <button onclick="update_cart()" class="btn btn-primary btn-sm btn-block">Update Cart</button>
               </div>
               <div class="col-md-6">
                 <button class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</button>
@@ -113,26 +73,18 @@
                     <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
                   </div>
                 </div>
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <span class="text-black">Subtotal</span>
-                  </div>
-                  <div class="col-md-6 text-right">
-                    <strong class="text-black">$230.00</strong>
-                  </div>
-                </div>
                 <div class="row mb-5">
                   <div class="col-md-6">
                     <span class="text-black">Total</span>
                   </div>
                   <div class="col-md-6 text-right">
-                    <strong class="text-black">$230.00</strong>
+                    <strong class="text-black"id="grandTotal">$230.00</strong>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="col-md-12">
-                    <button class="btn btn-primary btn-lg py-3 btn-block" onclick="window.location='checkout.html'">Proceed To Checkout</button>
+                    <a href="#" class="btn btn-primary btn-lg py-3 btn-block " id="redirectToCheckout" style="color:white;" >Proceed To Checkout</a>
                   </div>
                 </div>
               </div>
@@ -141,4 +93,270 @@
         </div>
       </div>
     </div>
-    {% endblock %}
+
+      <script src="{% static 'js/jquery-3.3.1.min.js'%}"></script>
+      <script src="{% static 'js/jquery-ui.js'%}"></script>
+      <script src="{% static 'js/popper.min.js'%}"></script>
+      <script src="{% static 'js/bootstrap.min.js'%}"></script>
+      <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+      <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+      <script src="{% static 'js/aos.js'%}"></script>  
+      <script src="{% static 'js/main.js'%}"></script>
+<script>
+    $(document).ready(function() {
+      const accessToken=window.localStorage.getItem('accessToken');
+              
+      $.ajax({
+      url : "http://localhost:8000/order/cart_list/",
+      type: 'GET',
+      dataType: "json",
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+      },
+      success: function (data, status, xhr) {
+        cartData = data;
+
+        var tableBody = document.getElementById('cart_table_body');
+        var grandTotalElement = document.getElementById('grandTotal');
+        
+        // Iterate over the cart items and create a table row for each item
+        for (var itemId in cartData.cart_items) {
+          var item = cartData.cart_items[itemId];
+          createTableRow(item);
+        }
+        
+        // Display the grand total
+        updateGrandTotal();
+        
+        // Function to create a table row for an item
+        function createTableRow(item) {
+          var row = document.createElement('tr');
+          var imageCell = document.createElement('td');
+          var nameCell = document.createElement('td');
+          var priceCell = document.createElement('td');
+          var quantityCell = document.createElement('td');
+          var subTotalCell = document.createElement('td');
+          var removeCell = document.createElement('td');
+          var removeLink = document.createElement('a');
+        
+          // Image cell
+          var image = document.createElement('img');
+          image.src = item.image;
+          image.alt = item.title;
+          image.className = 'img-fluid';
+          imageCell.appendChild(image);
+          row.appendChild(imageCell);
+      
+
+
+          // Name cell
+          var name = document.createElement('h2');
+          name.className = 'h5 text-black';
+          name.textContent = item.title;
+          nameCell.appendChild(name);
+          row.appendChild(nameCell);
+        
+          // Price cell
+          priceCell.textContent = '$' + item.price;
+          row.appendChild(priceCell);
+        
+          // Quantity cell
+          var quantityInputGroup = document.createElement('div');
+          quantityInputGroup.className = 'input-group mb-3';
+          quantityInputGroup.style.maxWidth = '120px';
+        
+          var quantityMinusBtn = document.createElement('button');
+          quantityMinusBtn.className = 'btn btn-outline-primary js-btn-minus';
+          quantityMinusBtn.type = 'button';
+          quantityMinusBtn.textContent = '-';
+          quantityInputGroup.appendChild(quantityMinusBtn);
+        
+          var quantityInput = document.createElement('input');
+          quantityInput.type = 'text';
+          quantityInput.className = 'form-control text-center';
+          quantityInput.value = item.quantity;
+          quantityInputGroup.appendChild(quantityInput);
+        
+          var quantityPlusBtn = document.createElement('button');
+          quantityPlusBtn.className = 'btn btn-outline-primary js-btn-plus';
+          quantityPlusBtn.type = 'button';
+          quantityPlusBtn.textContent = '+';
+          quantityInputGroup.appendChild(quantityPlusBtn);
+        
+          quantityCell.appendChild(quantityInputGroup);
+          row.appendChild(quantityCell);
+        
+          // Subtotal cell
+          subTotalCell.id = 'subTotal_' + item.id;
+          subTotalCell.textContent = '$' + item.sub_total;
+          row.appendChild(subTotalCell);
+        
+          // Remove cell
+          removeLink.href = '#';
+          removeLink.className = 'btn btn-primary btn-sm';
+          removeLink.textContent = 'X';
+          removeCell.appendChild(removeLink);
+          row.appendChild(removeCell);
+        
+          // Append the row to the table body
+          tableBody.appendChild(row);
+        
+          // Event listener for the minus button
+          quantityMinusBtn.addEventListener('click', function() {
+            if (item.quantity > 1) {
+              item.quantity--;
+              quantityInput.value = item.quantity;
+              updateSubTotal(item);
+              updateGrandTotal();
+              updateCartData();
+            }
+          });
+        
+          // Event listener for the plus button
+          quantityPlusBtn.addEventListener('click', function() {
+            item.quantity++;
+            quantityInput.value = item.quantity;
+            updateSubTotal(item);
+            updateGrandTotal();
+            updateCartData();
+
+          });
+        
+          // Event listener for the remove link
+          removeLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            removeCartItem(item.id);
+            row.remove();
+            updateGrandTotal();
+          });
+        }
+        
+        // Function to update the subtotal for an item
+        function updateSubTotal(item) {
+          item.sub_total = (item.price * item.quantity).toFixed(2);
+          var subTotalCell = document.getElementById('subTotal_' + item.id);
+          subTotalCell.textContent = '$' + item.sub_total;
+        }
+        
+        // Function to update the grand total
+        function updateGrandTotal() {
+          var grandTotal = 0;
+          for (var itemId in cartData.cart_items) {
+            var item = cartData.cart_items[itemId];
+            grandTotal += parseFloat(item.sub_total);
+          }
+          cartData.grand_total = grandTotal.toFixed(2);
+          grandTotalElement.textContent = 'Grand Total: $' + cartData.grand_total;
+        }
+
+        function updateCartData() {
+          // Get the updated values from the table rows
+          var rows = tableBody.getElementsByTagName('tr');
+          for (var i = 0; i < rows.length; i++) {
+            var itemId = rows[i].getAttribute('data-item-id');
+            var quantityInput = rows[i].querySelector('.form-control');
+            var quantity = parseInt(quantityInput.value);
+            cartData.cart_items[itemId].quantity = quantity;
+            cartData.cart_items[itemId].sub_total = (cartData.cart_items[itemId].price * quantity).toFixed(2);
+          }
+        }
+        
+        // Function to remove a cart item
+        function removeCartItem(itemId) {
+          {% comment %} alert(itemId); {% endcomment %}
+          delete cartData.cart_items[itemId];
+          cartItemDeleteSessionRequest(parseInt(itemId));
+        }
+
+      },
+      error: function (jqXhr, textStatus, errorMessage) { // error callback 
+        console.log('Error in loading data', errorMessage);
+    },
+  });
+});  
+const chckout=document.getElementById("redirectToCheckout");
+
+chckout.addEventListener("click", function(event){
+
+  event.preventDefault();
+  const accessToken=window.localStorage.getItem('accessToken');
+  refreshToken=window.localStorage.getItem('refreshToken');
+  if(accessToken){
+  console.log("access exists");
+  fetch('http://localhost:8000/checkout/', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        "Authorization": "Bearer " + accessToken ,
+    },
+})
+    .then(response => {
+      console.log(response);
+      if(response.status==200){
+        window.location = 'http://127.0.0.1:8000/checkout/';
+
+      } 
+
+      else if(response.status==401){  
+        console.log(401,"access token expired");
+
+        fetch('http://localhost:8000/checkout/', {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              "Authorization": "Bearer " + refreshToken ,
+          },
+      })
+          .then(response => {
+            console.log(response);
+            if(response.status==401){  
+              console.log(401,"refresh token expired");
+              window.location = 'http://127.0.0.1:8000/api/v1/accounts/optain_pair_tokens/?next=/checkout/';
+            }
+            else{
+              console.log("received new access and refresh tokens using last refresh token");
+
+              window.localStorage.setItem('refreshToken', response['refresh_token']);
+              window.localStorage.setItem('accessToken', response['access_token']);
+            }
+          })
+            
+            .catch(error => {
+              console.error('Error:', error);
+          });
+      }})
+      .catch(error => {
+        console.error('Error:', error);
+    });}
+    else{
+      window.location = 'http://127.0.0.1:8000/accounts/login/?next=/checkout/';
+      console.log("access token not exists");
+
+    }
+
+
+}
+);
+function update_cart() {
+  event.preventDefault();
+
+const accessToken=window.localStorage.getItem('accessToken');
+fetch('http://localhost:8000/order/update_cart/', {
+    method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          "Authorization": "Bearer " + refreshToken ,
+      },
+      body: JSON.stringify(cartData),
+  })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
+</script>
+<script src="{% static 'js/script.js'%}"></script>
+{% endblock %}

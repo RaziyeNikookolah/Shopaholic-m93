@@ -1,0 +1,34 @@
+<nav class="site-navigation text-right text-md-center" role="navigation">
+    <div class="container custom-width" style="width:400px">
+      <ul class="site-menu js-clone-nav  d-none d-md-block">
+        <li >
+          {% comment %} class="has-children active"> {% endcomment %}
+          <a href="{% url 'home:index' %}">Home</a>
+          {% comment %} <ul class="dropdown">
+            <li><a href="#">Menu One</a></li>
+            <li><a href="#">Menu Two</a></li>
+            <li><a href="#">Menu Three</a></li>
+            <li class="has-children">
+              <a href="#">Sub Menu</a>
+              <ul class="dropdown">
+                <li><a href="#">Menu One</a></li>
+                <li><a href="#">Menu Two</a></li>
+                <li><a href="#">Menu Three</a></li>
+              </ul>
+            </li>
+          </ul> {% endcomment %}
+        </li>
+        <li> 
+        {% comment %} class="has-children"> {% endcomment %}
+          <a href="#about_us">About</a>
+          {% comment %} <ul class="dropdown">
+            <li><a href="#">Menu One</a></li>
+            <li><a href="#">Menu Two</a></li>
+            <li><a href="#">Menu Three</a></li>
+          </ul> {% endcomment %}
+        </li>
+        <li><a href="#shop_all">Shop</a></li>
+        <li><a href="#get_in_touch">Contact</a></li>
+      </ul>
+    </div>
+  </nav>

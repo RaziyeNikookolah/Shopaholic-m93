@@ -1,0 +1,576 @@
+{% extends 'base.html' %}
+{% block title %}
+  Shoes Online Shop
+ 
+
+{% endblock %}
+{% block content %}
+{% load static %} 
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="{% url 'home:index' %}">Home</a> <span class="mx-2 mb-0">/</span> <a href="">Accounts</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Profile</strong><span class="mx-2 mb-0">/</span> <a href="{% url 'logout' %}">Logout</a> </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section">
+      <div class="container">
+
+        <div class="row">
+          <div class="col-md-6 mb-5 ">
+            <h2 class="h3 mb-3 text-black">Account Details</h2>
+            <div class="p-3 p-lg-5 border">
+
+              <div id="account_details">
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label for="c_fname" class="text-black">First Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_fname" name="c_fname" >
+                  </div>
+                  <div class="col-md-6">
+                    <label for="c_lname" class="text-black">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_lname" name="c_lname">
+                  </div>
+                </div>
+                
+                <div class="form-group row mb-5">
+                  <div class="col-md-6">
+                    <label for="c_gender" class="text-black">Gender <span class="text-danger">*</span></label>
+                    <select class="form-control" id="c_gender" name="c_gender">
+                      <option value="" disabled selected>Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_phone" name="c_phone" placeholder="Phone Number">
+                  </div>
+                </div>
+  
+  
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="c_email_address" name="c_email_address">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="c_birthdate" class="text-black">Birthdate <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="c_birthdate" name="c_birthdate">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-md-12">
+                    <label for="c_card_number" class="text-black">Card Shaba Number <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">IR</span>
+                      </div>
+                      <input type="text" class="form-control" id="c_card_number" name="c_card_number" placeholder="Card Number">
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="form-group row">
+                <div class="col-md-12">
+                    <button id="update-profile_details-btn" type="button" class="btn btn-primary w-100">Save Changes</button>
+                </div>  
+              </div>   
+            </div>
+            <div class="p-3 p-lg-5 border">           
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <h2 class="h3 mb-3 text-black">Addresses</h2>
+                  
+                  <div class="form-group">
+                    <label class="text-black">Select an Address:</label>
+                    <div id="address-list">
+                      <!-- Radio buttons will be dynamically added here -->
+                    </div>
+                  </div>
+                  
+                  <!-- Address fields initially hidden -->
+                  <div id="selected-address-fields" style="display: none;">
+                    <div class="form-group row">
+                      <div class="col-md-12">
+                        <label for="c_address" class="text-black">Address <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_address" name="c_address" placeholder="Street address">
+                        <input type="hidden" class="form-control" id="c_address_id" name="c_address_id" placeholder="Street address">
+                      </div>
+                    </div>
+                
+                    <div class="form-group">
+                      <input id="c_city" type="text" class="form-control" placeholder="City">
+                    </div>
+                
+                    <div class="form-group row">
+                      <div class="col-md-6">
+                        <label for="c_state_country" class="text-black">State / Country <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_state_country" name="c_state_country">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="c_postal_zip" class="text-black">Postal / Zip <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_postal_zip" name="c_postal_zip">
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-6">
+                        <!-- Button for updating the address -->
+                        <button id="update-address-btn" type="button" class="btn btn-primary">Save Changes</button>
+                      </div>    
+                      <div class="col-md-6">
+                        <!-- Button for deleting the address -->
+                        <button id="delete-address-btn" type="button" class="btn btn-primary">Delete</button>
+                      </div>
+                    </div>
+
+                  </div>
+                  
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="c_ship_different_address" class="text-black" data-toggle="collapse" href="#ship_different_address" role="button" aria-expanded="false" aria-controls="ship_different_address"><input type="checkbox" value="1" id="c_ship_different_address"> Add a New Address?</label> 
+                <div class="collapse" id="ship_different_address">
+                  <div class="py-2">
+
+                    <div class="form-group">
+                      <label for="c_diff_country" class="text-black">Province <span class="text-danger" readonly>*</span></label>
+                      <select id="c_diff_country" class="form-control">
+                        <option value="">Select a province</option>
+                        {% for province_code, province_name in PROVINCES %}
+                          <option value="{{ province_code }}">{{ province_name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-md-6">
+                        <label for="c_diff_city" class="text-black">City <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_city" name="c_diff_city">
+                      </div>
+                      <div class="col-md-6">
+                        <label for="c_diff_postal_zip" class="text-black">Postal / Zip <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_postal_zip" name="c_diff_postal_zip">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-md-12">
+                        <label for="c_diff_address" class="text-black">Address <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="c_diff_address" name="c_diff_address" placeholder="Street address">
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <!-- Button for deleting the address -->
+                      <button id="add-address-btn" type="button" class="btn btn-primary w-100">Add New Address</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="col-md-6">
+
+            <div class="row mb-5">
+              <div class="col-md-12">
+                <h2 class="h3 mb-3 text-black">Your Wishes</h2>
+                <div class="p-3 p-lg-5 border">
+                  
+                  Dear Customer,
+
+At My Online Shoes Store, your wishes matter. We're here to turn your preferences into reality, offering shoes that align with your unique style. Your feedback shapes our offerings, ensuring a curated shopping experience that exceeds expectations. Share your ideas and desires, and we'll deliver shoes that reflect your individuality. From a wide range of styles to personalization options, we're dedicated to staying ahead of trends and bringing your wishes to life. Thank you for being a part of our journey; we're committed to your satisfaction and fashion needs. Reach out to us anytime, and let's make your shoe dreams a reality.
+
+Warm regards,
+Raziye N.
+Online Shoes Store
+
+                </div> 
+              </div>
+            </div> 
+            
+            <div class="row mb-5">
+              <div class="col-md-12">
+                <h2 class="h3 mb-3 text-black">Your Recent Orders</h2>
+                <div class="p-3 p-lg-5 border">
+                  <table class="table site-block-order-table mb-5">
+                    <thead>
+                      <th>Product</th>
+                      <th>Total</th>
+                    </thead>
+                    <tbody id="order_product">
+                      <tr>
+                        <td><strong class="mx-2">x</strong> 1</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td><strong class="mx-2">x</strong>   1</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong>Cart Subtotal</strong></td>
+                        <td class="text-black"></td>
+                      </tr>
+                      <tr>
+                        <td class="text-black font-weight-bold"><strong></strong></td>
+                        <td class="text-black font-weight-bold"><strong></strong></td>
+                      </tr> 
+                    </tbody>
+                  </table>
+
+
+                  <div class="form-group">
+                    <a class="btn btn-primary btn-lg py-3 btn-block" id="save_order" href="#">Place New Order</a>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+     
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      let userId=0;
+
+      function loadAccountDetails(userId) {
+        const accessToken = window.localStorage.getItem('accessToken');
+        const url="http://127.0.0.1:8000/api/v1/account/accounts/"+userId+"/";
+        $.ajax({
+          url: url,
+          type: 'GET',
+          dataType: 'json',
+          beforeSend: function (xhr) {
+              xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+          },
+          success: function (data) {
+            console.log(data);
+            const output='<div id="account_details">'+
+              '<div class="form-group row">'+
+                '<div class="col-md-6">'+
+                  '<label for="c_fname" class="text-black">First Name <span class="text-danger">*</span></label>'+
+                  '<input type="text" class="form-control" id="c_fname" name="c_fname" value="'+data.profile.first_name+'" >'+
+                '</div>'+
+                '<div class="col-md-6">'+
+                  '<label for="c_lname" class="text-black">Last Name <span class="text-danger">*</span></label>'+
+                 ' <input type="text" class="form-control" id="c_lname" name="c_lname" value="'+data.profile.last_name+'">'+
+               ' </div>'+
+              '</div>'+
+              
+              '<div class="form-group row mb-5">'+
+                '<div class="col-md-6">'+
+                  '<label for="c_gender" class="text-black">Gender <span class="text-danger">*</span></label>'+
+                  '<select class="form-control" id="c_gender" name="c_gender">'+
+                    '<option value="" disabled selected>Select Gender</option>'+
+                    '<option value="male" '+
+                     (data.profile.gender==1?"selected": "")
+                    +'>Male</option>'+
+                    '<option value="female" '+
+                    (data.profile.gender==2?"selected" : "")
+                    +'>Female</option>'+
+                    '<option value="other"'+
+                    (data.profile.gender==3?"selected" : "")
+                    +'>Other</option>'+
+                  '</select>'+
+                '</div>'+
+                
+                '<div class="col-md-6">'+
+                  '<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>'+
+                  '<input type="text" class="form-control" id="c_phone" name="c_phone" placeholder="Phone Number"  readonly value="'+data.phone_number+'">'+
+                '</div>'+
+              '</div>'+
+
+
+              '<div class="form-group row">'+
+                '<div class="col-md-6">'+
+                  '<label for="c_email_address" class="text-black">Email Address <span class="text-danger">*</span></label>'+
+                  '<input type="text" class="form-control" id="c_email_address" name="c_email_address"value="'+data.profile.email+'">'+
+                '</div>'+
+                '<div class="col-md-6">'+
+                  '<label for="c_birthdate" class="text-black">Birthdate <span class="text-danger">*</span></label>'+
+                  '<input type="date" class="form-control" id="c_birthdate" name="c_birthdate" value="'+data.profile.birthday+'">'+
+                '</div>'+
+              '</div>'+
+              '<div class="form-group row">'+
+                '<div class="col-md-12">'+
+                 ' <label for="c_card_number" class="text-black">Card Shaba Number <span class="text-danger">*</span></label>'+
+                 ' <div class="input-group">'+
+                   ' <div class="input-group-prepend">'+
+                     ' <span class="input-group-text">IR</span>'+
+                    '</div>'+
+                   ' <input type="text" class="form-control" id="c_card_number" name="c_card_number" placeholder="Card Number"value="'+data.profile.card_shaba_number+'">'+
+                 ' </div>'+
+               ' </div>'+
+             ' </div>'+
+
+            '</div>';
+          $("#account_details").html(output);
+
+getAddresses(data);
+$('#update-profile_details-btn').click(function(event) {
+  event.preventDefault();
+  const genderValueMap = {
+    'male': 1,
+    'female': 2,
+    'other': 3
+  };
+
+  var fname = $('#c_fname').val();
+  var lname = $('#c_lname').val();
+  var genderString = $('#c_gender').val(); 
+  var gender = genderValueMap[genderString]; 
+  var email = $('#c_email_address').val();
+  var birthday = $('#c_birthdate').val();
+  var card_number = $('#c_card_number').val();
+  const data = {
+    "first_name": fname,
+    "last_name": lname,
+    "email": email,
+    "gender": gender,
+    "birthday":birthday,
+    "card_shaba_number": card_number,
+  };
+  const url="http://127.0.0.1:8000/api/v1/account/profiles/"+userId+"/";
+  
+  const accessToken=window.localStorage.getItem('accessToken');
+  $.ajax({
+    
+    url: url,
+    type: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify(data),
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+    },
+    success: function(response) {
+      console.log("changed")
+    },
+    error: function(error) {
+      console.error('Error:', error);
+    }
+  });
+});
+
+          },
+          error: function (jqXhr, textStatus, errorMessage) {
+              console.log('Error in loading data', errorMessage);
+          },
+      });
+  }
+
+
+function getAddresses(data){
+
+
+const provinceValueMap={
+
+
+  'thr':'Tehran',
+  'az-sh':'Azarbayejan Sharghi',
+  'az-gh':'Azarbayejan Gharbi',
+  'ard':'Ardebil',
+  'esf':'Esfehan',
+  'alb':'Alborz',
+  'ilm':'Ilam',
+  'bsh':'Booshehr',
+  'chm':'Charmahal o Bakhtiari',
+  'kh-j':'Khorasan Jonobi',
+  'kh-r':'Khorasan Razavi',
+  'kh-sh':'Khorasan Shomali',
+  'khz':'Khoozestan',
+  'znj':'Zanjan',
+  'smn':'Semnan',
+  'sbch':'Sistan Baloochestan',
+  'frs':'Fars',
+  'ghz':'Ghazvin',
+  'qom':'Qom',
+  'krd':'Kordestan',
+  'krm':'Kerman',
+  'kr-sh':'Kerman Shah',
+  'khb':'Kohkilooye Boyer Ahmad',
+  'gls':'Golestan',
+  'gil':'Gilan',
+  'lor':'Lorestan',
+  'maz':'Mazandaran',
+  'mrk':'Markazi',
+  'hrm':'Hormozgan',
+  'hmd':'Hamedan',
+  'yzd':'Yazd',
+};
+
+
+
+      const addressList = document.getElementById('address-list');
+      const selectedAddressFields = document.getElementById('selected-address-fields');
+    
+      data.addresses.forEach(address => {//////////////////////////////////////////
+        const radioContainer = document.createElement('div');
+        radioContainer.className = 'radio-container';
+    
+        const radioInput = document.createElement('input');
+        radioInput.type = 'radio';
+        radioInput.name = 'selected_address';
+        radioInput.value = address.id;
+        radioContainer.appendChild(radioInput);
+    
+        const radioLabel = document.createElement('label');
+        radioLabel.textContent = address.address+' '+address.city;
+        radioContainer.appendChild(radioLabel);
+    
+        radioInput.addEventListener('change', () => {
+          // Show the address fields when a checkbox is clicked
+          selectedAddressFields.style.display = 'block';
+          // Update the address fields with the corresponding values
+          document.getElementById('c_address').value = address.address;
+          document.getElementById('c_city').value = address.city;
+          document.getElementById('c_address_id').value = address.id;
+          document.getElementById('c_state_country').value = provinceValueMap[address.province];
+          document.getElementById('c_postal_zip').value = address.postal_code;
+
+          
+          
+        });
+        
+        addressList.appendChild(radioContainer);
+      });}
+      
+
+
+
+function update_address(){      
+        var address = $('#c_address').val();
+        var city = $('#c_city').val();
+        var address_id = $('#c_address_id').val();
+        var postal_code = $('#c_postal_zip').val();
+        const data = {
+          "address": address,
+          "city": city,
+          "postal_code": postal_code,
+        };
+        const url="http://127.0.0.1:8000/api/v1/account/addresses/"+address_id+"/";
+        
+        const accessToken=window.localStorage.getItem('accessToken');
+        $.ajax({          
+          url: url,
+          type: 'PUT',
+          contentType: 'application/json',
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+          },
+          success: function(response) {
+            console.log("changed");
+          },
+          error: function(error) {
+            console.error('Error:', error);
+          }
+        });     
+
+    }
+    function delete_address(){      
+      var address_id = $('#c_address_id').val();
+
+      const url="http://127.0.0.1:8000/api/v1/account/addresses/"+address_id+"/";
+      
+      const accessToken=window.localStorage.getItem('accessToken');
+      $.ajax({          
+        url: url,
+        type: 'DELETE',
+        contentType: 'application/json',
+
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+        },
+        success: function(response) {
+          console.log("deleted");
+
+        },
+        error: function(error) {
+          console.error('Error:', error);
+        }
+      });     
+
+  }
+  function add_address(){      
+    var address = $('#c_diff_address').val();
+    var city = $('#c_diff_city').val();
+    var province = $('#c_diff_country').val();
+    var postal_code = $('#c_diff_postal_zip').val();
+    const data = {
+      "address": address,
+      "city": city,
+      "province": province,
+      "postal_code": postal_code,
+      "account":userId
+    };
+    console.log(data);
+    const url="http://127.0.0.1:8000/api/v1/account/addresses/";    
+    const accessToken=window.localStorage.getItem('accessToken');
+    $.ajax({          
+      url: url,
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("Authorization", "Bearer " + accessToken);
+      },
+      success: function(response) {
+        console.log("deleted");
+
+      },
+      error: function(error) {
+        console.error('Error:', error);
+      }
+    });     
+
+}
+
+
+$(document).ready(
+
+function(){
+
+  const accessToken = window.localStorage.getItem('accessToken');
+  const url="http://127.0.0.1:8000/api/v1/accounts/get_user_id_from_token/";
+  $.ajax({
+    url: url,
+    type: 'GET',
+    dataType: 'json',
+    beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+    },
+    success: function (data) {
+      userId=data.userId;
+      loadAccountDetails(userId);
+    },
+    error: function (jqXhr, textStatus, errorMessage) {
+        console.log('Error in loading data', errorMessage);
+    },
+});
+$("#update-address-btn").click(function() {
+  update_address(); // Call the function without arguments
+});
+$("#delete-address-btn").click(function() {
+delete_address(); // Call the function without arguments
+});
+
+$("#add-address-btn").click(function() {
+add_address(); // Call the function without arguments
+});
+
+
+}); 
+
+    </script>
+
+
+    {% endblock %}

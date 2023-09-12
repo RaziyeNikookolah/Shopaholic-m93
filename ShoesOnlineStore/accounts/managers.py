@@ -25,3 +25,8 @@ class AccountManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(('Superuser must have is_superuser=True.'))
         return self.create_user(phone_number, password, role=ROLE.MANAGER, ** extra_fields)
+
+
+class CustomerManager(AccountManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(role=1)
