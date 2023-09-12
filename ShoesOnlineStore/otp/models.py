@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class OtpRequest(models.Model):
+    create_timestamp = models.DateTimeField(auto_now_add=True)
     phone_number = models.CharField(max_length=14)
     code = models.CharField(max_length=4, null=True)
     valid_until = models.DateTimeField(

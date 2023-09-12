@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}
+  Shoes Online Shop
+{% endblock %}
+{% block content %}
+<div class="site-section" >
+  <div class="container">
+    <div class="row" id="product_details"  >
+      <div class="col-md-6">
+        <img src="{{ product.image.url }}" alt="Image" id="product-image" class="img-fluid">
+        <script>
+          // Retrieve the value of the image source attribute
+          var image = document.getElementById('product-image').getAttribute('src');
+        </script>
+      </div>
+      <div class="col-md-6">
+        <h2 class="text-black">{{product.brand}}</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, vitae, explicabo? Incidunt facere, natus soluta dolores iusto! Molestiae expedita veritatis nesciunt doloremque sint asperiores fuga voluptas, distinctio, aperiam, ratione dolore.</p>
+        <p class="mb-4">Ex numquam veritatis debitis minima quo error quam eos dolorum quidem perferendis. Quos repellat dignissimos minus, eveniet nam voluptatibus molestias omnis reiciendis perspiciatis illum hic magni iste, velit aperiam quis.</p>
+        <p><strong class="text-primary h4" id="price">{{ product.last_price }}</strong></p>
+        <script>
+          // Retrieve the value of the Django HTML tag
+          var price = "{{ product.last_price }}";
+        </script>
+        
+        <div class="mb-1 d-flex">
+          {% for size in sizes %}
+          <label for="option-sm" class="d-flex mr-3 mb-3">
+            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
+              <input type="radio" value="{{ size }}" id="option-sm" name="shop-sizes">
+            </span> 
+            <span id="span_size" class="d-inline-block text-black">{{ size }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        <div>
+          {% for color in colors %}
+          <label for="option-sm" class="d-flex mr-3 mb-3">
+            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
+              <input type="radio" value="{{ color }}" id="option-sm" name="shop-colors">
+            </span>            
+            <span id="span_color" class="d-inline-block text-black">{{ color }}</span>                
+          </label>
+          {% endfor %}
+              <a href="{% url 'home:cart' %}" class="site-cart">
+                <span class="icon icon-shopping_cart"></span>
+                <span class="count">2</span>
+              </a>
+        </div>
+        <div class="mb-5">
+          <div class="input-group mb-3" style="max-width: 120px;">
+          <div class="input-group-prepend">
+            <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+          </div>
+          <input id="quantity" type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+          <div class="input-group-append">
+            <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+          </div>
+        </div>
+        </div>
+          <script>
+            
+          </script>
+        <p ><a  href="#" onclick="add_to_cart()" class="buy-now btn btn-sm btn-primary">Add To Cart</a></p>
+      </div>
+    </div>
+  </div>
+</div>   
+
+
+<script> 
+
+
+  const url = window.location.href;
+
+  // Split the URL by '/'
+  const urlParts = url.split('/');
+  
+  // Retrieve the value of the path parameter from the appropriate index
+  const pathParamValue = urlParts[4]; // Adjust the index based on your URL structure
+
+function add_to_cart() {
+  let quantity = document.getElementById('quantity').value;
+  const colorRadioButtons = document.getElementsByName('shop-colors');
+  let selectedColor = "";
+  for (const radioButton of colorRadioButtons) {
+    if (radioButton.checked) {
+      selectedColor = radioButton.value;
+      break;
+    }
+  };
+
+  const sizeRadioButtons = document.getElementsByName('shop-sizes');
+  let selectedSize = "";
+  for (const radioButton of sizeRadioButtons) {
+    if (radioButton.checked) {
+      selectedSize = radioButton.value;
+      break;
+    }
+  };
+  // Convert price and quantity to numbers
+  let price_int = parseInt(price);
+  let quantity_int = parseInt(quantity);
+  let total_price=(price_int*quantity_int);
+
+  const data = {
+    "product_id": pathParamValue,
+    "price":price,
+    "quantity": quantity_int,
+    "total_price":total_price,
+ };
+ console.log(data);
+const accessToken = window.localStorage.getItem('accessToken');
+
+  fetch('http://localhost:8000/order/add_to_cart/', {
+    method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          "Authorization": "Bearer " + accessToken,
+      },
+      body: JSON.stringify(data)
+  })
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+
+    }
+</script>
+ 
+{% endblock %}
+
