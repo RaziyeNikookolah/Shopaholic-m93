@@ -63,7 +63,7 @@ def email_export(self):  # no one can not call this view use user_passes_test
         items = OrderItem.objects.filter(order_id=order['id'])
         for item in items:
 
-            writer.writerow([item.product, item.quantity, item.final_price])
+            writer.writerow([item.product, item.quantity])
 
     response['Content-Disposition'] = 'attachment; filename="orders.csv"'
     with open(csv_file_path, 'w') as file:

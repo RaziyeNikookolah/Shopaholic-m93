@@ -17,11 +17,12 @@ services:
   celery_worker:
     container_name: celery_worker
     command: "celery -A onlineshop worker -l INFO"
+    build: .
     depends_on:
       - redis
       - db
       - djangoonlineshop
-    image: celery
+
     environment:
       - C_FORCE_ROOT="true"
     networks:
@@ -31,12 +32,13 @@ services:
   celery_beat:
     container_name: celery_beat
     command: "celery -A onlineshop beat -l info"
+    build: .
     depends_on:
       - celery_worker
       - redis
       - djangoonlineshop
       - db
-    image: celerybeat
+
     environment:
       - C_FORCE_ROOT="true"
     networks:

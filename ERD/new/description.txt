@@ -1,2 +1,0 @@
-two tables in v.1.2 deleted because of erd software limitation 
-profile and address is in v.1.2_left_side
